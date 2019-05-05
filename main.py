@@ -4,6 +4,7 @@ from pygame.constants import *
 
 #my modules
 from scripts.constants import *
+from scripts.actors import Character
 
 def initializePygame():
     '''Initializes the pygame modules and creates the global variables SCREEN and FPS_CLOCK'''
@@ -15,6 +16,7 @@ def initializePygame():
 
 def runGameLoop():
     '''runs the main game loop as long as the run_game boolean is true'''
+    player = Character(0,0)
 
     run_game = True
 
@@ -23,6 +25,9 @@ def runGameLoop():
         for event in pygame.event.get():
             if event.type == QUIT:
                 run_game = False
+
+            if event.type == KEYDOWN:
+                if event.key == K_UP:
 
         pygame.display.update()
         FPS_CLOCK.tick(FPS)
@@ -33,6 +38,12 @@ def terminateGame():
     sys.exit()
 
 
+def createMap():
+    game_map = [[Tile(False) for y in range(MAP_HEIGHT)] for x in range(MAP_WIDTH)]
+
+class Tile:
+    def __init__(self, block_path):
+        self.block_path = block_path
 
 if __name__ == '__main__':
     initializePygame()
