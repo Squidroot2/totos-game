@@ -4,7 +4,7 @@ from pygame.constants import *
 
 #my modules
 from scripts.constants import *
-from scripts.actors import Character
+from scripts.entities import Character
 
 def initializePygame():
     '''Initializes the pygame modules and creates the global variables SCREEN and FPS_CLOCK'''
@@ -38,12 +38,16 @@ def terminateGame():
     sys.exit()
 
 
-def createMap():
-    game_map = [[Tile(False) for y in range(MAP_HEIGHT)] for x in range(MAP_WIDTH)]
+class Map:
+    def __init__(self, width, height):
+        game_map = [[Tile(False) for y in range(height)] for x in range(width)]
+
 
 class Tile:
     def __init__(self, block_path):
         self.block_path = block_path
+    def draw(self, surface):
+        surface.blit(self.image, (self.x * CELL_WIDTH, self.y * CELL_HEIGHT))
 
 if __name__ == '__main__':
     initializePygame()
