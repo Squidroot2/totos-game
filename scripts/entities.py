@@ -29,7 +29,7 @@ class Enemy(Character):
 
 #todo write player class
 class Player(Character):
-
+    pass
 
 #todo write items class(es)
 

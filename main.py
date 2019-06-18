@@ -1,5 +1,5 @@
 #third party modules
-import pygame, tcod, sys
+import pygame, tcod, sys, os
 from pygame.constants import *
 
 #my modules
@@ -19,7 +19,8 @@ def runGameLoop():
     player = Character(0,0)
 
     run_game = True
-
+    map1 = Map(30,30)
+    map1.draw(SCREEN)
     #game loop
     while run_game:
         for event in pygame.event.get():
@@ -28,7 +29,7 @@ def runGameLoop():
 
             if event.type == KEYDOWN:
                 if event.key == K_UP:
-
+                    pass
         pygame.display.update()
         FPS_CLOCK.tick(FPS)
 
@@ -40,12 +41,26 @@ def terminateGame():
 
 class Map:
     def __init__(self, width, height):
-        game_map = [[Tile(False) for y in range(height)] for x in range(width)]
+        self.width = width
+        self.height = height
+        self.tile_map = [[Tile(False, x, y) for y in range(height)] for x in range(width)]
+
+    def draw(self, surface):
+        for xtile in range(self.width):
+            for ytile in range(self.height):
+                self.tile_map[xtile][ytile].draw(surface)
 
 
 class Tile:
-    def __init__(self, block_path):
+    def __init__(self, block_path, x, y):
         self.block_path = block_path
+        self.x = x
+        self.y = y
+        if block_path:
+            self.image = pygame.image.load(os.path.join('images', 'tiles', 'black-tile.png'))
+        else:
+            self.image = pygame.image.load(os.path.join('images', 'tiles', 'white-tile.png'))
+
     def draw(self, surface):
         surface.blit(self.image, (self.x * CELL_WIDTH, self.y * CELL_HEIGHT))
 
