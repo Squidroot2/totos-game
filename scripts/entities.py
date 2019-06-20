@@ -12,15 +12,21 @@ class Entity():
         self.y = y
 
 
+
     def draw(self, surface):
-        surface.blit(self.image, (self.x*CELL_WIDTH, self.y*CELL_HEIGHT))
+        if not self.dead:
+            surface.blit(self.image, (self.x*CELL_WIDTH, self.y*CELL_HEIGHT))
 
 class Character(Entity):
+    dead = False
+
+
     def move(self, game_map, delta_x, delta_y):
         destination = ((self.x+delta_x), (self.y+delta_y))
         if self.validateMove(game_map, destination):
-            self.x += delta_x
-            self.y += delta_y
+            if not self.attack(game_map, destination):
+                self.x += delta_x
+                self.y += delta_y
 
     def validateMove(self, game_map, destination):
         # If destination is out of range
@@ -33,6 +39,18 @@ class Character(Entity):
             return False
         else:
             return True
+
+    def attack(self, game_map, destination):
+        for entity in game_map.entities:
+            if entity.x == destination[0] and entity.y == destination[1]:
+                entity.kill()
+                print("ATTACK")
+                return True
+            else:
+                return False
+
+    def kill(self):
+        self.dead = True
 
 class Player(Character):
     image = pygame.image.load(os.path.join('images','characters','player.png'))

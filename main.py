@@ -20,7 +20,7 @@ def runGameLoop():
     run_game = True
     map1 = Map(MAP_WIDTH,MAP_HEIGHT)
     player = entities.Player(0,0)
-    enemy_list = generateEnemies(3)
+    map1.entities.append(player)
 
     #game loop
     while run_game:
@@ -46,12 +46,12 @@ def runGameLoop():
                 if event.key == K_KP3:
                     player.move(map1,1,1)
 
-                for enemy in enemy_list:
+                for enemy in map1.enemies:
                     enemy.randomMove(map1)
 
         map1.draw(SCREEN)
         player.draw(SCREEN)
-        for enemy in enemy_list:
+        for enemy in map1.enemies:
             enemy.draw(SCREEN)
         pygame.display.update()
         FPS_CLOCK.tick(FPS)
@@ -60,17 +60,6 @@ def terminateGame():
     '''Quits the game'''
     pygame.quit()
     sys.exit()
-
-def generateEnemies(number_of_enemies):
-    enemy_list = []
-    for enemy in range(number_of_enemies):
-        x = random.randint(0, MAP_WIDTH)
-        y = random.randint(0, MAP_HEIGHT)
-        new_enemy = entities.Enemy(x,y)
-        enemy_list.append(new_enemy)
-
-    return enemy_list
-
 
 class Map:
     def __init__(self, width, height):
@@ -84,7 +73,19 @@ class Map:
                 roll_block = random.randint(0,9)
                 if roll_block == 0:
                     self.tile_map[xtile][ytile].block_path = True
+        self.enemies= self.generateEnemies(3)
+        self.entities = []
+        self.entities += self.enemies
 
+
+    def generateEnemies(self, number_of_enemies):
+        enemy_list = []
+        for enemy in range(number_of_enemies):
+            x = random.randint(0, self.width -1)
+            y = random.randint(0, self.height -1)
+            new_enemy = entities.Enemy(x, y)
+            enemy_list.append(new_enemy)
+        return enemy_list
 
 
     def draw(self, surface):
