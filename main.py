@@ -106,18 +106,19 @@ class Tile:
         # Row Major Order
         self.walkable = map.walkable[y][x]
         self.transparent = map.transparent[y][x]
+        self.image = pygame.image.load(os.path.join('images', 'tiles', 'black-tile.png'))
         self.x = x
         self.y = y
 
     def update(self, map):
         self.walkable = map.walkable[self.y][self.x]
         self.transparent = map.transparent[self.y][self.x]
-
-    def draw(self, surface):
         if self.walkable and self.transparent:
             self.image = pygame.image.load(os.path.join('images', 'tiles', 'white-tile.png'))
         else:
             self.image = pygame.image.load(os.path.join('images', 'tiles', 'black-tile.png'))
+
+    def draw(self, surface):
         surface.blit(self.image, (self.x * CELL_WIDTH, self.y * CELL_HEIGHT))
 
 if __name__ == '__main__':

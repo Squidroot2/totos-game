@@ -28,14 +28,14 @@ class Character(Entity):
                 self.x += delta_x
                 self.y += delta_y
 
-    def validateMove(self, game_map, destination):
+    def validateMove(self, floor, destination):
         # If destination is out of range
-        if destination[0] < 0 or destination[0] >= game_map.width:
+        if destination[0] < 0 or destination[0] >= floor.width:
             return False
-        elif destination[1] < 0 or destination[1] >= game_map.height:
+        elif destination[1] < 0 or destination[1] >= floor.height:
             return False
         # If destination is blocked
-        elif not game_map.map.walkable[destination[1]][destination[0]]:
+        elif not floor.map.walkable[destination[1]][destination[0]]:
             return False
         else:
             return True
