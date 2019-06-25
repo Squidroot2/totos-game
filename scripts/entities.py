@@ -21,10 +21,10 @@ class Character(Entity):
     dead = False
 
 
-    def move(self, game_map, delta_x, delta_y):
+    def move(self, floor, delta_x, delta_y):
         destination = ((self.x+delta_x), (self.y+delta_y))
-        if self.validateMove(game_map, destination):
-            if not self.attack(game_map, destination):
+        if self.validateMove(floor, destination):
+            if not self.attack(floor, destination):
                 self.x += delta_x
                 self.y += delta_y
 
@@ -35,7 +35,7 @@ class Character(Entity):
         elif destination[1] < 0 or destination[1] >= game_map.height:
             return False
         # If destination is blocked
-        elif game_map.tile_map[destination[0]][destination[1]].block_path:
+        elif not game_map.map.walkable[destination[1]][destination[0]]:
             return False
         else:
             return True
