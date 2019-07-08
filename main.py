@@ -1,5 +1,8 @@
+#Python modules
+import sys, os, random
+
 #third party modules
-import pygame, tcod, sys, os, random
+import pygame, tcod
 from pygame.constants import *
 
 #my modules
