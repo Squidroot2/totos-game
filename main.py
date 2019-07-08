@@ -65,6 +65,9 @@ def terminateGame():
     pygame.quit()
     sys.exit()
 
+# todo change Map name to Floor
+# todo use the tcod.Map object
+
 class Map:
     def __init__(self, width, height):
         self.width = width

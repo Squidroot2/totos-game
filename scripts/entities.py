@@ -4,9 +4,13 @@ Contains the classes used to construct actors(player,enemies,items)
 from scripts.constants import *
 import os, pygame, random
 
+# my modules
+from scripts.inventory import Inventory
+
 class Entity():
     image = pygame.image.load(os.path.join('images', 'unknown.png'))
-
+    
+    # todo Turn components into a dictionary
     def __init__(self,x,y,map,components=[]):
         self.x = x
         self.y = y
@@ -16,12 +20,17 @@ class Entity():
             self.ai = AI(self)
         else:
             self.ai = None
-
+        
+        if 'Inventory' in components:
+            self.inventory = Inventory(self)
+        else:
+            self.inventory = None
 
     def draw(self, surface):
         #if not self.dead:
         surface.blit(self.image, (self.x*CELL_WIDTH, self.y*CELL_HEIGHT))
 
+# move characters to seperate modules
 class Character(Entity):
 
     dead = False
@@ -67,6 +76,14 @@ class Player(Character):
 class Enemy(Character):
     image = pygame.image.load(os.path.join('images','characters','enemy.png'))
 
+class Corpse(Entity):
+    pass
+    # todo add image for corpse
+    
+    
+
+
+# todo seperate to seperate module
 class AI:
     '''Component Class'''
     def __init__(self, owner):
@@ -81,5 +98,5 @@ class AI:
         self.owner.move(x_move, y_move)
 
 
-#todo write items class(es)
+
 
