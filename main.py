@@ -19,7 +19,7 @@ def runGameLoop():
 
     run_game = True
     map1 = Map(MAP_WIDTH,MAP_HEIGHT)
-    player = entities.Player(0,0)
+    player = entities.Player(0,0,map1)
     map1.entities.append(player)
 
     #game loop
@@ -30,29 +30,30 @@ def runGameLoop():
 
             if event.type == KEYDOWN:
                 if event.key == K_UP or event.key == K_KP8:
-                    player.move(map1, 0,-1)
-                if event.key == K_DOWN or event.key == K_KP2:
-                    player.move(map1, 0, 1)
-                if event.key == K_LEFT or event.key == K_KP4:
-                    player.move(map1, -1, 0)
-                if event.key == K_RIGHT or event.key == K_KP6:
-                    player.move(map1, 1, 0)
-                if event.key == K_KP7:
-                    player.move(map1,-1,-1)
-                if event.key == K_KP9:
-                    player.move(map1,1,-1)
-                if event.key == K_KP1:
-                    player.move(map1,-1,1)
-                if event.key == K_KP3:
-                    player.move(map1,1,1)
+                    player.move(0, -1)
+                elif event.key == K_DOWN or event.key == K_KP2:
+                    player.move(0, 1)
+                elif event.key == K_LEFT or event.key == K_KP4:
+                    player.move(-1, 0)
+                elif event.key == K_RIGHT or event.key == K_KP6:
+                    player.move(1, 0)
+                elif event.key == K_KP7:
+                    player.move(-1, -1)
+                elif event.key == K_KP9:
+                    player.move(1, -1)
+                elif event.key == K_KP1:
+                    player.move(-1, 1)
+                elif event.key == K_KP3:
+                    player.move(1, 1)
 
-                for enemy in map1.enemies:
-                    enemy.randomMove(map1)
+                for entity in map1.entities:
+                    if entity.ai:
+                        entity.ai.takeTurn()
 
         map1.draw(SCREEN)
         player.draw(SCREEN)
-        for enemy in map1.enemies:
-            enemy.draw(SCREEN)
+        for entity in player.map.entities:
+            entity.draw(SCREEN)
         pygame.display.update()
         FPS_CLOCK.tick(FPS)
 
@@ -73,9 +74,9 @@ class Map:
                 roll_block = random.randint(0,9)
                 if roll_block == 0:
                     self.tile_map[xtile][ytile].block_path = True
-        self.enemies= self.generateEnemies(3)
+        enemies = self.generateEnemies(3)
         self.entities = []
-        self.entities += self.enemies
+        self.entities += enemies
 
 
     def generateEnemies(self, number_of_enemies):
@@ -83,7 +84,7 @@ class Map:
         for enemy in range(number_of_enemies):
             x = random.randint(0, self.width -1)
             y = random.randint(0, self.height -1)
-            new_enemy = entities.Enemy(x, y)
+            new_enemy = entities.Enemy(x, y, self, ['AI'])
             enemy_list.append(new_enemy)
         return enemy_list
 
@@ -111,4 +112,3 @@ class Tile:
 if __name__ == '__main__':
     initializePygame()
     runGameLoop()
-    terminateGame()
