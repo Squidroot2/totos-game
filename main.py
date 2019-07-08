@@ -23,10 +23,10 @@ def runGameLoop():
     map1.entities.append(player)
 
     #game loop
-    while run_game:
+    while True:
         for event in pygame.event.get():
             if event.type == QUIT:
-                run_game = False
+                break
 
             if event.type == KEYDOWN:
                 if event.key == K_UP or event.key == K_KP8:
