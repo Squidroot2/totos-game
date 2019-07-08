@@ -1,0 +1,21 @@
+<weapons>
+	<weapon>
+		<name>Handgun Mk1</name>
+		<melee_damage>2</melee_damage>
+		<isRanged>True</isRanged>
+		<ranged_damage>5</ranged_damage>
+		<quick_draw>True</quick_draw>
+		<fire_rate>1</fire_rate>
+		<energy_per_shot>1</energy_per_shot>
+		<difficulty>1</difficulty>
+	</weapon>
+	<weapon>
+		<name>ZenKnife</name>
+		<melee_damage>3</melee_damage>
+		<isRanged>False</isRanged>
+		<
+
+
+
+
+</weapons>
