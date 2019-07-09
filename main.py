@@ -1,8 +1,7 @@
 #Python modules
-import sys, os, random
+import random
 
 #third party modules
-import pygame
 import tcod
 from pygame.constants import *
 
@@ -61,12 +60,6 @@ def runGameLoop():
         pygame.display.update()
         FPS_CLOCK.tick(FPS)
 
-def terminateGame():
-    '''Quits the game'''
-    pygame.quit()
-    sys.exit()
-
-# todo use the tcod.Map object
 
 class Floor:
     def __init__(self, width, height):
