@@ -8,7 +8,7 @@ from pygame.constants import *
 
 #my modules
 from scripts.constants import *
-from scripts import entities
+from scripts.characters import *
 
 def initializePygame():
     '''Initializes the pygame modules and creates the global variables SCREEN and FPS_CLOCK'''
@@ -22,7 +22,7 @@ def runGameLoop():
     '''runs the main game loop as long as the run_game boolean is true'''
     run_game = True
     floor1 = Floor(MAP_WIDTH, MAP_HEIGHT)
-    player = entities.Player(0,0,floor1,components={'Inventory': []})
+    player = Player(0,0,floor1,components={'Inventory': []})
     floor1.entities.append(player)
 
     #game loop
@@ -90,7 +90,7 @@ class Floor:
         for enemy in range(number_of_enemies):
             x = random.randint(0, self.width -1)
             y = random.randint(0, self.height -1)
-            new_enemy = entities.Enemy(x, y, self, ['AI'])
+            new_enemy = Enemy(x, y, self, ['AI'])
             enemy_list.append(new_enemy)
         return enemy_list
 

@@ -1,11 +1,12 @@
 from scripts.entities import Entity
-import configparser, os
+import os
 from scripts.utilities import readINI
 from copy import copy
 
 WEAPON_INI = os.path.join('data','weapons.ini')
 ARMOR_INI = os.path.join('data','armor.ini')
 GENERATOR_INI = os.path.join('data','generator.ini')
+BATTERY_INI = os.path.join('data','battery.ini')
 
 #todo write items classes
 class Item(Entity):
@@ -49,6 +50,7 @@ class Weapon(Item):
 
     def equip(self):
         self.location.equipped['weapon'] = self
+    
 
 class Armor(Item):
     
@@ -62,6 +64,7 @@ class Armor(Item):
     
     def equip(self):
         self.location.equipped['armor'] = self
+    
 
 class Generator(Item):
 
@@ -71,19 +74,38 @@ class Generator(Item):
         config = readINI(GENERATOR_INI)
         self.name =             config[id].get('name')
         self.max_charge =       config[id].getint('max_charge')
-        self.recharge_rate =    config[id].getint('recharge_rate')
-        self.current_charge =   copy(max_charge)
+        self.recharge_rate =    config[id].getfloat('recharge_rate')
         
+        # Current Charge Starts at 0
+        self.current_charge = 0.0
+    
     def equip(self):
-        self.locaton.equipped['generator'] = self
+        self.location.equipped['generator'] = self
+        self.current_charge = 0.0
+        
+    def recharge(self):
+        # Happens once per turn while equipped
+        new_charge_level = self.current_charge + self.recharge_rate
+        if new_charge_level > self.max_charge:
+            self.current_charge = self.max_charge
+        else:
+            self.current_charge = new_charge_level
+    
+    def rechargeToFull(self):
+        self.current_charge = self.max_charge
+        
     
 class Battery(Item):
     
     def __init__(self, id, location, x=None, y=None):
         super().__init__(location, x, y)
+        
+        config = readINI(BATTERY_INI)
+        self.name = config[id].get('name')
+        self.power = config[id].getint(power)
     
     def use(self):
         target = self.location.equipped['generator']
-        #todo finish use method
+        target.current_charge += self.power
         
         
