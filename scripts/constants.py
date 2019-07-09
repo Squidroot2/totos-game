@@ -1,7 +1,7 @@
 '''
 This module contains constants used throughout the grim ranger game
 '''
-FPS = 60
+FPS = 30
 
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720

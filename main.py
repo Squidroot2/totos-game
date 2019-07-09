@@ -1,10 +1,14 @@
+#Python modules
+import sys, os, random
+
 #third party modules
-import pygame, tcod, sys, os, random
+import pygame
+import tcod
 from pygame.constants import *
 
 #my modules
 from scripts.constants import *
-from scripts import entities
+from scripts.characters import *
 
 def initializePygame():
     '''Initializes the pygame modules and creates the global variables SCREEN and FPS_CLOCK'''
@@ -16,10 +20,9 @@ def initializePygame():
 
 def runGameLoop():
     '''runs the main game loop as long as the run_game boolean is true'''
-
     run_game = True
     floor1 = Floor(MAP_WIDTH, MAP_HEIGHT)
-    player = entities.Player(0,0)
+    player = Player(0,0,floor1,components={'Inventory': []})
     floor1.entities.append(player)
 
     #game loop
@@ -27,32 +30,34 @@ def runGameLoop():
         for event in pygame.event.get():
             if event.type == QUIT:
                 run_game = False
+                break
 
-            if event.type == KEYDOWN:
+            elif event.type == KEYDOWN:
                 if event.key == K_UP or event.key == K_KP8:
-                    player.move(floor1, 0,-1)
-                if event.key == K_DOWN or event.key == K_KP2:
-                    player.move(floor1, 0, 1)
-                if event.key == K_LEFT or event.key == K_KP4:
-                    player.move(floor1, -1, 0)
-                if event.key == K_RIGHT or event.key == K_KP6:
-                    player.move(floor1, 1, 0)
-                if event.key == K_KP7:
-                    player.move(floor1,-1,-1)
-                if event.key == K_KP9:
-                    player.move(floor1,1,-1)
-                if event.key == K_KP1:
-                    player.move(floor1,-1,1)
-                if event.key == K_KP3:
-                    player.move(floor1,1,1)
+                    player.move(0, -1)
+                elif event.key == K_DOWN or event.key == K_KP2:
+                    player.move(0, 1)
+                elif event.key == K_LEFT or event.key == K_KP4:
+                    player.move(-1, 0)
+                elif event.key == K_RIGHT or event.key == K_KP6:
+                    player.move(1, 0)
+                elif event.key == K_KP7:
+                    player.move(-1, -1)
+                elif event.key == K_KP9:
+                    player.move(1, -1)
+                elif event.key == K_KP1:
+                    player.move(-1, 1)
+                elif event.key == K_KP3:
+                    player.move(1, 1)
 
-                for enemy in floor1.enemies:
-                    enemy.randomMove(floor1)
+                for entity in floor1.entities:
+                    if entity.ai:
+                        entity.ai.takeTurn()
 
         floor1.draw(SCREEN)
         player.draw(SCREEN)
-        for enemy in floor1.enemies:
-            enemy.draw(SCREEN)
+        for entity in player.location.entities:
+            entity.draw(SCREEN)
         pygame.display.update()
         FPS_CLOCK.tick(FPS)
 
@@ -61,54 +66,61 @@ def terminateGame():
     pygame.quit()
     sys.exit()
 
+# todo use the tcod.Map object
+
 class Floor:
     def __init__(self, width, height):
         self.width = width
         self.height = height
-        self.map = tcod.map.Map(width,height)
-        self.tile_map = [[Tile(x, y, self.map) for y in range(height)] for x in range(width)]
-
+        self.map = tcod.map.Map(width, height)
+        self.tile_map = [[Tile(self.map, x, y) for y in range(height)] for x in range(width)]
+        self.entities = []
         # primitive random generation
         for xtile in range(self.width):
             for ytile in range(self.height):
                 roll_block = random.randint(0,9)
-                if roll_block != 0:
+                if not roll_block == 0:
                     self.map.walkable[ytile][xtile] = True
                     self.map.transparent[ytile][xtile] = True
         self.updateTiles()
-        self.enemies = self.generateEnemies(3)
-        self.entities = []
-        self.entities += self.enemies
+        self.generateEnemies(3)
+
 
 
     def generateEnemies(self, number_of_enemies):
-        enemy_list = []
         for enemy in range(number_of_enemies):
             x = random.randint(0, self.width -1)
             y = random.randint(0, self.height -1)
-            new_enemy = entities.Enemy(x, y)
-            enemy_list.append(new_enemy)
-        return enemy_list
-
-
-    def draw(self, surface):
-        for xtile in range(self.width):
-            for ytile in range(self.height):
-                self.tile_map[xtile][ytile].draw(surface)
+            Enemy(x, y, self, ['AI'])
 
     def updateTiles(self):
         for xtile in range(self.width):
             for ytile in range(self.height):
                 self.tile_map[xtile][ytile].update(self.map)
 
+    def draw(self, surface):
+        for xtile in range(self.width):
+            for ytile in range(self.height):
+                self.tile_map[xtile][ytile].draw(surface)
+
+    def addEntity(self, entity):
+        self.entities.append(entity)
+        
+    def removeEntity(self, entity):
+        self.entities.remove(entity)
+
+
+
 class Tile:
-    def __init__(self, x, y, map):
+    def __init__(self, map, x, y):
         # Row Major Order
         self.walkable = map.walkable[y][x]
         self.transparent = map.transparent[y][x]
-        self.image = pygame.image.load(os.path.join('images', 'tiles', 'black-tile.png'))
         self.x = x
         self.y = y
+
+    def draw(self, surface):
+        surface.blit(self.image, (self.x * CELL_WIDTH, self.y * CELL_HEIGHT))
 
     def update(self, map):
         self.walkable = map.walkable[self.y][self.x]
@@ -118,10 +130,6 @@ class Tile:
         else:
             self.image = pygame.image.load(os.path.join('images', 'tiles', 'black-tile.png'))
 
-    def draw(self, surface):
-        surface.blit(self.image, (self.x * CELL_WIDTH, self.y * CELL_HEIGHT))
-
 if __name__ == '__main__':
     initializePygame()
     runGameLoop()
-    terminateGame()

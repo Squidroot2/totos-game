@@ -4,65 +4,64 @@ Contains the classes used to construct actors(player,enemies,items)
 from scripts.constants import *
 import os, pygame, random
 
+# my modules
+from scripts.inventory import *
+
+
 class Entity():
     image = pygame.image.load(os.path.join('images', 'unknown.png'))
-
-    def __init__(self,x,y):
+    
+    # todo rearrange signature so that location is first, amd x and y are optional
+    def __init__(self,x,y,location,components=[]):
         self.x = x
         self.y = y
+        self.location = location
+        self.location.addEntity(self)
+        obstruct = False
 
-
+        if 'AI' in components:
+            self.ai = AI(self)
+        else:
+            self.ai = None
+        
+        if 'Inventory' in components:
+            self.inventory = Inventory(self, components['Inventory'])
+        else:
+            self.inventory = None
 
     def draw(self, surface):
-        if not self.dead:
-            surface.blit(self.image, (self.x*CELL_WIDTH, self.y*CELL_HEIGHT))
+        surface.blit(self.image, (self.x*CELL_WIDTH, self.y*CELL_HEIGHT))
 
-class Character(Entity):
-    dead = False
+# todo move characters to seperate modules
 
 
-    def move(self, floor, delta_x, delta_y):
-        destination = ((self.x+delta_x), (self.y+delta_y))
-        if self.validateMove(floor, destination):
-            if not self.attack(floor, destination):
-                self.x += delta_x
-                self.y += delta_y
-
-    def validateMove(self, floor, destination):
-        # If destination is out of range
-        if destination[0] < 0 or destination[0] >= floor.width:
-            return False
-        elif destination[1] < 0 or destination[1] >= floor.height:
-            return False
-        # If destination is blocked
-        elif not floor.map.walkable[destination[1]][destination[0]]:
-            return False
+class Corpse(Entity):
+    def __init__(self, character):
+        if character.inventory:
+            inventory_contents = character.inventory.contents
         else:
-            return True
+            inventory_contents = []
+        super().__init__(character.x, character.y, character.location, components={'Inventory': inventory_contents})
+        
+    # todo add image for corpse
+    
+    
 
-    def attack(self, game_map, destination):
-        for entity in game_map.entities:
-            if entity.x == destination[0] and entity.y == destination[1]:
-                entity.kill()
-                print("ATTACK")
-                return True
-            else:
-                return False
 
-    def kill(self):
-        self.dead = True
+# todo seperate to seperate module
+class AI:
+    '''Component Class'''
+    def __init__(self, owner):
+        self.owner = owner
 
-class Player(Character):
-    image = pygame.image.load(os.path.join('images','characters','player.png'))
+    def takeTurn(self):
+        self.randomMove()
 
-class Enemy(Character):
-    image = pygame.image.load(os.path.join('images','characters','enemy.png'))
-
-    def randomMove(self, game_map):
+    def randomMove(self):
         x_move = random.randint(-1,1)
         y_move = random.randint(-1,1)
-        self.move(game_map, x_move, y_move)
+        self.owner.move(x_move, y_move)
 
 
-#todo write items class(es)
+
 
