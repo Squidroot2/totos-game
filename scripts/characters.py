@@ -8,9 +8,9 @@ class Character(Entity):
     dead = False
     
     # todo add ids for enemy types
-    def __init__(self,x,y,map,components=[]):
+    def __init__(self,map,x,y,components=[]):
         
-        super().__init__(x,y,map,components)
+        super().__init__(map,x,y,components)
         obstruct = True
         
 
@@ -73,9 +73,9 @@ class Character(Entity):
 class Player(Character):
     image = pygame.image.load(os.path.join('images','characters','player.png'))
     
-    def __init__(self,x,y,map,components={"Inventory": []}):
+    def __init__(self,map,x,y,components={"Inventory": []}):
         
-        super().__init__(x,y,map,components)
+        super().__init__(map,x,y,components)
         level = 1
         xp = 0
         base_damage = 1

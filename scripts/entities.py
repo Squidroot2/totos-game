@@ -13,7 +13,7 @@ class Entity:
     image = pygame.image.load(os.path.join('images', 'unknown.png'))
     
     # todo rearrange signature so that location is first, amd x and y are optional
-    def __init__(self,x,y,location,components=[]):
+    def __init__(self,location,x=None,y=None,components=[]):
         self.x = x
         self.y = y
         self.location = location
@@ -41,7 +41,7 @@ class Corpse(Entity):
             inventory_contents = character.inventory.contents
         else:
             inventory_contents = []
-        super().__init__(character.x, character.y, character.location, components={'Inventory': inventory_contents})
+        super().__init__(character.location, character.x, character.y,  components={'Inventory': inventory_contents})
         
     # todo add image for corpse
     
