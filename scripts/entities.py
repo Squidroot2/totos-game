@@ -8,7 +8,7 @@ import os, pygame, random
 from scripts.inventory import *
 
 
-class Entity():
+class Entity:
     image = pygame.image.load(os.path.join('images', 'unknown.png'))
     
     # todo rearrange signature so that location is first, amd x and y are optional
