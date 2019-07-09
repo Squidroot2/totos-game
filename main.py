@@ -20,8 +20,7 @@ def initializePygame():
 def runGameLoop():
     '''runs the main game loop as long as the run_game boolean is true'''
 
-    run_game = True
-    map1 = Map(MAP_WIDTH,MAP_HEIGHT)
+    map1 = Floor(MAP_WIDTH, MAP_HEIGHT)
     player = entities.Player(0,0,map1)
     map1.entities.append(player)
 
@@ -68,7 +67,7 @@ def terminateGame():
 # todo change Map name to Floor
 # todo use the tcod.Map object
 
-class Map:
+class Floor:
     def __init__(self, width, height):
         self.width = width
         self.height = height
