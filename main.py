@@ -2,7 +2,8 @@
 import sys, os, random
 
 #third party modules
-import pygame, tcod
+import pygame
+#import tcod
 from pygame.constants import *
 
 #my modules
@@ -19,18 +20,19 @@ def initializePygame():
 
 def runGameLoop():
     '''runs the main game loop as long as the run_game boolean is true'''
-
-    map1 = Floor(MAP_WIDTH, MAP_HEIGHT)
-    player = entities.Player(0,0,map1)
-    map1.entities.append(player)
+    run_game = True
+    floor1 = Floor(MAP_WIDTH, MAP_HEIGHT)
+    player = entities.Player(0,0,floor1,components={'Inventory': []})
+    floor1.entities.append(player)
 
     #game loop
-    while True:
+    while run_game:
         for event in pygame.event.get():
             if event.type == QUIT:
+                run_game = False
                 break
 
-            if event.type == KEYDOWN:
+            elif event.type == KEYDOWN:
                 if event.key == K_UP or event.key == K_KP8:
                     player.move(0, -1)
                 elif event.key == K_DOWN or event.key == K_KP2:
@@ -48,11 +50,11 @@ def runGameLoop():
                 elif event.key == K_KP3:
                     player.move(1, 1)
 
-                for entity in map1.entities:
+                for entity in floor1.entities:
                     if entity.ai:
                         entity.ai.takeTurn()
 
-        map1.draw(SCREEN)
+        floor1.draw(SCREEN)
         player.draw(SCREEN)
         for entity in player.map.entities:
             entity.draw(SCREEN)
@@ -72,7 +74,7 @@ class Floor:
         self.width = width
         self.height = height
         self.tile_map = [[Tile(False, x, y) for y in range(height)] for x in range(width)]
-
+        self.entities = []
         # primitive random generation
         for xtile in range(self.width):
             for ytile in range(self.height):
@@ -80,8 +82,7 @@ class Floor:
                 if roll_block == 0:
                     self.tile_map[xtile][ytile].block_path = True
         enemies = self.generateEnemies(3)
-        self.entities = []
-        self.entities += enemies
+
 
 
     def generateEnemies(self, number_of_enemies):
@@ -99,13 +100,18 @@ class Floor:
             for ytile in range(self.height):
                 self.tile_map[xtile][ytile].draw(surface)
 
+    def addEntity(self, entity):
+        self.entities.append(entity)
+        
+    def removeEntity(self, entity):
+        self.entities.remove(entity)
+
 
 class Tile:
     def __init__(self, block_path, x, y):
         self.block_path = block_path
         self.x = x
         self.y = y
-
 
     def draw(self, surface):
         if self.block_path:

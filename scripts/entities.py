@@ -5,16 +5,20 @@ from scripts.constants import *
 import os, pygame, random
 
 # my modules
-from scripts.inventory import Inventory
+from scripts.inventory import *
+from scripts.inventory import *
 
 class Entity():
     image = pygame.image.load(os.path.join('images', 'unknown.png'))
     
-    # todo Turn components into a dictionary
+    # todo Turn components into a dictionary,
+    # todo rearrange signature so that map is first and is called location
     def __init__(self,x,y,map,components=[]):
         self.x = x
         self.y = y
         self.map = map
+        self.map.addEntity(self)
+        obstruct=False
 
         if 'AI' in components:
             self.ai = AI(self)
@@ -22,18 +26,24 @@ class Entity():
             self.ai = None
         
         if 'Inventory' in components:
-            self.inventory = Inventory(self)
+            self.inventory = Inventory(self, components['Inventory'])
         else:
             self.inventory = None
 
     def draw(self, surface):
-        #if not self.dead:
         surface.blit(self.image, (self.x*CELL_WIDTH, self.y*CELL_HEIGHT))
 
-# move characters to seperate modules
+# todo move characters to seperate modules
 class Character(Entity):
 
     dead = False
+    
+    # todo add ids for enemy types
+    def __init__(self,x,y,map,components=[]):
+        
+        super().__init__(x,y,map,components)
+        obstruct = True
+        
 
     def move(self, delta_x, delta_y):
         destination = ((self.x+delta_x), (self.y+delta_y))
@@ -62,22 +72,51 @@ class Character(Entity):
                 entity.kill()
                 print("ATTACK")
                 return True
-
-        return False
+        return False        
 
     def kill(self):
         self.dead = True
         self.ai = None
-        #self.map.entities.remove(self)
-
+        self.map.removeEntity(self)
+        # Create a corpse
+        Corpse(self)
+        
+        
+        
 class Player(Character):
     image = pygame.image.load(os.path.join('images','characters','player.png'))
-
+    
+    def __init__(self,x,y,map,components={"Inventory": []}):
+        
+        super().__init__(x,y,map,components)
+        
+    def getStartingInventory(self):
+    
+        # Create Initial Items in Inventory
+        gun = Weapon("HANDGUN1",self.inventory)
+        knife = Weapon("KNIFE1",self.inventory)
+        armor = Armor("ARMOR1",self.inventory)
+        generator = Generator("LIGHT1", self.inventory)
+        # Player starts with 2 batteries
+        for i in range(2):
+            Battery("TINY", self.inventory)
+        
+        # Equip Items
+        gun.equip()
+        armor.equip()
+        generator.equip()
+        
 class Enemy(Character):
     image = pygame.image.load(os.path.join('images','characters','enemy.png'))
 
 class Corpse(Entity):
-    pass
+    def __init__(self, character):
+        if character.inventory:
+            inventory_contents = character.inventory.contents
+        else:
+            inventory_contents = []
+        super().__init__(character.x, character.y, character.map, components={'Inventory': inventory_contents})
+        
     # todo add image for corpse
     
     
