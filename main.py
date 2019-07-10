@@ -22,7 +22,7 @@ def runGameLoop():
     run_game = True
     floor1 = Floor(MAP_WIDTH, MAP_HEIGHT)
     player = Player(floor1,0,0,components={'Inventory': []})
-    floor1.entities.append(player)
+
 
     #game loop
     while run_game:
