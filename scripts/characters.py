@@ -3,6 +3,7 @@ from scripts.entities import Entity, Corpse
 import pygame
 import os, random
 
+
 class Character(Entity):
 
     dead = False
@@ -128,9 +129,9 @@ class Player(Character):
     
         # Create Initial Items in Inventory
         gun = Weapon("HANDGUN1",self.inventory)
-        knife = Weapon("KNIFE1",self.inventory)
         armor = Armor("ARMOR1",self.inventory)
         generator = Generator("LIGHT1", self.inventory)
+        Weapon("KNIFE1", self.inventory)
         # Player starts with 2 batteries
         for i in range(2):
             Battery("TINY", self.inventory)
@@ -144,5 +145,5 @@ class Player(Character):
         generator.rechargeToFull()
         
 class Enemy(Character):
-    image = pygame.image.load(os.path.join('images','characters','enemy.png'))
+    image = pygame.image.load(os.path.join('images', 'characters', 'enemy.png'))
     obstruct = True
