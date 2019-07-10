@@ -10,6 +10,7 @@ class Character(Entity):
     dead = False
     
     # todo add ids for enemy types
+    # todo use the characters ini to initialize character stats
     def __init__(self,map,x,y,components=[]):
         
         super().__init__(map,x,y,components)
@@ -107,7 +108,9 @@ class Character(Entity):
             for item in equipment:
                 if equipment[item] is not None and equipment[item].difficulty > self.level:
                     encumbrance += equipment[item].difficulty - self.level
-
+    #todo finish getEnergy()
+    def getEnergy(self):
+        pass
 
 
 
