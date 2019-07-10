@@ -75,6 +75,7 @@ class Generator(Item):
         self.name =             config[item_id].get('name')
         self.max_charge =       config[item_id].getint('max_charge')
         self.recharge_rate =    config[item_id].getfloat('recharge_rate')
+        self.difficulty =       config[item_id].getint('difficulty')
         
         # Current Charge Starts at 0
         self.current_charge = 0.0
