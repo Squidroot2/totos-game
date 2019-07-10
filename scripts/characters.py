@@ -46,9 +46,10 @@ class Character(Entity):
                 return True
         return False
 
+    #todo finish function
     def meleeAttack(self, enemy):
-        damage = self.getMeleeDamage(self)
-        damage -= self.getDefense(self)
+        damage = self.getMeleeDamage()
+        damage -= enemy.getDefense()
 
 
     def kill(self):
@@ -73,7 +74,8 @@ class Character(Entity):
         
         return damage
 
-    def getFireRate(self):
+    #todo finish function
+    def getAttackRate(self):
         pass
         
         
