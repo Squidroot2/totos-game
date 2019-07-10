@@ -123,6 +123,7 @@ class Player(Character):
         self.base_damage = 1
         self.base_defense = 0
         self.base_attack_rate = 1
+        self.setStartingInventory()
 
         
     def setStartingInventory(self):
