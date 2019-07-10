@@ -1,19 +1,22 @@
 from scripts.items import Weapon, Armor, Generator, Battery
 from scripts.entities import Entity, Corpse
+from scripts.utilities import readINI
 from scripts import formulas
 import pygame
-import os, random
+import os
 
+CHARACTER_INI = os.path.join('data','characters.ini')
 
 class Character(Entity):
 
     dead = False
     
-    # todo add ids for enemy types
-    # todo use the characters ini to initialize character stats
-    def __init__(self,map,x,y,components=[]):
+    # todo  finish using the characters ini to initialize character stats
+    def __init__(self,char_id, map,x,y,components=[]):
         
         super().__init__(map,x,y,components)
+        config = readINI(CHARACTER_INI)
+        self.name =     config[char_id].get('name')
         self.obstruct = True
         
 
@@ -128,7 +131,6 @@ class Player(Character):
         self.base_attack_rate = 1
         self.setStartingInventory()
 
-        
     def setStartingInventory(self):
     
         # Create Initial Items in Inventory
@@ -147,7 +149,8 @@ class Player(Character):
         
         # Shield Starts charged
         generator.rechargeToFull()
-        
-class Enemy(Character):
-    image = pygame.image.load(os.path.join('images', 'characters', 'enemy.png'))
-    obstruct = True
+
+# todo figure out if I want to have an enemy class
+# class Enemy(Character):
+#     image = pygame.image.load(os.path.join('images', 'characters', 'enemy.png'))
+#     obstruct = True

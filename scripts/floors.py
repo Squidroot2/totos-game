@@ -4,7 +4,7 @@ import random
 import pygame
 import tcod
 
-from scripts.characters import Enemy
+from scripts.characters import Character
 from scripts.constants import CELL_WIDTH, CELL_HEIGHT
 
 
@@ -31,7 +31,7 @@ class Floor:
         for enemy in range(number_of_enemies):
             x = random.randint(0, self.width -1)
             y = random.randint(0, self.height -1)
-            Enemy(self,x, y, ['AI'])
+            Character("BLOB1",self, x, y, ['AI'])
 
     def updateTiles(self):
         for xtile in range(self.width):
