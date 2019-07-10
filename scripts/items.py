@@ -22,7 +22,7 @@ class Item(Entity):
         self.location.removeEntity(self)
         self.x = self.owner.x
         self.y = self.owner.y
-        self.owner.floor.addEntity(item)
+        self.owner.floor.addEntity(self)
     
     def pickUp(self, inventory):
         self.location.removeEntity(self)
@@ -40,13 +40,13 @@ class Weapon(Item):
         self.name =             config[item_id].get('name')
         self.melee_damage =     config[item_id].getint('melee_damage')
         self.is_quick_draw =    config[item_id].getboolean('quick_draw')
-        self.fire_rate =        config[item_id].getint('fire_rate')
+        self.melee_speed =      config[item_id].getint('melee_speed')
         self.difficulty =       config[item_id].getint('difficulty')
         self.is_ranged =        config[item_id].getboolean('is_ranged')
         if self.is_ranged:
-            self.ranged_damage = config[item_id].getint('ranged_damage')
-            self.energy_per_shot = config[item_id].getint('energy_per_shot')
-        
+            self.ranged_damage =    config[item_id].getint('ranged_damage')
+            self.energy_per_shot =  config[item_id].getint('energy_per_shot')
+            self.fire_rate =        config[item_id].getint('fire_rate')
 
     def equip(self):
         self.location.equipped['weapon'] = self
