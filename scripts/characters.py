@@ -55,7 +55,6 @@ class Character(Entity):
 
         self_enc = self.getEncumbrance()
         enemy_enc = enemy.getEncumbrance()
-        # todo put this in a formulas module
         hit_chance = formulas.getHitChance()
 
 
