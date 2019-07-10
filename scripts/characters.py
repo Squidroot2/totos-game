@@ -17,7 +17,7 @@ class Character(Entity):
     def move(self, delta_x, delta_y):
         destination = ((self.x+delta_x), (self.y+delta_y))
         if self.validateMove(destination):
-            if not self.attack(destination):
+            if not self.checkEntityObstruct(destination):
                 self.x += delta_x
                 self.y += delta_y
 
@@ -36,15 +36,20 @@ class Character(Entity):
         else:
             return True
 
-    def attack(self, destination):
+    def checkEntityObstruct(self, destination):
         for entity in self.location.entities:
-            if entity is self:
+            if entity is self or not entity.obstruct:
                 continue
             elif entity.x == destination[0] and entity.y == destination[1]:
-                entity.kill()
+                self.meleeAttack(entity)
                 print("ATTACK")
                 return True
         return False
+
+    def meleeAttack(self, enemy):
+        damage = self.getMeleeDamage(self)
+        damage -= self.getDefense(self)
+
 
     def kill(self):
         self.dead = True
@@ -58,7 +63,6 @@ class Character(Entity):
         if self.inventory and self.inventory.equipped['armor']:
             armor = self.inventory.equipped['armor']
             defense += armor.defense
-            
         return defense
         
     def getMeleeDamage(self):
@@ -68,6 +72,9 @@ class Character(Entity):
             damage += weapon.melee_damage
         
         return damage
+
+    def getFireRate(self):
+        pass
         
         
 class Player(Character):
