@@ -21,7 +21,7 @@ def runGameLoop():
     '''runs the main game loop as long as the run_game boolean is true'''
     run_game = True
     floor1 = Floor(MAP_WIDTH, MAP_HEIGHT)
-    player = Player(floor1,0,0,components={'Inventory': []})
+    player = Player(floor1,0,0)
 
 
     #game loop
