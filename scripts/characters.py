@@ -1,7 +1,7 @@
 from scripts.items import Weapon, Armor, Generator, Battery
 from scripts.entities import Entity, Corpse
 import pygame
-import os
+import os, random
 
 class Character(Entity):
 
@@ -11,7 +11,7 @@ class Character(Entity):
     def __init__(self,map,x,y,components=[]):
         
         super().__init__(map,x,y,components)
-        obstruct = True
+        self.obstruct = True
         
 
     def move(self, delta_x, delta_y):
@@ -51,6 +51,14 @@ class Character(Entity):
         damage = self.getMeleeDamage()
         damage -= enemy.getDefense()
 
+        self_enc = self.getEncumbrance()
+        enemy_enc = enemy.getEncumbrance()
+        hit_chance = .9 - (self_enc *.15) + (enemy_enc * .1)
+
+
+        for attack in range(self.getFireRate()):
+            pass
+
 
     def kill(self):
         self.dead = True
@@ -71,13 +79,36 @@ class Character(Entity):
         if self.inventory and self.inventory.equipped['weapon']:
             weapon = self.inventory.equipped['weapon']
             damage += weapon.melee_damage
-        
+
         return damage
 
-    #todo finish function
-    def getAttackRate(self):
-        pass
-        
+    def getAttackRate(self, ranged=False):
+
+        # Find out if carrying weapon; if not, return base_attack_rate
+        if self.inventory and self.inventory.equipped['weapon']:
+            weapon = self.inventory.equipped['weapon']
+        else:
+            return self.base_attack_rate
+
+        #
+        if not ranged:
+            return weapon.melee_speed
+        else:
+            return weapon.fire_rate
+
+    def getEncumbrance(self):
+        encumbrance = 0
+        if self.inventory is None:
+            return 0
+        else:
+            equipment = self.inventory.equipped
+            for item in equipment:
+                if equipment[item] is not None and equipment[item].difficulty > self.level:
+                    encumbrance += equipment[item].difficulty - self.level
+
+
+
+
         
 class Player(Character):
     image = pygame.image.load(os.path.join('images','characters','player.png'))
@@ -85,10 +116,12 @@ class Player(Character):
     def __init__(self,map,x,y,components={"Inventory": []}):
         
         super().__init__(map,x,y,components)
-        level = 1
-        xp = 0
-        base_damage = 1
-        base_defense = 0
+        self.level = 1
+        self.xp = 0
+        self.base_damage = 1
+        self.base_defense = 0
+        self.base_attack_rate = 1
+
         
     def setStartingInventory(self):
     
@@ -111,3 +144,4 @@ class Player(Character):
         
 class Enemy(Character):
     image = pygame.image.load(os.path.join('images','characters','enemy.png'))
+    obstruct = True
