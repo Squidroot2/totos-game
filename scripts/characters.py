@@ -55,7 +55,7 @@ class Character(Entity):
 
         self_enc = self.getEncumbrance()
         enemy_enc = enemy.getEncumbrance()
-        hit_chance = formulas.getHitChance()
+        hit_chance = formulas.getHitChance(self_enc,enemy_enc)
 
 
         for attack in range(self.getFireRate()):
