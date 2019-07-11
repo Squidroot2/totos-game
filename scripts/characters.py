@@ -13,10 +13,22 @@ class Character(Entity):
     
     # todo  finish using the characters ini to initialize character stats
     def __init__(self,char_id, map,x,y,components=[]):
-        
-        super().__init__(map,x,y,components)
+
         config = readINI(CHARACTER_INI)
+
+        if config[char_id].getboolean('has_inventory'):
+            components = {'Inventory': []}
+        # todo get inventory in here
+
+        super().__init__(map,x,y,components)
+
         self.name =     config[char_id].get('name')
+        self.level =    config[char_id].getint('level')
+        self.xp =       config[char_id].getint('xp')
+        self.base_damage = config[char_id].getint('damage')
+        self.base_defense = config[char_id].getint('defense')
+        self.base_attack_rate = config[char_id].getint('attack_rate')
+
         self.obstruct = True
         
 
@@ -131,6 +143,8 @@ class Player(Character):
         self.base_attack_rate = 1
         self.setStartingInventory()
 
+
+    # todo move inventory stuff to inventory class with ids
     def setStartingInventory(self):
     
         # Create Initial Items in Inventory
@@ -138,6 +152,7 @@ class Player(Character):
         armor = Armor("ARMOR1",self.inventory)
         generator = Generator("LIGHT1", self.inventory)
         Weapon("KNIFE1", self.inventory)
+
         # Player starts with 2 batteries
         for i in range(2):
             Battery("TINY", self.inventory)
