@@ -8,18 +8,22 @@ from scripts.constants import *
 from scripts.characters import *
 from scripts.floors import Floor
 from scripts.utilities import checkForQuit
+from scripts.screens import titleScreen
 
 
 def initializePygame():
     '''Initializes the pygame modules and creates the global variables SCREEN and FPS_CLOCK'''
 
-    global SCREEN, FPS_CLOCK
+    global WINDOW, FPS_CLOCK
     pygame.init()
     FPS_CLOCK = pygame.time.Clock()
-    SCREEN = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+    WINDOW = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
 def runGameLoop():
     '''runs the main game loop as long as the run_game boolean is true'''
+    titleScreen(WINDOW, FPS_CLOCK)
+
+
     run_game = True
     floor1 = Floor(MAP_WIDTH, MAP_HEIGHT)
     player = Player(floor1,0,0)
@@ -53,10 +57,10 @@ def runGameLoop():
                     if entity.ai:
                         entity.ai.takeTurn()
 
-        floor1.draw(SCREEN)
-        player.draw(SCREEN)
+        floor1.draw(WINDOW)
+        player.draw(WINDOW)
         for entity in player.location.entities:
-            entity.draw(SCREEN)
+            entity.draw(WINDOW)
         pygame.display.update()
         FPS_CLOCK.tick(FPS)
 
