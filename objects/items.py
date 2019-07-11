@@ -1,7 +1,6 @@
-from scripts.entities import Entity
+from objects.entities import Entity
 import os
 from scripts.utilities import readINI
-from copy import copy
 
 WEAPON_INI = os.path.join('data','weapons.ini')
 ARMOR_INI = os.path.join('data','armor.ini')

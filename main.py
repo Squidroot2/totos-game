@@ -5,8 +5,8 @@ from pygame.constants import *
 
 #my modules
 from scripts.constants import *
-from scripts.characters import *
-from scripts.floors import Floor
+from objects.characters import *
+from objects.floors import Floor
 from scripts.utilities import checkForQuit
 from scripts.screens import titleScreen
 

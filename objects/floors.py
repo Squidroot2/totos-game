@@ -4,7 +4,7 @@ import random
 import pygame
 import tcod
 
-from scripts.characters import Character
+from objects.characters import Character
 from scripts.constants import CELL_WIDTH, CELL_HEIGHT
 
 

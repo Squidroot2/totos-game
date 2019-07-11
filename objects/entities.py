@@ -1,12 +1,12 @@
 '''
 Contains the classes used to construct actors(player,enemies,items)
 '''
-from scripts.ai import AI
+from objects.ai import AI
 from scripts.constants import *
 import os, pygame
 
 # my modules
-from scripts.inventory import *
+from objects.inventory import *
 
 
 class Entity:

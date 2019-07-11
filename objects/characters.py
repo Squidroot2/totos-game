@@ -1,5 +1,5 @@
-from scripts.items import Weapon, Armor, Generator, Battery
-from scripts.entities import Entity, Corpse
+from objects.items import Weapon, Armor, Generator, Battery
+from objects.entities import Entity, Corpse
 from scripts.utilities import readINI
 from scripts import formulas
 import pygame
