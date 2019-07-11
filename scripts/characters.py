@@ -135,7 +135,7 @@ class Player(Character):
     
     def __init__(self,map,x,y,components={"Inventory": []}):
         
-        super().__init__(map,x,y,components)
+        super().__init__("PLAYER",map,x,y,components)
         self.level = 1
         self.xp = 0
         self.base_damage = 1
@@ -148,8 +148,8 @@ class Player(Character):
     def setStartingInventory(self):
     
         # Create Initial Items in Inventory
-        gun = Weapon("HANDGUN1",self.inventory)
-        armor = Armor("ARMOR1",self.inventory)
+        gun = Weapon("HANDGUN1", self.inventory)
+        armor = Armor("ARMOR1", self.inventory)
         generator = Generator("LIGHT1", self.inventory)
         Weapon("KNIFE1", self.inventory)
 
