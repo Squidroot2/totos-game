@@ -7,6 +7,7 @@ from pygame.constants import *
 from scripts.constants import *
 from scripts.characters import *
 from scripts.floors import Floor
+from scripts.utilities import checkForQuit
 
 
 def initializePygame():
@@ -26,12 +27,11 @@ def runGameLoop():
 
     #game loop
     while run_game:
+        checkForQuit()
         for event in pygame.event.get():
-            if event.type == QUIT:
-                run_game = False
-                break
 
-            elif event.type == KEYDOWN:
+
+            if event.type == KEYDOWN:
                 if event.key == K_UP or event.key == K_KP8:
                     player.move(0, -1)
                 elif event.key == K_DOWN or event.key == K_KP2:
