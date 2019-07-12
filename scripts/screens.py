@@ -1,3 +1,5 @@
+"""Contains the screens, each of which contains its own while loop"""
+
 from scripts.constants import *
 from scripts.utilities import checkForQuit
 

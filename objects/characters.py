@@ -13,7 +13,7 @@ class Character(Entity):
     
     # todo  finish using the characters ini to initialize character stats
     def __init__(self, char_id, floor, x, y, components=[]):
-
+        """Extends the entity init function"""
         config = readINI(CHARACTER_INI)
 
         if config[char_id].getboolean('has_inventory'):

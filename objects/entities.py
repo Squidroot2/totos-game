@@ -30,11 +30,13 @@ class Entity:
             self.inventory = None
 
     def draw(self, surface):
+        """Takes a pygame surface object and blits the object's 'image' to it at the specified x and y coordinates"""
         surface.blit(self.image, (self.x*CELL_WIDTH, self.y*CELL_HEIGHT))
 
 
 
 class Corpse(Entity):
+    """This is created when a character object has been killed"""
     def __init__(self, character):
         if character.inventory:
             inventory_contents = character.inventory.contents
