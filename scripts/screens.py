@@ -1,14 +1,35 @@
-"""Contains the screens, each of which contains its own while loop"""
+"""Contains the screens, each of which contains its own while loop
 
-from scripts.constants import *
+Functions:
+    titleScreen(window, fps_clock)
+    playerCreateScreen(window, fps_clock)
+"""
+
 from scripts.utilities import checkForQuit
 
 import pygame
 from pygame.constants import *
 
 
+pygame.font.init()
+#                    R   G   B
+COLORS = {'BLACK': (  0,  0,  0),
+          'WHITE': (255,255,255)}
+FONTS = {'TITLE': pygame.font.Font('freesansbold.ttf', 70),
+         'MAIN': pygame.font.Font('freesansbold.ttf', 28)}
+FONTS['TITLE'].set_underline(True)
+FPS = 144
+
 def titleScreen(window, fps_clock):
-    """Displays the Title Screen. Runs its own while loop until the player hits enter to continue"""
+    """Displays the Title Screen. Runs its own while loop until the player hits enter to continue
+
+    Parameters:
+        window : pygame.Surface
+            Where the content will get drawn to
+        fps_clock : pygame.Clock
+            Used to keep FPS Steady
+
+    """
 
     # Fills the screen with WHITE
     window.fill(COLORS['WHITE'])
@@ -74,3 +95,53 @@ def titleScreen(window, fps_clock):
 
         pygame.display.flip()
         fps_clock.tick(FPS)
+
+def playerCreateScreen(window, fps_clock):
+    """Displays the player creation window where the player can choose their name and class
+
+    Parameters:
+        window : pygame.Surface
+            Where the content will get drawn to
+        fps_clock : pygame.Clock
+            Used to keep FPS Steady
+
+    """
+
+    window_rect = window.get_rect()
+
+
+    name_prompt = FONTS['MAIN'].render("Name: ", True, COLORS['BLACK'])
+    name_prompt_rect = name_prompt.get_rect()
+    name_prompt_rect.midright = (window_rect.centerx, window_rect.height/6)
+
+    name = ''
+
+    # Clear the events to ensure no keys previously pressed show up in the name
+    pygame.event.clear()
+
+    name_chosen = False
+    while not name_chosen:
+        window.fill(COLORS['WHITE'])
+        window.blit(name_prompt, name_prompt_rect)
+
+        checkForQuit()
+        for event in pygame.event.get():
+            if event.type == KEYDOWN:
+                if event.key == K_RETURN and name != '':
+                    name_chosen = True
+                elif event.key == K_BACKSPACE:
+                    name = name[:-1]
+                else:
+                    name += event.unicode
+
+        name_text = FONTS['MAIN'].render(name, True, COLORS['BLACK'])
+        input_rect = name_text.get_rect()
+        input_rect.midleft = (name_prompt_rect.right, name_prompt_rect.centery)
+
+        window.blit(name_text, input_rect)
+
+        fps_clock.tick(FPS)
+        pygame.display.flip()
+
+    # todo have the player choose class in this function and return it
+    return name

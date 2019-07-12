@@ -179,14 +179,24 @@ class Character(Entity):
 class Player(Character):
     image = pygame.image.load(os.path.join('images','characters','player.png'))
     
-    def __init__(self,map,x,y,components={"Inventory": []}):
-        
+    def __init__(self,name,map,x,y,components={"Inventory": []}):
+        """Extends the Character init method
+
+        Parameters:
+            name : string
+                name of the player
+            map : Floor Object
+                the starting location of the player
+            x : int
+                starting x position on the floor
+            y : int
+                starting y position on the floor
+        """
+
         super().__init__("PLAYER",map,x,y,components)
-        self.level = 1
-        self.xp = 0
-        self.base_damage = 1
-        self.base_defense = 0
-        self.base_attack_rate = 1
+
+        # Overrides the name set by the Character init method
+        self.name = name
         self.setStartingInventory()
 
 
@@ -196,7 +206,7 @@ class Player(Character):
         # Create Initial Items in Inventory
         gun = Weapon("HANDGUN1", self.inventory)
         armor = Armor("ARMOR1", self.inventory)
-        generator = Generator("LIGHT1", self.inventory)
+        generator = Generator("QUICK1", self.inventory)
         Weapon("KNIFE1", self.inventory)
 
         # Player starts with 2 batteries

@@ -8,7 +8,7 @@ from scripts.constants import *
 from objects.characters import *
 from objects.floors import Floor
 from scripts.utilities import checkForQuit
-from scripts.screens import titleScreen
+from scripts.screens import titleScreen, playerCreateScreen
 
 
 def initializePygame():
@@ -22,11 +22,11 @@ def initializePygame():
 def runGameLoop():
     '''runs the main game loop as long as the run_game boolean is true'''
     titleScreen(WINDOW, FPS_CLOCK)
-
+    name = playerCreateScreen(WINDOW, FPS_CLOCK)
 
     run_game = True
     floor1 = Floor(MAP_WIDTH, MAP_HEIGHT)
-    player = Player(floor1,0,0)
+    player = Player(name,floor1,0,0)
 
 
     #game loop
