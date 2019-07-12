@@ -18,7 +18,7 @@ class Character(Entity):
 
         if config[char_id].getboolean('has_inventory'):
             components = {'Inventory': []}
-        # todo get inventory in here
+        # todo use the inventory type
 
         super().__init__(floor, x, y, components)
 
@@ -66,7 +66,7 @@ class Character(Entity):
                 return True
         return False
 
-    #todo finish function
+
     def meleeAttack(self, opponent):
         attack = self.getMeleeDamage()
         defense = opponent.getDefense()

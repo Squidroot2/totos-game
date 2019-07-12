@@ -7,7 +7,6 @@ ARMOR_INI = os.path.join('data','armor.ini')
 GENERATOR_INI = os.path.join('data','generator.ini')
 BATTERY_INI = os.path.join('data','battery.ini')
 
-#todo write items classes
 class Item(Entity):
 
     def __init__(self, location, x=None, y=None):
