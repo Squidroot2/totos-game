@@ -55,6 +55,9 @@ def runGameLoop():
                 elif event.key == K_i:
                     # todo write open inventory screen
                     pass
+                elif event.key == K_f:
+                    # todo write ranged attack screen
+                    pass
 
                 for entity in floor1.entities:
                     if entity.ai:
