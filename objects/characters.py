@@ -29,8 +29,10 @@ class Character(Entity):
         self.base_defense = config[char_id].getint('defense')
         self.base_attack_rate = config[char_id].getint('attack_rate')
 
+        image_name = config[char_id].get('image')
+        self.image = pygame.image.load(os.path.join('images', 'characters', image_name)).convert_alpha()
+
         self.obstruct = True
-        
 
     def move(self, delta_x, delta_y):
         destination = ((self.x+delta_x), (self.y+delta_y))
