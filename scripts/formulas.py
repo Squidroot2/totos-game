@@ -1,12 +1,24 @@
+""" Contains formulas that are used during combat 
+
+Functions:
+
+....getHitChance(attacker_enc, defender_enc)
+....getDamaageDealt(attack, defense)
+....determineLethal(damage, life)
+....determineInjury(damage, life)
+"""
+
 import math
 import random
 
+
 def getHitChance(attacker_enc,defender_enc):
-    return .9 - (attacker_enc * .15) + (defender_enc * .1)
+    """ Takes the attackers encumbrance and the defender's encumbrance and returns a floating number between 0 and 1 representing the chance to hit the defender"""
+    return 1 - (attacker_enc * .15) + (defender_enc * .1)
 
 
 def getDamageDealt(attack, defense):
-
+    """Determines the damage dealt using the attacker's raw attack damage and the defender's defense"""
     # Uses a logarithmic function to find damage reduction.
     # Attack is fed into Log Base so that higher damage means lower reduction
     reduction = math.log(defense/20+1, attack+1)*3
