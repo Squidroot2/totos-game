@@ -52,6 +52,9 @@ def runGameLoop():
                     player.move(-1, 1)
                 elif event.key == K_KP3:
                     player.move(1, 1)
+                elif event.key == K_i:
+                    # todo write open inventory screen
+                    pass
 
                 for entity in floor1.entities:
                     if entity.ai:
