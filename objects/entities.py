@@ -18,7 +18,7 @@ class Entity:
         self.y = y
         self.location = location
         self.location.addEntity(self)
-        obstruct = False
+        self.obstruct = False
 
         if 'AI' in components:
             self.ai = AI(self)

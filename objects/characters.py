@@ -3,7 +3,7 @@ from objects.entities import Entity, Corpse
 from scripts.utilities import readINI
 from scripts import formulas
 import pygame
-import os
+import os, random
 
 CHARACTER_INI = os.path.join('data','characters.ini')
 
@@ -12,7 +12,7 @@ class Character(Entity):
     dead = False
     
     # todo  finish using the characters ini to initialize character stats
-    def __init__(self,char_id, map,x,y,components=[]):
+    def __init__(self, char_id, floor, x, y, components=[]):
 
         config = readINI(CHARACTER_INI)
 
@@ -20,11 +20,12 @@ class Character(Entity):
             components = {'Inventory': []}
         # todo get inventory in here
 
-        super().__init__(map,x,y,components)
+        super().__init__(floor, x, y, components)
 
         self.name =     config[char_id].get('name')
         self.level =    config[char_id].getint('level')
         self.xp =       config[char_id].getint('xp')
+        self.life =     config[char_id].getint('life')
         self.base_damage = config[char_id].getint('damage')
         self.base_defense = config[char_id].getint('defense')
         self.base_attack_rate = config[char_id].getint('attack_rate')
@@ -62,23 +63,54 @@ class Character(Entity):
                 continue
             elif entity.x == destination[0] and entity.y == destination[1]:
                 self.meleeAttack(entity)
-                print("ATTACK")
                 return True
         return False
 
     #todo finish function
-    def meleeAttack(self, enemy):
-        damage = self.getMeleeDamage()
-        damage -= enemy.getDefense()
+    def meleeAttack(self, opponent):
+        attack = self.getMeleeDamage()
+        defense = opponent.getDefense()
+
+        damage = formulas.getDamageDealt(attack, defense)
 
         self_enc = self.getEncumbrance()
-        enemy_enc = enemy.getEncumbrance()
-        hit_chance = formulas.getHitChance(self_enc,enemy_enc)
+        enemy_enc = opponent.getEncumbrance()
+        hit_chance = formulas.getHitChance(self_enc, enemy_enc)
 
 
-        for attack in range(self.getFireRate()):
-            pass
+        for attack in range(self.getAttackRate()):
 
+            roll = random.random()
+            if roll < hit_chance:
+                print(self.name + " hit " + opponent.name + " for " + str(damage) + " damage")
+                opponent.takeDamage(damage)
+
+
+    def takeDamage(self, damage):
+        if not self.energy == 0:
+
+            # If energy exceeds damage, it is completely absorbed by the shields
+            if self.energy > damage:
+                damage_to_flesh = 0
+                self.energy -= damage
+
+            # Otherwise, energy is reduced to zero and difference is dealt to flesh
+            else:
+                damage_to_flesh = damage - self.energy
+                self.energy = 0
+                print(self.name + " energy depleted")
+        else:
+            damage_to_flesh = damage
+
+        killed = formulas.determineLethal(damage_to_flesh, self.life)
+
+        if killed:
+            self.kill()
+        else:
+            injured = formulas.determineInjury(damage_to_flesh, self.life)
+            if injured:
+                print(self.name + " injured")
+                self.life -= 1
 
     def kill(self):
         self.dead = True
@@ -119,15 +151,27 @@ class Character(Entity):
     def getEncumbrance(self):
         encumbrance = 0
         if self.inventory is None:
-            return 0
+            pass
         else:
             equipment = self.inventory.equipped
             for item in equipment:
                 if equipment[item] is not None and equipment[item].difficulty > self.level:
                     encumbrance += equipment[item].difficulty - self.level
-    #todo finish getEnergy()
-    def getEnergy(self):
-        pass
+
+        return encumbrance
+
+    @property
+    def energy(self):
+        if self.inventory is None or self.inventory.equipped['generator'] is None:
+            return 0
+        else:
+            return self.inventory.equipped['generator'].current_charge
+    @energy.setter
+    def energy(self, value):
+        try:
+            self.inventory.equipped['generator'].current_charge = value
+        except:
+            print("No Generator to hold energy")
 
 
 
