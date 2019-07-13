@@ -217,7 +217,7 @@ class Player(Character):
         self.name = name
 
         # Stores the background
-        assert background in ("officer","marksman","agent","pointman","gladiator")
+        assert background in ("Officer","Marksman","Agent","Pointman","Gladiator")
         self.background = background
 
         self.setStartingInventory()
@@ -227,28 +227,28 @@ class Player(Character):
     def setStartingInventory(self):
     
         # Create Initial Items in Inventory
-        if self.background == "officer":
+        if self.background == "Officer":
             weapon = Weapon("PISTOL_1", self.inventory)
             armor = Armor("ARMOR1", self.inventory)
             generator = Generator("QUICK1", self.inventory)
             Weapon("KNIFE_1", self.inventory)
 
-        elif self.background == "marksman":
+        elif self.background == "Marksman":
             weapon = Weapon("RIFLE_1", self.inventory)
             armor = Armor("ARMOR1", self.inventory)
             generator = Generator("RANGER1", self.inventory)
 
-        elif self.background == "agent":
+        elif self.background == "Agent":
             weapon = Weapon("PDW_1", self.inventory)
             armor = Armor("ARMOR1", self.inventory)
             generator = Generator("FEEDER1", self.inventory)
 
-        elif self.background == "pointman":
+        elif self.background == "Pointman":
             weapon = Weapon("CANNON_1", self.inventory)
             armor = Armor("ARMOR1", self.inventory)
             generator = Generator("RANGER1", self.inventory)
 
-        elif self.background == "gladiator":
+        elif self.background == "Gladiator":
             weapon = Weapon("SWORD_1", self.inventory)
             armor = Armor("ARMOR2", self.inventory)
             generator = Generator("BRAWLER1", self.inventory)

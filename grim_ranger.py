@@ -26,7 +26,7 @@ def setupGame(window, fps_clock):
     titleScreen(window, fps_clock)
     name = playerCreateScreen(window, fps_clock)
     floor1 = Floor(MAP_WIDTH, MAP_HEIGHT)
-    player = Player(name,"officer",floor1,0,0)
+    player = Player(name,"Officer",floor1,0,0)
 
     return player
 
