@@ -10,14 +10,15 @@ from objects.inventory import *
 
 
 class Entity:
-    image = pygame.image.load(os.path.join('images', 'unknown.png'))
+    image_path = os.path.join('images', 'unknown.png')
 
-    def __init__(self,location,x=None,y=None,components=[]):
+    def __init__(self,location,x=None,y=None,components=[],obstruct=False):
         self.x = x
         self.y = y
         self.location = location
         self.location.addEntity(self)
-        self.obstruct = False
+        self.obstruct = obstruct
+        self.loadImage()
 
         if 'AI' in components:
             self.ai = AI(self)
@@ -28,6 +29,9 @@ class Entity:
             self.inventory = Inventory(self, components['Inventory'])
         else:
             self.inventory = None
+
+    def loadImage(self):
+        self.image = pygame.image.load(self.image_path).convert_alpha()
 
     def draw(self, surface):
         """Takes a pygame surface object and blits the object's 'image' to it at the specified x and y coordinates"""

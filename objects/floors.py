@@ -130,4 +130,4 @@ class Tile:
         if self.walkable and self.transparent:
             self.image = pygame.image.load(os.path.join('images', 'tiles', 'white-tile.png'))
         else:
-            self.image = pygame.image.load(os.path.join('images', 'tiles', 'black-tile.png'))
+            self.image = pygame.image.load(os.path.join('images', 'tiles', 'wall.png'))

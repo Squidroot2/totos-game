@@ -20,7 +20,10 @@ class Character(Entity):
             components = {'Inventory': []}
         # todo use the inventory type
 
-        super().__init__(floor, x, y, components)
+        image_name = config[char_id].get('image')
+        self.image_path = os.path.join('images', 'characters', image_name)
+
+        super().__init__(floor, x, y, components,obstruct=True)
 
         self.name =     config[char_id].get('name')
         self.level =    config[char_id].getint('level')
@@ -29,11 +32,6 @@ class Character(Entity):
         self.base_damage = config[char_id].getint('damage')
         self.base_defense = config[char_id].getint('defense')
         self.base_attack_rate = config[char_id].getint('attack_rate')
-
-        image_name = config[char_id].get('image')
-        self.image = pygame.image.load(os.path.join('images', 'characters', image_name)).convert_alpha()
-
-        self.obstruct = True
 
     def move(self, delta_x, delta_y):
         destination = ((self.x+delta_x), (self.y+delta_y))

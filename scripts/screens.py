@@ -124,6 +124,8 @@ def playerCreateScreen(window, fps_clock):
         window.fill(COLORS['WHITE'])
         window.blit(name_prompt, name_prompt_rect)
 
+        #drawClassSelect()
+
         checkForQuit()
         for event in pygame.event.get():
             if event.type == KEYDOWN:
@@ -145,3 +147,9 @@ def playerCreateScreen(window, fps_clock):
 
     # todo have the player choose class in this function and return it
     return name
+
+
+def drawClassSelect(window):
+    window.get_rect()
+
+
