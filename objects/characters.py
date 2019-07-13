@@ -113,6 +113,7 @@ class Character(Entity):
                 self.life -= 1
 
     def kill(self):
+        """Kills the character. Removes the AI, removes the entity from the map and creates a corpse"""
         self.dead = True
         self.ai = None
         self.location.removeEntity(self)
@@ -120,6 +121,12 @@ class Character(Entity):
         Corpse(self)
     
     def getDefense(self):
+        """Gets the defense based on the base_defense and, if the character has armor, armor defense
+
+        Returns
+            defense : int
+                An integer representing the defense
+        """
         defense = self.base_defense
         if self.inventory and self.inventory.equipped['armor']:
             armor = self.inventory.equipped['armor']
@@ -135,7 +142,16 @@ class Character(Entity):
         return damage
 
     def getAttackRate(self, ranged=False):
+        """Gets the number of attacks that can be performed in a turn
 
+        Parameters:
+            ranged : boolean
+                represents whether these are ranged attacks or melee attacks
+
+        Returns:
+            : int
+                Number of attacks that will be performed in a turn
+        """
         # Find out if carrying weapon; if not, return base_attack_rate
         if self.inventory and self.inventory.equipped['weapon']:
             weapon = self.inventory.equipped['weapon']
@@ -179,24 +195,33 @@ class Character(Entity):
 class Player(Character):
     image = pygame.image.load(os.path.join('images','characters','player.png'))
     
-    def __init__(self,name,map,x,y,components={"Inventory": []}):
+    def __init__(self,name,background,map,x,y):
         """Extends the Character init method
 
         Parameters:
             name : string
                 name of the player
-            map : Floor Object
+            background : string
+                background of the player which determines the starting items
+                Valid Attributes are ['officer','marksman','agent','pointman','gladiator']
+            map : Floor
                 the starting location of the player
             x : int
                 starting x position on the floor
             y : int
                 starting y position on the floor
         """
+        components = {"Inventory": []}
 
         super().__init__("PLAYER",map,x,y,components)
 
         # Overrides the name set by the Character init method
         self.name = name
+
+        # Stores the background
+        assert background in ("officer","marksman","agent","pointman","gladiator")
+        self.background = background
+
         self.setStartingInventory()
 
 
@@ -204,24 +229,40 @@ class Player(Character):
     def setStartingInventory(self):
     
         # Create Initial Items in Inventory
-        gun = Weapon("HANDGUN1", self.inventory)
-        armor = Armor("ARMOR1", self.inventory)
-        generator = Generator("QUICK1", self.inventory)
-        Weapon("KNIFE1", self.inventory)
+        if self.background == "officer":
+            weapon = Weapon("HANDGUN1", self.inventory)
+            armor = Armor("ARMOR1", self.inventory)
+            generator = Generator("QUICK1", self.inventory)
+            Weapon("KNIFE1", self.inventory)
+
+        elif self.background == "marksman":
+            weapon = Weapon("RIFLE1", self.inventory)
+            armor = Armor("ARMOR1", self.inventory)
+            generator = Generator("RANGER1", self.inventory)
+
+        elif self.background == "agent":
+            weapon = Weapon("SMG1", self.inventory)
+            armor = Armor("ARMOR1", self.inventory)
+            generator = Generator("FEEDER1", self.inventory)
+
+        elif self.background == "pointman":
+            weapon = Weapon("SHOTGUN1", self.inventory)
+            armor = Armor("ARMOR1", self.inventory)
+            generator = Generator("RANGER1", self.inventory)
+
+        elif self.background == "gladiator":
+            weapon = Weapon("SWORD1", self.inventory)
+            armor = Armor("ARMOR2", self.inventory)
+            generator = Generator("BRAWLER1", self.inventory)
 
         # Player starts with 2 batteries
         for i in range(2):
             Battery("TINY", self.inventory)
         
         # Equip Items
-        gun.equip()
+        weapon.equip()
         armor.equip()
         generator.equip()
         
         # Shield Starts charged
         generator.rechargeToFull()
-
-# todo figure out if I want to have an enemy class
-# class Enemy(Character):
-#     image = pygame.image.load(os.path.join('images', 'characters', 'enemy.png'))
-#     obstruct = True

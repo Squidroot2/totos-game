@@ -26,7 +26,7 @@ def runGameLoop():
 
     run_game = True
     floor1 = Floor(MAP_WIDTH, MAP_HEIGHT)
-    player = Player(name,floor1,0,0)
+    player = Player(name,"officer",floor1,0,0)
 
 
     #game loop
