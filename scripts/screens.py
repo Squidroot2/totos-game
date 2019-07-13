@@ -4,25 +4,23 @@ Functions:
     titleScreen(window, fps_clock)
     playerCreateScreen(window, fps_clock)
 """
-
-
-from pygame.constants import *
-
-from scripts.constants import MAP_WIDTH, MAP_HEIGHT, FPS
+import pygame
 
 from scripts.utilities import checkForQuit
-
-import pygame
 from pygame.constants import *
 
 
-pygame.font.init()
+# GLOBAL VALUES
 #                    R   G   B
 COLORS = {'BLACK': (  0,  0,  0),
           'WHITE': (255,255,255)}
+
+pygame.font.init()
 FONTS = {'TITLE': pygame.font.Font('freesansbold.ttf', 70),
-         'MAIN': pygame.font.Font('freesansbold.ttf', 28)}
+         'MAIN': pygame.font.Font('freesansbold.ttf', 28),
+         'INFO': pygame.font.Font('freesansbold.ttf', 14)}
 FONTS['TITLE'].set_underline(True)
+
 FPS = 144
 
 def titleScreen(window, fps_clock):
@@ -153,13 +151,19 @@ def playerCreateScreen(window, fps_clock):
     # todo have the player choose class in this function and return it
     return name
 
-
+# todo finish drawClassSelect
 def drawClassSelect(window):
     window.get_rect()
 
 
 def mainGameScreen(window, fps_clock, player):
     '''runs the main game loop as long as the run_game boolean is true'''
+    window_rect = window.get_rect()
+
+    panes = getPanes(window_rect)
+
+    drawStatPane(window, player, panes['side'])
+    drawLogPane(window, player, panes['bottom'])
 
 
     #game loop
@@ -196,13 +200,96 @@ def mainGameScreen(window, fps_clock, player):
                 for entity in player.location.entities:
                     if entity.ai:
                         entity.ai.takeTurn()
-
+        # Draw the map
         player.location.draw(window)
+
+        # Draw the entities in the map
         for entity in player.location.entities:
             if entity is player:
                 continue
             entity.draw(window)
         player.draw(window)
 
+        drawStatPane(window, player, panes['side'])
+        drawLogPane(window, player, panes['bottom'])
+
         pygame.display.update()
         fps_clock.tick(FPS)
+
+def getPanes(window_rect):
+    """Takes a pygame.Rect object representing the window and returns a dictionary of Rect Objects for the three panes
+    of the mainGameScreen"""
+
+    # Explicit variables for the size of the panes
+    bottom_pane_height = window_rect.height / 6
+    side_pane_width = window_rect.width / 4
+
+    # Calculate bottom pane dimensions
+    bottom_pane_top = window_rect.bottom - bottom_pane_height
+    bottom_pane_width = window_rect.width - side_pane_width
+
+    # Calculate side pane dimension
+    side_pane_left = window_rect.width - side_pane_width
+
+    # Calculate main pane dimensions
+    main_pane_width = window_rect.width - side_pane_width
+    main_pane_height = window_rect.height - bottom_pane_height
+
+    # Create Rect Objects
+    bottom_pane = pygame.Rect(0, bottom_pane_top, bottom_pane_width, bottom_pane_height)
+    side_pane = pygame.Rect(side_pane_left, 0, side_pane_width, window_rect.height)
+    main_pane = pygame.Rect(0, 0, main_pane_width, main_pane_height)
+
+    # Create dictionary
+    panes = {'bottom': bottom_pane,
+             'side': side_pane,
+             'main': main_pane}
+
+    # Return dictionary
+    return panes
+
+
+def drawStatPane(window, player, pane):
+    """Draws the players statistics on the right side of the screen"""
+
+    # Fills in the pane in black
+    pygame.draw.rect(window, COLORS['BLACK'], pane, 0)
+
+    X_MARGIN = pane.width/10
+    Y_MARGIN = pane.height/25
+
+    # Strings used
+    full_name = player.name + " the " + player.background
+    experience = "XL: %d" % player.level
+    defense = "Defense: %d" % player.getDefense()
+    life = "Life: %d" % player.life
+
+    # Dictionary of text surfaces that will be blitted to the screen
+    text_surfs = dict()
+
+    text_surfs['name'] = FONTS['INFO'].render(full_name, True, COLORS['WHITE'], COLORS['BLACK'])
+    text_surfs['xp'] = FONTS['INFO'].render(experience, True, COLORS['WHITE'], COLORS['BLACK'])
+    text_surfs['defense'] = FONTS['INFO'].render(defense,  True, COLORS['WHITE'], COLORS['BLACK'])
+    text_surfs['energy_key'] = FONTS['INFO'].render("Energy", True, COLORS['WHITE'], COLORS['BLACK'])
+
+    # Create Dictionary of Rectangle objects for each rect
+    text_rects = {surf: text_surfs[surf].get_rect() for surf in text_surfs}
+
+    # Place rectangles
+    text_rects['name'].midleft = (pane.left+X_MARGIN, Y_MARGIN)
+    text_rects['xp'].topleft = (pane.left+X_MARGIN, text_rects['name'].bottom)
+    text_rects['defense'].topleft = (pane.left+X_MARGIN, text_rects['xp'].bottom)
+
+    for text in text_surfs:
+        window.blit(text_surfs[text], text_rects[text])
+
+
+def drawLogPane(window, player, pane):
+
+    # Fills in the pane in black
+    # 0 represents the width, if zero fills in rect
+    pygame.draw.rect(window, COLORS['BLACK'], pane, 0)
+
+
+
+
