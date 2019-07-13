@@ -17,17 +17,49 @@ class Floor:
         self.map = tcod.map.Map(width, height)
         self.tile_map = [[Tile(self.map, x, y) for y in range(height)] for x in range(width)]
         self.entities = []
-        # primitive random generation
-        for xtile in range(self.width):
-            for ytile in range(self.height):
-                roll_block = random.randint(0,9)
-                if not roll_block == 0:
-                    self.map.walkable[ytile][xtile] = True
-                    self.map.transparent[ytile][xtile] = True
+        # # primitive random generation
+        # for xtile in range(self.width):
+        #     for ytile in range(self.height):
+        #         roll_block = random.randint(0,9)
+        #         if not roll_block == 0:
+        #             self.map.walkable[ytile][xtile] = True
+        #             self.map.transparent[ytile][xtile] = True
+        self.generateLayout()
         self.updateTiles()
         self.generateEnemies(3)
 
+    def generateLayout(self):
 
+        bsp = tcod.bsp.BSP(0,0,self.width,self.height)
+        bsp.split_recursive(depth=5,min_width=3,min_height=3,max_horizontal_ratio=2,max_vertical_ratio=2)
+        for node in bsp.pre_order():
+            if node.children:
+                self.makeHallway(node)
+
+            else:
+                self.makeRoom(node)
+
+    def makeHallway(self,node):
+        if node.horizontal:
+            y = node.position
+            x = random.randint(node.x+1, node.x + node.width-1)
+        else:
+            x = node.position
+            y = random.randint(node.y+1, node.y + node.height-1)
+
+        self.map.transparent[y][x] = True
+        self.map.walkable[y][x] = True
+
+    def makeRoom(self,node):
+        x = node.x + 1
+        y = node.y + 1
+        width = node.width - 2
+        height = node.height - 2
+
+        for a in range(height):
+            for b in range(width):
+                self.map.transparent[y+a][x+b] = True
+                self.map.walkable[y+a][x+b] = True
 
     def generateEnemies(self, number_of_enemies):
         for enemy in range(number_of_enemies):
