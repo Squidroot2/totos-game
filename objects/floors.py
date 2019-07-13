@@ -30,7 +30,7 @@ class Floor:
 
     def generateLayout(self):
 
-        bsp = tcod.bsp.BSP(0,0,self.width,self.height)
+        bsp = tcod.bsp.BSP(0,0,self.width-1,self.height-1)
         bsp.split_recursive(depth=5,min_width=3,min_height=3,max_horizontal_ratio=2,max_vertical_ratio=2)
         for node in bsp.pre_order():
             if node.children:
@@ -53,8 +53,8 @@ class Floor:
     def makeRoom(self,node):
         x = node.x + 1
         y = node.y + 1
-        width = node.width - 2
-        height = node.height - 2
+        width = node.width - 1
+        height = node.height - 1
 
         for a in range(height):
             for b in range(width):
