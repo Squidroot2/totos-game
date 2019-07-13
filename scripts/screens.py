@@ -270,6 +270,7 @@ def drawStatPane(window, player, pane):
     text_surfs['name'] = FONTS['INFO'].render(full_name, True, COLORS['WHITE'], COLORS['BLACK'])
     text_surfs['xp'] = FONTS['INFO'].render(experience, True, COLORS['WHITE'], COLORS['BLACK'])
     text_surfs['defense'] = FONTS['INFO'].render(defense,  True, COLORS['WHITE'], COLORS['BLACK'])
+    text_surfs['life'] = FONTS['INFO'].render(life, True, COLORS['WHITE'], COLORS['BLACK'])
     text_surfs['energy_key'] = FONTS['INFO'].render("Energy", True, COLORS['WHITE'], COLORS['BLACK'])
 
     # Create Dictionary of Rectangle objects for each rect
@@ -277,8 +278,9 @@ def drawStatPane(window, player, pane):
 
     # Place rectangles
     text_rects['name'].midleft = (pane.left+X_MARGIN, Y_MARGIN)
-    text_rects['xp'].topleft = (pane.left+X_MARGIN, text_rects['name'].bottom)
+    text_rects['xp'].topleft = (pane.left+X_MARGIN, text_rects['name'].bottom+FONTS['INFO'].get_linesize())
     text_rects['defense'].topleft = (pane.left+X_MARGIN, text_rects['xp'].bottom)
+    text_rects['life'].topleft = (pane.left + X_MARGIN, text_rects['defense'].bottom)
 
     for text in text_surfs:
         window.blit(text_surfs[text], text_rects[text])
