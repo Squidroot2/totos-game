@@ -195,7 +195,7 @@ class Character(Entity):
 class Player(Character):
     image = pygame.image.load(os.path.join('images','characters','player.png'))
     
-    def __init__(self,name,background,map,x,y):
+    def __init__(self, name, background, floor, x, y):
         """Extends the Character init method
 
         Parameters:
@@ -204,7 +204,7 @@ class Player(Character):
             background : string
                 background of the player which determines the starting items
                 Valid Attributes are ['officer','marksman','agent','pointman','gladiator']
-            map : Floor
+            floor : Floor
                 the starting location of the player
             x : int
                 starting x position on the floor
@@ -213,7 +213,7 @@ class Player(Character):
         """
         components = {"Inventory": []}
 
-        super().__init__("PLAYER",map,x,y,components)
+        super().__init__("PLAYER", floor, x, y, components)
 
         # Overrides the name set by the Character init method
         self.name = name
