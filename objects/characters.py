@@ -228,28 +228,28 @@ class Player(Character):
     
         # Create Initial Items in Inventory
         if self.background == "officer":
-            weapon = Weapon("HANDGUN1", self.inventory)
+            weapon = Weapon("PISTOL_1", self.inventory)
             armor = Armor("ARMOR1", self.inventory)
             generator = Generator("QUICK1", self.inventory)
-            Weapon("KNIFE1", self.inventory)
+            Weapon("KNIFE_1", self.inventory)
 
         elif self.background == "marksman":
-            weapon = Weapon("RIFLE1", self.inventory)
+            weapon = Weapon("RIFLE_1", self.inventory)
             armor = Armor("ARMOR1", self.inventory)
             generator = Generator("RANGER1", self.inventory)
 
         elif self.background == "agent":
-            weapon = Weapon("SMG1", self.inventory)
+            weapon = Weapon("PDW_1", self.inventory)
             armor = Armor("ARMOR1", self.inventory)
             generator = Generator("FEEDER1", self.inventory)
 
         elif self.background == "pointman":
-            weapon = Weapon("SHOTGUN1", self.inventory)
+            weapon = Weapon("CANNON_1", self.inventory)
             armor = Armor("ARMOR1", self.inventory)
             generator = Generator("RANGER1", self.inventory)
 
         elif self.background == "gladiator":
-            weapon = Weapon("SWORD1", self.inventory)
+            weapon = Weapon("SWORD_1", self.inventory)
             armor = Armor("ARMOR2", self.inventory)
             generator = Generator("BRAWLER1", self.inventory)
 

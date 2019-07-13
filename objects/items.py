@@ -45,8 +45,8 @@ class Weapon(Item):
             self.ranged_damage =    config[item_id].getint('ranged_damage')
             self.energy_per_shot =  config[item_id].getint('energy_per_shot')
             self.fire_rate =        config[item_id].getint('fire_rate')
-            self.peak_range =       config[item_id].getint('peak_range')
-            self.max_range =        config[item_id].getint('max_range')
+            self.range =       config[item_id].getint('range')
+
 
     def equip(self):
         self.location.equipped['weapon'] = self
