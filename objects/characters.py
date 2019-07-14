@@ -1,7 +1,7 @@
 from objects.items import Weapon, Armor, Generator, Battery
 from objects.entities import Entity, Corpse
 from objects.camera import Camera
-from objects.log import Log
+from objects.game import Log
 from scripts.utilities import readINI
 from scripts import formulas
 import pygame
@@ -11,7 +11,7 @@ CHARACTER_INI = os.path.join('data','characters.ini')
 
 class Character(Entity):
 
-    dead = False
+    is_dead = False
     
     # todo  finish using the characters ini to initialize character stats
     def __init__(self, char_id, floor, x, y, components=[]):
@@ -71,10 +71,14 @@ class Character(Entity):
         attack = self.getMeleeDamage()
         defense = opponent.getDefense()
 
+        # Determines the damage based on the
         damage = formulas.getDamageDealt(attack, defense)
 
+        # Gets the encumbrance of the two characters
         self_enc = self.getEncumbrance()
         enemy_enc = opponent.getEncumbrance()
+
+        # Determines the hit chance based on the encumbrances
         hit_chance = formulas.getHitChance(self_enc, enemy_enc)
 
 
@@ -82,9 +86,10 @@ class Character(Entity):
 
             roll = random.random()
             if roll < hit_chance:
-                print(self.name + " hit " + opponent.name + " for " + str(damage) + " damage")
+                Log.addMessage(self.name + " hit " + opponent.name + " for " + str(damage) + " damage")
                 opponent.takeDamage(damage)
-
+        if opponent.is_dead:
+            Log.addMessage(self.name + " killed " + opponent.name)
 
     def takeDamage(self, damage):
         if not self.energy == 0:
@@ -98,7 +103,7 @@ class Character(Entity):
             else:
                 damage_to_flesh = damage - self.energy
                 self.energy = 0
-                print(self.name + " energy depleted")
+                Log.addMessage(self.name + " energy depleted")
         else:
             damage_to_flesh = damage
 
@@ -109,12 +114,12 @@ class Character(Entity):
         else:
             injured = formulas.determineInjury(damage_to_flesh, self.life)
             if injured:
-                print(self.name + " injured")
+                Log.addMessage(self.name + " suffered an injury")
                 self.life -= 1
 
     def kill(self):
         """Kills the character. Removes the AI, removes the entity from the map and creates a corpse"""
-        self.dead = True
+        self.is_dead = True
         self.ai = None
         self.location.removeEntity(self)
         # Create a corpse
@@ -224,7 +229,6 @@ class Player(Character):
 
         # Player-Specific Components
         self.camera = Camera(self)
-        self.log = Log(self)
 
     # todo move inventory stuff to inventory class with ids
     def setStartingInventory(self):

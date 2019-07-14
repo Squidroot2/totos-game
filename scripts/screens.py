@@ -3,6 +3,7 @@
 Functions:
     titleScreen(window, fps_clock)
     playerCreateScreen(window, fps_clock)
+    mainGameScreen(window, fps_clock, player)
 """
 import pygame
 
@@ -18,7 +19,8 @@ COLORS = {'BLACK': (  0,  0,  0),
 pygame.font.init()
 FONTS = {'TITLE': pygame.font.Font('freesansbold.ttf', 70),
          'MAIN': pygame.font.Font('freesansbold.ttf', 28),
-         'INFO': pygame.font.Font('freesansbold.ttf', 14)}
+         'INFO': pygame.font.Font('freesansbold.ttf', 14),
+         'LOG': pygame.font.Font('freesansbold.ttf', 12)}
 FONTS['TITLE'].set_underline(True)
 
 FPS = 144
@@ -108,6 +110,9 @@ def playerCreateScreen(window, fps_clock):
         fps_clock : pygame.Clock
             Used to keep FPS Steady
 
+    Returns:
+        name : string
+            Chosen name of the player character
     """
 
     window_rect = window.get_rect()
@@ -156,15 +161,15 @@ def drawClassSelect(window):
     window.get_rect()
 
 
-def mainGameScreen(window, fps_clock, player):
-    '''runs the main game loop as long as the run_game boolean is true'''
+def mainGameScreen(window, fps_clock, game):
+    """runs the main game loop as long as the run_game boolean is true"""
     window_rect = window.get_rect()
 
+    # Pulls the player from the game object
+    player = game.player
+
+    # Gets a dict of Rects
     panes = getPanes(window_rect)
-
-    drawStatPane(window, player, panes['side'])
-    drawLogPane(window, player, panes['bottom'])
-
 
     #game loop
     run_game = True
@@ -172,7 +177,7 @@ def mainGameScreen(window, fps_clock, player):
         checkForQuit()
         for event in pygame.event.get():
 
-
+            # Determine what to do with Key Presses
             if event.type == KEYDOWN:
                 if event.key == K_UP or event.key == K_KP8:
                     player.move(0, -1)
@@ -200,6 +205,10 @@ def mainGameScreen(window, fps_clock, player):
                 for entity in player.location.entities:
                     if entity.ai:
                         entity.ai.takeTurn()
+
+        if player.is_dead:
+            run_game = False
+
         # Draw the map
         player.location.draw(window)
 
@@ -210,9 +219,11 @@ def mainGameScreen(window, fps_clock, player):
             entity.draw(window)
         player.draw(window)
 
+        # Draw the bottom and side panes
         drawStatPane(window, player, panes['side'])
-        drawLogPane(window, player, panes['bottom'])
+        drawLogPane(window, game.log, panes['bottom'])
 
+        # Update the screen and wait for clock to tick; repeat the while loop
         pygame.display.update()
         fps_clock.tick(FPS)
 
@@ -286,12 +297,41 @@ def drawStatPane(window, player, pane):
         window.blit(text_surfs[text], text_rects[text])
 
 
-def drawLogPane(window, player, pane):
-
+def drawLogPane(window, log, pane):
+    """Draws the messages on the bottom pane of the screen"""
     # Fills in the pane in black
-    # 0 represents the width, if zero fills in rect
+    # 0 represents the width; if zero fills in rect
     pygame.draw.rect(window, COLORS['BLACK'], pane, 0)
 
+    # Adds a Margin to the top and left side of the messages box
+    X_MARGIN = 10
+    Y_MARGIN = 5
+    log_left = pane.left + X_MARGIN
+    log_top = pane.top + Y_MARGIN
+
+    # Get tha last messages from the log
+    messages = log.getLastMessages(8)
+
+    # Create lists to store surfaces and rects
+    text_surfs = list()
+    text_rects = list()
+
+    for line, message in enumerate(messages):
+
+        # Create a surface and rect for each line of messages
+        surf = FONTS['LOG'].render(message, True, COLORS['WHITE'], COLORS['BLACK'])
+        rect = surf.get_rect()
+
+        # Place rect based on line number
+        rect.topleft = (log_left, log_top + FONTS['LOG'].get_linesize()*line)
+
+        # Append surf and rect to list
+        text_surfs.append(surf)
+        text_rects.append(rect)
+
+    # Blits all text surfaces to the location of their Rect
+    for i, surf in enumerate(text_surfs):
+        window.blit(surf, text_rects[i])
 
 
 
