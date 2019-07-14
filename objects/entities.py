@@ -7,11 +7,12 @@ import os, pygame
 
 # my modules
 from objects.inventory import *
+from scripts.constants import CELL_SIZE
 
 
 class Entity:
     image_path = os.path.join('images', 'unknown.png')
-
+    CELL_SIZE = CELL_SIZE
     def __init__(self,location,x=None,y=None,components=[],obstruct=False):
         self.x = x
         self.y = y
@@ -35,7 +36,7 @@ class Entity:
 
     def draw(self, surface):
         """Takes a pygame surface object and blits the object's 'image' to it at the specified x and y coordinates"""
-        surface.blit(self.image, (self.x*CELL_WIDTH, self.y*CELL_HEIGHT))
+        surface.blit(self.image, (self.x*self.CELL_SIZE, self.y*self.CELL_SIZE))
 
 
 

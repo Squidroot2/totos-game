@@ -5,11 +5,10 @@ import pygame
 import tcod
 
 from objects.characters import Character
-
+from scripts.constants import CELL_SIZE
 
 
 class Floor:
-    CELL_SIZE = 32
     def __init__(self, width=40, height=25):
         """Init method for the Floor class
 
@@ -132,17 +131,18 @@ class Floor:
 
 
 class Tile:
+    CELL_SIZE = CELL_SIZE
     def __init__(self, map, x, y):
         # Row Major Order
         self.walkable = map.walkable[y][x]
         self.transparent = map.transparent[y][x]
         self.x = x
         self.y = y
-        self.cell_size = map.CELL_SIZE
+
 
     def draw(self, surface):
         """Blits the tile to the screen"""
-        surface.blit(self.image, (self.x * self.cell_size, self.y * self.cell_size))
+        surface.blit(self.image, (self.x * self.CELL_SIZE, self.y * self.CELL_SIZE))
 
     def update(self, map):
         """Loads the image for each image depending on the values in the walkable and transparent array"""

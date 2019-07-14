@@ -11,8 +11,7 @@ WINDOW_HEIGHT = 720
 MAP_WIDTH = 39
 MAP_HEIGHT = 22
 
-CELL_WIDTH = 32
-CELL_HEIGHT = 32
+CELL_SIZE = 32
 
 #                    R   G   B
 COLORS = {'BLACK': (  0,  0,  0),
