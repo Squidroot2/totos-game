@@ -4,6 +4,13 @@ Functions:
     titleScreen(window, fps_clock)
     playerCreateScreen(window, fps_clock)
     mainGameScreen(window, fps_clock, player)
+
+Globals:
+    COLORS : Dictionary of Tuples of ints
+        Represents the colors used as RGB Tuples
+    FONTS : Dictionary of pygame.Fonts
+    FPS : int
+        Represents the frames per second; used for clock.tick()
 """
 import pygame
 

@@ -10,23 +10,24 @@ import os, random
 CHARACTER_INI = os.path.join('data','characters.ini')
 
 class Character(Entity):
-
-    is_dead = False
-    
-    # todo  finish using the characters ini to initialize character stats
     def __init__(self, char_id, floor, x, y, components=[]):
         """Extends the entity init function"""
+
+        # Reads the ini file
         config = readINI(CHARACTER_INI)
 
+        # Adds components depending on the boolean in the ini file
         if config[char_id].getboolean('has_inventory'):
             components = {'Inventory': []}
         # todo use the inventory type
 
+        # Gets the
         image_name = config[char_id].get('image')
         self.image_path = os.path.join('images', 'characters', image_name)
 
         super().__init__(floor, x, y, components,obstruct=True)
 
+        # Pull stats from the character ini file
         self.name =     config[char_id].get('name')
         self.level =    config[char_id].getint('level')
         self.xp =       config[char_id].getint('xp')
@@ -34,6 +35,9 @@ class Character(Entity):
         self.base_damage = config[char_id].getint('damage')
         self.base_defense = config[char_id].getint('defense')
         self.base_attack_rate = config[char_id].getint('attack_rate')
+
+        # Set the character to not dead
+        self.is_dead = False
 
     def move(self, delta_x, delta_y):
         destination = ((self.x+delta_x), (self.y+delta_y))
