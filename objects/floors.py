@@ -17,13 +17,8 @@ class Floor:
         self.map = tcod.map.Map(width, height)
         self.tile_map = [[Tile(self.map, x, y) for y in range(height)] for x in range(width)]
         self.entities = []
-        # # primitive random generation
-        # for xtile in range(self.width):
-        #     for ytile in range(self.height):
-        #         roll_block = random.randint(0,9)
-        #         if not roll_block == 0:
-        #             self.map.walkable[ytile][xtile] = True
-        #             self.map.transparent[ytile][xtile] = True
+
+        # Random Generation of Floor
         self.generateLayout()
         self.updateTiles()
         self.generateEnemies(3)
