@@ -1,5 +1,7 @@
 from objects.items import Weapon, Armor, Generator, Battery
 from objects.entities import Entity, Corpse
+from objects.camera import Camera
+from objects.log import Log
 from scripts.utilities import readINI
 from scripts import formulas
 import pygame
@@ -188,8 +190,6 @@ class Character(Entity):
             print("No Generator to hold energy")
 
 
-
-        
 class Player(Character):
     image = pygame.image.load(os.path.join('images','characters','player.png'))
     
@@ -209,7 +209,7 @@ class Player(Character):
             y : int
                 starting y position on the floor
         """
-        components = {"Inventory": []}
+        components = {"Inventory": [], "Log": []}
 
         super().__init__("PLAYER", floor, x, y, components)
 
@@ -222,6 +222,9 @@ class Player(Character):
 
         self.setStartingInventory()
 
+        # Player-Specific Components
+        self.camera = Camera(self)
+        self.log = Log(self)
 
     # todo move inventory stuff to inventory class with ids
     def setStartingInventory(self):
