@@ -8,21 +8,35 @@ GENERATOR_INI = os.path.join('data','generator.ini')
 BATTERY_INI = os.path.join('data','battery.ini')
 
 class Item(Entity):
-
+    #todo finish Item docstring
+    """Represents entities which can be inside of an Inventory
+    
+    Child of Entity
+    
+    Attributes:
+    
+    
+    Methods:
+        drop(self) : Item is moved from inventory to floor
+        pickUp(self) : Item is moved from floor to specified Inventory
+    """
     def __init__(self, location, x=None, y=None):
         # Location will be a floor or a container
+        # todo use the Entity initialization method
         self.location = location
         self.x = x
         self.y = y
         self.location.addEntity(self)
 
     def drop(self):
+        """Item is moved from inventory to floor"""
         self.location.removeEntity(self)
         self.x = self.owner.x
         self.y = self.owner.y
         self.owner.floor.addEntity(self)
     
     def pickUp(self, inventory):
+        """Item is moved from floor to specified Inventory"""
         self.location.removeEntity(self)
         self.x = None
         self.y = None
@@ -30,7 +44,11 @@ class Item(Entity):
         
         
 class Weapon(Item):
+    """Damage dealing item which can be equipped
     
+    Child of Item, Entity
+    
+    """
     def __init__(self, item_id, location, x=None, y=None):
         super().__init__(location, x, y)
         
@@ -53,7 +71,12 @@ class Weapon(Item):
     
 
 class Armor(Item):
+    """Item which provides defense when equipped
     
+    Child of Item, Entity
+    
+    
+    """
     def __init__(self, item_id, location, x=None, y=None):
         super().__init__(location, x, y)
         
@@ -67,6 +90,11 @@ class Armor(Item):
     
 
 class Generator(Item):
+    """"Item which provides energy when equipped
+    
+    Child of Item, Entity
+    
+    """
 
     def __init__(self, item_id, location, x=None, y=None):
         super().__init__(location, x, y)
@@ -97,6 +125,12 @@ class Generator(Item):
         
     
 class Battery(Item):
+    """Item which can be used to charge energy
+    
+    Child of Item, Entity
+    
+    
+    """
     
     def __init__(self, item_id, location, x=None, y=None):
         super().__init__(location, x, y)
