@@ -235,12 +235,18 @@ def mainGameScreen(window, fps_clock, game):
         fps_clock.tick(FPS)
 
 def getPanes(window_rect):
-    """Takes a pygame.Rect object representing the window and returns a dictionary of Rect Objects for the three panes
+    """Takes a pygame.Rect object representing the window and returns a dictionary of Rect Objects for the four panes
     of the mainGameScreen"""
+
+    # log pane margin from bottom
+    y_margin = 10
+
 
     # Explicit variables for the size of the panes
     bottom_pane_height = window_rect.height / 6
     side_pane_width = window_rect.width / 4
+    log_pane_width = window_rect.width / 5
+    log_pane_height = window_rect.height / 6
 
     # Calculate bottom pane dimensions
     bottom_pane_top = window_rect.bottom - bottom_pane_height
@@ -253,14 +259,22 @@ def getPanes(window_rect):
     main_pane_width = window_rect.width - side_pane_width
     main_pane_height = window_rect.height - bottom_pane_height
 
+    # Calculate log pane dimension
+    log_pane_bottom = window_rect.height - y_margin
+
     # Create Rect Objects
     bottom_pane = pygame.Rect(0, bottom_pane_top, bottom_pane_width, bottom_pane_height)
     side_pane = pygame.Rect(side_pane_left, 0, side_pane_width, window_rect.height)
     main_pane = pygame.Rect(0, 0, main_pane_width, main_pane_height)
+    log_pane = pygame.Rect(0,0, log_pane_width, log_pane_height)
+
+    # Align log pane within the side pane
+    log_pane.midbottom = (side_pane.centerx, log_pane_bottom)
 
     # Create dictionary
     panes = {'bottom': bottom_pane,
              'side': side_pane,
+             'log': log_pane,
              'main': main_pane}
 
     # Return dictionary
