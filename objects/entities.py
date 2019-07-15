@@ -1,24 +1,81 @@
 '''
 Contains the classes used to construct actors(player,enemies,items)
+
+Classes:
+    Entity
+    Corpse(Entity)
 '''
 from objects.ai import AI
 from scripts.constants import *
 import os, pygame
-
-# my modules
 from objects.inventory import *
 from scripts.constants import CELL_SIZE
 
 
 class Entity:
+    """Represents any object that can act and be drawn into the world
+    
+    Instantiation requires pygame.display module to be initialized
+    
+    Attributes:
+        image_path : string
+            CLASS; Used to identify relative location of the image file
+        CELL_SIZE : int
+            CLASS; The number of pixels in the width and height of each image
+        x : int or None
+            X location on the tile map. Should be None if not on a tile map
+        y : int or None
+            Y location on the tile map. Should be None if not on a tile map
+        location : Floor or Inventory
+            where the entity is found in the game
+        obstruct : bool
+            Whether the entity stops another entity from moving through it.
+            Typically, Characters should have this set to true and everything else should be false
+        image : pygame.Surface
+            the entity's image as a Surface object
+        ai : AI or None
+            the entity's AI component if it has one
+        inventory : Inventory or None
+            the entity's Inventory component if it has one
+    
+    Methods:
+        loadImage(self) : Loads the image stored at the image_path attribute
+        draw(self) : Takes a pygame surface object and blits the object's 'image' to it at the determined x and y coordinates
+    
+    Children:
+        Corpse(Entity)
+        Item(Entity)
+            Armor(Item)
+            Weapon(Item)
+            Armor(Item)
+            Battery(Item)
+        Character(Entity)
+            Player(Character)
+    """
     image_path = os.path.join('images', 'unknown.png')
     CELL_SIZE = CELL_SIZE
     def __init__(self,location,x=None,y=None,components=[],obstruct=False):
+        """Init method for Entity
+        
+        Parameters: 
+            location : Floor or Inventory
+                where the entity is found in the game
+            x : int
+                X location on the tile map. Should be None if not on a tile map
+            y : int
+                Y location on the tile map. Should be None if not on a tile map
+            components : List or Dictionary
+                List or Dictionary that is either empty or contains Inventory and/or AI
+            obstruct : bool
+                Whether the entity obtructs movement or not
+        """
+        # todo split the components parameter into inventory and ai
         self.x = x
         self.y = y
         self.location = location
         self.location.addEntity(self)
         self.obstruct = obstruct
+        # todo have image be initialized in the init method
         self.loadImage()
 
         if 'AI' in components:
@@ -32,17 +89,58 @@ class Entity:
             self.inventory = None
 
     def loadImage(self):
+        """Loads the image stored at the image_path attribute"""
+        # todo exception handling for when pygame is not initialized and when image is not found
         self.image = pygame.image.load(self.image_path).convert_alpha()
 
     def draw(self, surface):
-        """Takes a pygame surface object and blits the object's 'image' to it at the specified x and y coordinates"""
+        """Takes a pygame surface object and blits the object's 'image' to it at the determined x and y coordinates
+        
+        Paramaters:
+            surface : pygame.Surface
+                The surface that the image will get written to
+        """
         surface.blit(self.image, (self.x*self.CELL_SIZE, self.y*self.CELL_SIZE))
+    # todo move the "move" method from character to entity
+    # todo add "Cursor" entity child class
 
 
 
 class Corpse(Entity):
-    """This is created when a character object has been killed"""
+    """This is created when a character object has been killed
+    
+    Child of Entity
+    Instantiation requires pygame.display module to be initialized
+    
+    Attributes:
+        image_path : string
+            INHERITED, CLASS; Used to identify relative location of the image file
+        CELL_SIZE : int
+            INHERITED, CLASS; The number of pixels in the width and height of each image
+        x : int or None
+            INHERITED; X location on the tile map. Should be None if not on a tile map
+        y : int or None
+            INHERITED; Y location on the tile map. Should be None if not on a tile map
+        location : Floor
+            INHERITED; what floor the corpse is found in the game
+        obstruct : bool
+            INHERITED; Whether the entity stops another entity from moving through it. 
+            Should be False for Corpses
+        image : pygame.Surface
+            INHERITED; the corpse's image as a Surface object
+        ai : None
+            INHERITED; Specifies that corpse does not have ai
+        inventory : Inventory
+            INHERITED; the corpse's Inventory component
+    """
     def __init__(self, character):
+        """Init method for Corpse. Extends the init method of Entity
+        
+        
+        Parameters:
+            character : Character
+                The character that died this is make this corpse
+        """
         if character.inventory:
             inventory_contents = character.inventory.contents
         else:
