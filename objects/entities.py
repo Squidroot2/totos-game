@@ -52,6 +52,8 @@ class Entity:
         Character(Entity)
             Player(Character)
     """
+    
+    # Default image_path value for all entities
     image_path = os.path.join('images', 'unknown.png')
     CELL_SIZE = CELL_SIZE
     def __init__(self,location,x=None,y=None,components=[],obstruct=False):
