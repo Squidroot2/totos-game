@@ -18,6 +18,8 @@ class Floor:
             height : int
                 Number of tiles on the y axis of the floor
         """
+        # todo have floor store its floor number
+        # todo add stair generation
         self.width = width
         self.height = height
         self.map = tcod.map.Map(width, height)
@@ -78,6 +80,7 @@ class Floor:
         Parameters:
             number_of_enemies: int
         """
+        # todo allow multiple different types of enemies to be generated
         for enemy in range(number_of_enemies):
             x = random.randint(0, self.width -1)
             y = random.randint(0, self.height -1)
