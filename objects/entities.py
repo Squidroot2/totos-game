@@ -119,7 +119,6 @@ class Corpse(Entity):
     """This is created when a character object has been killed
     
     Child of Entity
-    Instantiation requires pygame.display module to be initialized
     
     Attributes:
         image_path : string
