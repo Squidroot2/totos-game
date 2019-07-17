@@ -8,7 +8,7 @@ GENERATOR_INI = os.path.join('data','generator.ini')
 BATTERY_INI = os.path.join('data','battery.ini')
 
 class Item(Entity):
-    #todo finish Item docstring
+    #todo finish Item docstrings
     """Represents entities which can be inside of an Inventory
 
     Child of Entity
@@ -126,6 +126,7 @@ class Battery(Item):
     """
     
     def __init__(self, item_id, location, x=None, y=None):
+        """Extends the Entity init method"""
         super().__init__(location, x, y)
         
         config = readINI(BATTERY_INI)
