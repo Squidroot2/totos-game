@@ -15,8 +15,6 @@ from scripts.constants import CELL_SIZE
 class Entity:
     """Represents any object that can act and be drawn into the world
     
-    Instantiation requires pygame.display module to be initialized
-    
     Attributes:
         image_path : string
             CLASS; Used to identify relative location of the image file
@@ -90,12 +88,16 @@ class Entity:
             self.inventory = None
 
     def loadImage(self):
-        """Loads the image stored at the image_path attribute"""
+        """Loads the image stored at the image_path attribute
+
+        Requires pygame to be initialized"""
         self.image = pygame.image.load(self.image_path).convert_alpha()
 
     def draw(self, surface):
         """Takes a pygame surface object and blits the object's 'image' to it at the determined x and y coordinates
-        
+
+        Requires pygame to be initialized
+
         Paramaters:
             surface : pygame.Surface
                 The surface that the image will get written to
@@ -104,10 +106,14 @@ class Entity:
         if self.image is None:
                 self.loadImage()
         surface.blit(self.image, (self.x*self.CELL_SIZE, self.y*self.CELL_SIZE))
-    # todo move the "move" method from character to entity
-    # todo add "Cursor" entity child class
 
 
+# todo finish Target  class
+class Target(Entity):
+    """Represents the player's target when aiming or exploring"""
+    def move(self, delta_x, delta_y):
+        self.x += delta_x
+        self.y += delta_y
 
 class Corpse(Entity):
     """This is created when a character object has been killed
