@@ -135,6 +135,8 @@ class Corpse(Entity):
         inventory : Inventory
             INHERITED; the corpse's Inventory component
     """
+
+    image_path = os.path.join('images', 'other', 'headstone.png')
     def __init__(self, character):
         """Init method for Corpse. Extends the init method of Entity
         
