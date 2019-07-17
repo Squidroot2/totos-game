@@ -77,8 +77,7 @@ class Entity:
         self.location = location
         self.location.addEntity(self)
         self.obstruct = obstruct
-        # todo have image be initialized in the init method
-        self.loadImage()
+        self.image = None
 
         if 'AI' in components:
             self.ai = AI(self)
@@ -92,7 +91,6 @@ class Entity:
 
     def loadImage(self):
         """Loads the image stored at the image_path attribute"""
-        # todo exception handling for when pygame is not initialized and when image is not found
         self.image = pygame.image.load(self.image_path).convert_alpha()
 
     def draw(self, surface):
@@ -102,6 +100,9 @@ class Entity:
             surface : pygame.Surface
                 The surface that the image will get written to
         """
+        # First load the image if it hasn't been loaded
+        if self.image is None:
+                self.loadImage()
         surface.blit(self.image, (self.x*self.CELL_SIZE, self.y*self.CELL_SIZE))
     # todo move the "move" method from character to entity
     # todo add "Cursor" entity child class
