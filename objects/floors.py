@@ -9,7 +9,11 @@ from scripts.constants import CELL_SIZE
 
 
 class Floor:
-    def __init__(self, width=40, height=25):
+    # todo make the use the class attributes
+    width=40
+    height=50
+    
+    def __init__(self, width=40, height=40):
         """Init method for the Floor class
 
         Parameter:
