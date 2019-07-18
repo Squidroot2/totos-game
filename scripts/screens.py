@@ -3,7 +3,8 @@
 Functions:
     titleScreen(window, fps_clock)
     playerCreateScreen(window, fps_clock)
-    mainGameScreen(window, fps_clock, player)
+    mainGameScreen(window, fps_clock, game)
+    gameOverScreen(window, fps_clock)
 
 Globals:
     COLORS : Dictionary of Tuples of ints
@@ -172,7 +173,7 @@ def drawClassSelect(window):
 def mainGameScreen(window, fps_clock, game):
     """runs the main game loop as long as the run_game boolean is true"""
     window_rect = window.get_rect()
-
+    
     # Pulls the player from the game object
     player = game.player
 
@@ -217,6 +218,7 @@ def mainGameScreen(window, fps_clock, game):
         if player.is_dead:
             run_game = False
 
+        # todo have objects drawn to game.surface, then blit game.surface to window
         # Draw the map
         player.location.draw(window)
 
@@ -230,7 +232,10 @@ def mainGameScreen(window, fps_clock, game):
         # Draw the bottom and side panes
         drawStatPane(window, player, panes['side'])
         drawLogPane(window, game.log, panes['bottom'])
-
+        
+        # todo add the following line after camera and game.surface are finished
+            # window.blit(game.surface, pane['main'], camera.getRect())
+            
         # Update the screen and wait for clock to tick; repeat the while loop
         pygame.display.update()
         fps_clock.tick(FPS)
