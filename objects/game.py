@@ -4,7 +4,9 @@ Classes:
     Game : Stores high level game information
     Log : Keeps track of game messages
 """
-
+import pygame
+from scripts.constants import CELL_SIZE
+from objects.floors import Floor
 
 class Game:
     """Stores high level game information
@@ -14,6 +16,8 @@ class Game:
         player: Player
         log: Log
             Keeps track of things that happen in the game; created in the init method
+        surface : pygame.Surface
+            Objects in the game are drawn to here, then this is blitted to the main window
     """
     def __init__(self, dungeon, player):
         """Init method for Game
@@ -25,6 +29,8 @@ class Game:
         self.dungeon = dungeon
         self.player = player
         self.log = Log(self)
+        self.surface = pygame.Surface(Floor.width*CELL_SIZE,Floor.height*CELL_SIZE)
+        
 
 
 class Log:
