@@ -7,12 +7,14 @@ from scripts.constants import *
 from objects.characters import Player
 from objects.floors import Floor
 from objects.game import Game
-from scripts.screens import mainGameScreen, titleScreen, playerCreateScreen
+from scripts.screens import mainGameScreen, titleScreen, playerCreateScreen, gameOverScreen
 
 def main():
     window, fps_clock = initializePygame()
-    game = setupGame(window, fps_clock)
-    mainGameScreen(window,fps_clock,game)
+    while True:
+        game = setupGame(window, fps_clock)
+        mainGameScreen(window,fps_clock,game)
+        gameOverScreen(window, fps_clock)
 
 def initializePygame():
     """Initializes the pygame modules and returns SCREEN and FPS_CLOCK"""

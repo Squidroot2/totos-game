@@ -21,7 +21,8 @@ from pygame.constants import *
 # GLOBAL VALUES
 #                    R   G   B
 COLORS = {'BLACK': (  0,  0,  0),
-          'WHITE': (255,255,255)}
+          'WHITE': (255,255,255),
+          'RED':   (255,  0,  0)}
 
 pygame.font.init()
 FONTS = {'TITLE': pygame.font.Font('freesansbold.ttf', 70),
@@ -232,6 +233,29 @@ def mainGameScreen(window, fps_clock, game):
 
         # Update the screen and wait for clock to tick; repeat the while loop
         pygame.display.update()
+        fps_clock.tick(FPS)
+
+def gameOverScreen(window, fps_clock):
+    """Shown after the player dies"""
+
+    window.fill(COLORS['BLACK'])
+
+    window_rect = window.get_rect()
+
+    text = FONTS['TITLE'].render('Game Over', True, COLORS['RED'])
+    text_rect = text.get_rect()
+    text_rect.center = (window_rect.center)
+
+    window.blit(text, text_rect)
+    show_game_over = True
+
+    while show_game_over:
+        checkForQuit()
+        for event in pygame.event.get(KEYDOWN):
+            if event.key == K_RETURN:
+                show_game_over = False
+
+        pygame.display.flip()
         fps_clock.tick(FPS)
 
 def getPanes(window_rect):
