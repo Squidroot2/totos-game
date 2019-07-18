@@ -236,7 +236,12 @@ def mainGameScreen(window, fps_clock, game):
         fps_clock.tick(FPS)
 
 def gameOverScreen(window, fps_clock):
-    """Shown after the player dies"""
+    """Shown after the player dies
+
+    Parameters:
+        window : pygame.Surface
+        fps_clock : pygame.Clock
+    """
 
     window.fill(COLORS['BLACK'])
 
