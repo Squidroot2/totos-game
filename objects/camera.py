@@ -1,4 +1,3 @@
-#todo write camera component class
 from scripts.constants import CELL_SIZE
 import pygame
 
