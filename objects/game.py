@@ -5,8 +5,8 @@ Classes:
     Log : Keeps track of game messages
 """
 import pygame
-from scripts.constants import CELL_SIZE
-from objects.floors import Floor
+from scripts.constants import CELL_SIZE, FLOOR_WIDTH, FLOOR_HEIGHT
+
 
 class Game:
     """Stores high level game information
@@ -29,7 +29,7 @@ class Game:
         self.dungeon = dungeon
         self.player = player
         self.log = Log(self)
-        self.surface = pygame.Surface(Floor.width*CELL_SIZE,Floor.height*CELL_SIZE)
+        self.surface = pygame.Surface((FLOOR_WIDTH*CELL_SIZE,FLOOR_HEIGHT*CELL_SIZE))
         
 
 

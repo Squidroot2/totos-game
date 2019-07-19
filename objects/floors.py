@@ -5,29 +5,19 @@ import pygame
 import tcod
 
 from objects.characters import Character
-from scripts.constants import CELL_SIZE
+from scripts.constants import CELL_SIZE, FLOOR_HEIGHT, FLOOR_WIDTH
 
 
 class Floor:
-    # todo make the Floor use the class attributes
-    width=40
-    height=40
+    width = FLOOR_WIDTH
+    height = FLOOR_HEIGHT
     
-    def __init__(self, width=40, height=40):
-        """Init method for the Floor class
-
-        Parameter:
-            width : int
-                Number of tiles on the x axis of the floor
-            height : int
-                Number of tiles on the y axis of the floor
-        """
+    def __init__(self):
+        """Init method for the Floor class"""
         # todo have floor store its floor number
         # todo add stair generation
-        self.width = width
-        self.height = height
-        self.map = tcod.map.Map(width, height)
-        self.tile_map = [[Tile(self.map, x, y) for y in range(height)] for x in range(width)]
+        self.map = tcod.map.Map(self.width, self.height)
+        self.tile_map = [[Tile(self.map, x, y) for y in range(self.height)] for x in range(self.width)]
         self.entities = []
 
         # Random Generation of Floor
