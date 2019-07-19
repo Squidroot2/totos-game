@@ -45,6 +45,7 @@ class Log:
             Stores  messages to be drawn to the screen
     Methods:
         getLastMessage(self, num) : Gets a specified number of messages from the end of the messages list
+        addEOTUnderscore(self) : Adds an underscore to the last message of the turn
         setInstance(cls, instance) : CLASS; Used by the init function to keep track of the current instance in a class
             attribute
         addMessage(cls, message) : CLASS; Used by external functions to add messages to the current instance
