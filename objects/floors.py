@@ -19,11 +19,12 @@ class Floor:
         self.map = tcod.map.Map(self.width, self.height)
         self.tile_map = [[Tile(self.map, x, y) for y in range(self.height)] for x in range(self.width)]
         self.entities = []
+        self.rooms = []
 
         # Random Generation of Floor
         self.generateLayout()
         self.updateTiles()
-        self.generateEnemies(3)
+        self.generateEnemies()
 
     def generateLayout(self):
         """Uses Binary Space Partition to generate the layout of the dungeon"""
@@ -68,17 +69,24 @@ class Floor:
                 self.map.transparent[y+a][x+b] = True
                 self.map.walkable[y+a][x+b] = True
 
-    def generateEnemies(self, number_of_enemies):
+        self.rooms.append({"x":x,"y":y,"w":width,"h":height})
+
+    def generateEnemies(self):
         """Generates a specified number of enemies for the floor
 
         Parameters:
             number_of_enemies: int
         """
         # todo allow multiple different types of enemies to be generated
-        for enemy in range(number_of_enemies):
-            x = random.randint(0, self.width -1)
-            y = random.randint(0, self.height -1)
-            Character("BLOB1",self, x, y, ['AI'])
+        chance_per_room = .2
+
+        for room in self.rooms:
+            roll = random.random()
+            if roll < chance_per_room:
+                x = random.randint(room['x'], room['x']+room['w'])
+                y = random.randint(room['y'], room['y']+room['h'])
+                Character("BLOB1", self, x, y)
+
 
     def updateTiles(self):
         """Runs the update method on every tile in the tile_map"""
