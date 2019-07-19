@@ -111,6 +111,7 @@ class Entity:
 
 # todo finish Target  class
 class Target(Entity):
+    # todo give Target a draw 
     """Represents the player's target when aiming or exploring"""
     def move(self, delta_x, delta_y):
         self.x += delta_x

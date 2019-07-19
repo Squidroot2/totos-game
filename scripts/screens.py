@@ -1,11 +1,14 @@
-"""Contains the screens, each of which contains its own while loop
+"""Contains the screen functions and the draw functions that the screen function use
 
 Functions:
     titleScreen(window, fps_clock)
     playerCreateScreen(window, fps_clock)
+    drawClassSelect(window)
     mainGameScreen(window, fps_clock, game)
-    gameOverScreen(window, fps_clock)
-
+    gameOverScreen(window, fps_clock) 
+    getPanes(window_rect) : Takes a pygame.Rect object representing the window and returns a dictionray of Rect Objects
+    drawStatPane(window, player, pane) : Draws the player's statistic on the right side of the screen
+    drawLogPane(window, log, pane) : Draws the messages in the log pane
 
 """
 import pygame
@@ -343,7 +346,7 @@ def drawStatPane(window, player, pane):
 
 
 def drawLogPane(window, log, pane):
-    """Draws the messages on the bottom pane of the screen"""
+    """Draws the messages in the log pane"""
     # Fills in the pane in black
     # 0 represents the width; if zero fills in rect
     pygame.draw.rect(window, COLORS['WHITE'], pane, 0)

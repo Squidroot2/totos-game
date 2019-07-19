@@ -10,6 +10,37 @@ import os, random
 CHARACTER_INI = os.path.join('data','characters.ini')
 
 class Character(Entity):
+    """Used for entities which act on the world
+    
+    Child of Entity
+       
+    Attributes:
+        image_path : string : CLASS; INSTANCE OVERRIDE;
+        CELL_SIZE : int : CLASS; INHERITED
+        x : int or None : INHERITED
+        y : int or None : INHERITED
+        location : Floor or Inventory : INHERITED
+        obstruct : bool : INHERITED
+        image : pygame.Surface : INHERITED
+        ai : AI or None : INHERITED
+        inventory : Inventory or None : INHERITED
+        name : string : The character's name
+        level : int
+        xp : int : number of xp point the character has
+        life : int : how likely a character is going to survive damage to flesh
+        base_damage : int : amount of melee damage done with no weapon
+        base_defense : int : amount of defense with no armor
+        base_attack_rate : int : amount of melee attacks that can be performed
+        isDead : bool
+    
+    Methods:
+        loadImage(self) : INHERITED
+        draw(self) : INHERITED
+        
+        
+    
+    Children:
+        Player(Character)"""
     def __init__(self, char_id, floor, x, y, ai=True, inventory=[]):
         """Extends the entity init function"""
 
@@ -165,13 +196,14 @@ class Character(Entity):
         else:
             return self.base_attack_rate
 
-        #
+        # If its a melee attack
         if not ranged:
             return weapon.melee_speed
         else:
             return weapon.fire_rate
 
     def getEncumbrance(self):
+        """Encumbrance determines the penalty to hit chance or dodge chance"""
         encumbrance = 0
         if self.inventory is None:
             pass
