@@ -2,9 +2,6 @@
 This module contains constants used throughout the grim ranger game
 '''
 
-import pygame
-FPS = 30
-
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
 
