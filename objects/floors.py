@@ -137,6 +137,7 @@ class Floor:
 
 class Tile:
     CELL_SIZE = CELL_SIZE
+
     def __init__(self, map, x, y):
         # Row Major Order
         self.walkable = map.walkable[y][x]
