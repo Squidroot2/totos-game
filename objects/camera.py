@@ -4,8 +4,8 @@ import pygame
 
 class Camera:
     """Used for display the part of the game surface centered on a particular entity such as the player"""
-    width = 15
-    height = 15
+    width = 20
+    height = 20
     
     def __init__(self, owner):
         self.owner = owner

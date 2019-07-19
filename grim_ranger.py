@@ -1,9 +1,5 @@
-#Python modules
-
-#third party modules
-
-#my modules
-from scripts.constants import *
+import pygame
+from scripts.constants import WINDOW_WIDTH, WINDOW_HEIGHT
 from objects.characters import Player
 from objects.floors import Floor
 from objects.game import Game

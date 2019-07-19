@@ -6,33 +6,13 @@ Functions:
     mainGameScreen(window, fps_clock, game)
     gameOverScreen(window, fps_clock)
 
-Globals:
-    COLORS : Dictionary of Tuples of ints
-        Represents the colors used as RGB Tuples
-    FONTS : Dictionary of pygame.Fonts
-    FPS : int
-        Represents the frames per second; used for clock.tick()
+
 """
 import pygame
-
-from scripts.utilities import checkForQuit
 from pygame.constants import *
+from scripts.constants import COLORS, FONTS, FPS
+from scripts.utilities import checkForQuit
 
-
-# GLOBAL VALUES
-#                    R   G   B
-COLORS = {'BLACK': (  0,  0,  0),
-          'WHITE': (255,255,255),
-          'RED':   (255,  0,  0)}
-
-pygame.font.init()
-FONTS = {'TITLE': pygame.font.Font('freesansbold.ttf', 70),
-         'MAIN': pygame.font.Font('freesansbold.ttf', 28),
-         'INFO': pygame.font.Font('freesansbold.ttf', 14),
-         'LOG': pygame.font.Font('freesansbold.ttf', 12)}
-FONTS['TITLE'].set_underline(True)
-
-FPS = 144
 
 def titleScreen(window, fps_clock):
     """Displays the Title Screen. Runs its own while loop until the player hits enter to continue
@@ -218,23 +198,25 @@ def mainGameScreen(window, fps_clock, game):
         if player.is_dead:
             run_game = False
 
-        # todo have objects drawn to game.surface, then blit game.surface to window
+        window.fill(COLORS['BLACK'])
         # Draw the map
-        player.location.draw(window)
+        player.location.draw(game.surface)
 
         # Draw the entities in the map
         for entity in player.location.entities:
             if entity is player:
                 continue
-            entity.draw(window)
-        player.draw(window)
+            entity.draw(game.surface)
+        player.draw(game.surface)
 
-        # Draw the bottom and side panes
+        # Draw the side and log panes
         drawStatPane(window, player, panes['side'])
-        drawLogPane(window, game.log, panes['bottom'])
-        
+        drawLogPane(window, game.log, panes['log'])
+
+        player.camera.update()
+
         # todo add the following line after camera and game.surface are finished
-            # window.blit(game.surface, pane['main'], camera.getRect())
+        window.blit(game.surface, panes['main'], player.camera.getRect())
             
         # Update the screen and wait for clock to tick; repeat the while loop
         pygame.display.update()
@@ -273,8 +255,11 @@ def getPanes(window_rect):
     of the mainGameScreen"""
 
     # log pane margin from bottom
-    y_margin = 10
+    log_y_margin = 10
 
+    # main pane margins
+    main_x_margin = 40
+    main_y_margin = 10
 
     # Explicit variables for the size of the panes
     bottom_pane_height = window_rect.height / 6
@@ -294,12 +279,12 @@ def getPanes(window_rect):
     main_pane_height = window_rect.height - bottom_pane_height
 
     # Calculate log pane dimension
-    log_pane_bottom = window_rect.height - y_margin
+    log_pane_bottom = window_rect.height - log_y_margin
 
     # Create Rect Objects
     bottom_pane = pygame.Rect(0, bottom_pane_top, bottom_pane_width, bottom_pane_height)
     side_pane = pygame.Rect(side_pane_left, 0, side_pane_width, window_rect.height)
-    main_pane = pygame.Rect(0, 0, main_pane_width, main_pane_height)
+    main_pane = pygame.Rect(main_x_margin, main_y_margin, main_pane_width, main_pane_height)
     log_pane = pygame.Rect(0,0, log_pane_width, log_pane_height)
 
     # Align log pane within the side pane
@@ -318,8 +303,12 @@ def getPanes(window_rect):
 def drawStatPane(window, player, pane):
     """Draws the players statistics on the right side of the screen"""
 
+
+    background_color = COLORS['DARK GRAY']
+    font_color = COLORS['WHITE']
+
     # Fills in the pane in black
-    pygame.draw.rect(window, COLORS['BLACK'], pane, 0)
+    pygame.draw.rect(window, background_color, pane, 0)
 
     X_MARGIN = pane.width/10
     Y_MARGIN = pane.height/25
@@ -333,18 +322,18 @@ def drawStatPane(window, player, pane):
     # Dictionary of text surfaces that will be blitted to the screen
     text_surfs = dict()
 
-    text_surfs['name'] = FONTS['INFO'].render(full_name, True, COLORS['WHITE'], COLORS['BLACK'])
-    text_surfs['xp'] = FONTS['INFO'].render(experience, True, COLORS['WHITE'], COLORS['BLACK'])
-    text_surfs['defense'] = FONTS['INFO'].render(defense,  True, COLORS['WHITE'], COLORS['BLACK'])
-    text_surfs['life'] = FONTS['INFO'].render(life, True, COLORS['WHITE'], COLORS['BLACK'])
-    text_surfs['energy_key'] = FONTS['INFO'].render("Energy", True, COLORS['WHITE'], COLORS['BLACK'])
+    text_surfs['name'] = FONTS['INFO'].render(full_name, True, font_color, background_color)
+    text_surfs['xp'] = FONTS['INFO'].render(experience, True, font_color, background_color)
+    text_surfs['defense'] = FONTS['INFO'].render(defense, True, font_color, background_color)
+    text_surfs['life'] = FONTS['INFO'].render(life, True, font_color, background_color)
+    text_surfs['energy_key'] = FONTS['INFO'].render("Energy", True, font_color, background_color)
 
     # Create Dictionary of Rectangle objects for each rect
     text_rects = {surf: text_surfs[surf].get_rect() for surf in text_surfs}
 
     # Place rectangles
     text_rects['name'].midleft = (pane.left+X_MARGIN, Y_MARGIN)
-    text_rects['xp'].topleft = (pane.left+X_MARGIN, text_rects['name'].bottom+FONTS['INFO'].get_linesize())
+    text_rects['xp'].topleft = (pane.left + X_MARGIN, text_rects['name'].bottom + FONTS['INFO'].get_linesize())
     text_rects['defense'].topleft = (pane.left+X_MARGIN, text_rects['xp'].bottom)
     text_rects['life'].topleft = (pane.left + X_MARGIN, text_rects['defense'].bottom)
 
@@ -356,7 +345,7 @@ def drawLogPane(window, log, pane):
     """Draws the messages on the bottom pane of the screen"""
     # Fills in the pane in black
     # 0 represents the width; if zero fills in rect
-    pygame.draw.rect(window, COLORS['BLACK'], pane, 0)
+    pygame.draw.rect(window, COLORS['WHITE'], pane, 0)
 
     # Adds a Margin to the top and left side of the messages box
     X_MARGIN = 10
@@ -374,11 +363,11 @@ def drawLogPane(window, log, pane):
     for line, message in enumerate(messages):
 
         # Create a surface and rect for each line of messages
-        surf = FONTS['LOG'].render(message, True, COLORS['WHITE'], COLORS['BLACK'])
+        surf = FONTS['LOG'].render(message, True, COLORS['BLACK'], COLORS['WHITE'])
         rect = surf.get_rect()
 
         # Place rect based on line number
-        rect.topleft = (log_left, log_top + FONTS['LOG'].get_linesize()*line)
+        rect.topleft = (log_left, log_top + FONTS['LOG'].get_linesize() * line)
 
         # Append surf and rect to list
         text_surfs.append(surf)
