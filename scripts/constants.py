@@ -19,8 +19,3 @@ COLORS = {'BLACK': (  0,  0,  0),
 
 BG_COLOR = COLORS['BLACK']
 
-pygame.font.init()
-FONTS = {'TITLE': pygame.font.Font('freesansbold.ttf', 70),
-         'MAIN': pygame.font.Font('freesansbold.ttf', 28)}
-
-FONTS['TITLE'].set_underline(True)
