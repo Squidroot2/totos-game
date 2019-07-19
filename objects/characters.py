@@ -10,22 +10,20 @@ import os, random
 CHARACTER_INI = os.path.join('data','characters.ini')
 
 class Character(Entity):
-    def __init__(self, char_id, floor, x, y, components=[]):
+    def __init__(self, char_id, floor, x, y, ai=True, inventory=[]):
         """Extends the entity init function"""
 
         # Reads the ini file
         config = readINI(CHARACTER_INI)
 
-        # Adds components depending on the boolean in the ini file
-        if config[char_id].getboolean('has_inventory'):
-            components = {'Inventory': []}
         # todo use the inventory type
 
-        # Gets the
+        # Runs the Entity init method
+        super().__init__(floor, x, y, ai=ai, inventory=inventory, obstruct=True)
+
+        # Gets the image
         image_name = config[char_id].get('image')
         self.image_path = os.path.join('images', 'characters', image_name)
-
-        super().__init__(floor, x, y, components,obstruct=True)
 
         # Pull stats from the character ini file
         self.name =     config[char_id].get('name')
@@ -218,9 +216,8 @@ class Player(Character):
             y : int
                 starting y position on the floor
         """
-        components = {"Inventory": [], "Log": []}
 
-        super().__init__("PLAYER", floor, x, y, components)
+        super().__init__("PLAYER", floor, x, y, ai=None, inventory=[])
 
         # Overrides the name set by the Character init method
         self.name = name

@@ -54,7 +54,8 @@ class Entity:
     # Default image_path value for all entities
     image_path = os.path.join('images', 'unknown.png')
     CELL_SIZE = CELL_SIZE
-    def __init__(self,location,x=None,y=None,components=[],obstruct=False):
+
+    def __init__(self, location, x=None, y=None, ai=None, inventory=None, obstruct=False):
         """Init method for Entity
         
         Parameters: 
@@ -77,13 +78,13 @@ class Entity:
         self.obstruct = obstruct
         self.image = None
 
-        if 'AI' in components:
+        if ai:
             self.ai = AI(self)
         else:
             self.ai = None
         
-        if 'Inventory' in components:
-            self.inventory = Inventory(self, components['Inventory'])
+        if inventory is not None:
+            self.inventory = Inventory(self, inventory)
         else:
             self.inventory = None
 
@@ -155,7 +156,7 @@ class Corpse(Entity):
             inventory_contents = character.inventory.contents
         else:
             inventory_contents = []
-        super().__init__(character.location, character.x, character.y,  components={'Inventory': inventory_contents})
+        super().__init__(character.location, character.x, character.y, inventory=inventory_contents)
         
     # todo add image for corpse
     
