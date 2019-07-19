@@ -66,6 +66,10 @@ class Log:
         """Gets a specified number of messages from the end of the messages list"""
         return self.messages[-num:]
 
+    def addEOTUnderscore(self):
+        """Adds an underscore to the last message of the turn"""
+        self.messages[-1] = self.messages[-1] + "_"
+
     @classmethod
     def setInstance(cls, instance):
         """Used by the init function to keep track of the current instance in a class attribute"""
