@@ -160,6 +160,10 @@ def mainGameScreen(window, fps_clock, game):
     # Gets a dict of Rects
     panes = getPanes(window_rect)
 
+    # Create a Rect with the same dimensions as the camera; center it in the main pane
+    game_area = player.camera.getRect().copy()
+    game_area.center = panes['main'].center
+
     #game loop
     run_game = True
     while run_game:
@@ -213,10 +217,11 @@ def mainGameScreen(window, fps_clock, game):
         drawStatPane(window, player, panes['side'])
         drawLogPane(window, game.log, panes['log'])
 
+        pygame.draw.rect(window, COLORS['DARK GRAY'], panes['bottom'], 0)
         player.camera.update()
 
         # todo add the following line after camera and game.surface are finished
-        window.blit(game.surface, panes['main'], player.camera.getRect())
+        window.blit(game.surface, game_area, player.camera.getRect())
             
         # Update the screen and wait for clock to tick; repeat the while loop
         pygame.display.update()
@@ -257,12 +262,8 @@ def getPanes(window_rect):
     # log pane margin from bottom
     log_y_margin = 10
 
-    # main pane margins
-    main_x_margin = 40
-    main_y_margin = 10
-
     # Explicit variables for the size of the panes
-    bottom_pane_height = window_rect.height / 6
+    bottom_pane_height = window_rect.height / 25
     side_pane_width = window_rect.width / 4
     log_pane_width = window_rect.width / 5
     log_pane_height = window_rect.height / 6
@@ -284,7 +285,7 @@ def getPanes(window_rect):
     # Create Rect Objects
     bottom_pane = pygame.Rect(0, bottom_pane_top, bottom_pane_width, bottom_pane_height)
     side_pane = pygame.Rect(side_pane_left, 0, side_pane_width, window_rect.height)
-    main_pane = pygame.Rect(main_x_margin, main_y_margin, main_pane_width, main_pane_height)
+    main_pane = pygame.Rect(0,0, main_pane_width, main_pane_height)
     log_pane = pygame.Rect(0,0, log_pane_width, log_pane_height)
 
     # Align log pane within the side pane
