@@ -2,12 +2,11 @@ from objects.items import Weapon, Armor, Generator, Battery
 from objects.entities import Entity, Corpse
 from objects.camera import Camera
 from objects.game import Log
-from scripts.utilities import readINI, getItemById
+from scripts.utilities import getItemById
 from scripts import formulas
 import pygame
 import os, random
 
-CHARACTER_INI = os.path.join('data','characters.ini')
 CHARACTER_JSON = os.path.join('data','characters.json')
 
 class Character(Entity):
