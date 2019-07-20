@@ -65,8 +65,8 @@ class Entity:
                 X location on the tile map. Should be None if not on a tile map
             y : int
                 Y location on the tile map. Should be None if not on a tile map
-            components : List or Dictionary
-                List or Dictionary that is either empty or contains Inventory and/or AI
+            ai : None or True
+            inventory : None or List
             obstruct : bool
                 Whether the entity obtructs movement or not
         """
