@@ -256,14 +256,16 @@ def mainGameScreen(window, fps_clock, game):
                 else:
                     turn_taken = False
 
-                # If turn was taken, every entity with an AI takes a turn
+                # If turn was taken, iterate through all entities in the
                 if turn_taken:
                     for entity in player.location.entities:
+                        #  every entity with an AI takes a turn
+                        if entity.ai:
+                            entity.ai.takeTurn()
+                        # Recharge all equipped generators
                         if entity.inventory and entity.inventory.equipped['generator']:
                             entity.inventory.equipped['generator'].recharge()
                             entity.inventory.equipped['generator'].hit_this_turn = False
-                        if entity.ai:
-                            entity.ai.takeTurn()
 
         if player.is_dead:
             run_game = False

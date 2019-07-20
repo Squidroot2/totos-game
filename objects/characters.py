@@ -96,7 +96,6 @@ class Character(Entity):
                 return True
         return False
 
-
     def meleeAttack(self, opponent):
         attack = self.getMeleeDamage()
         defense = opponent.getDefense()
@@ -111,9 +110,7 @@ class Character(Entity):
         # Determines the hit chance based on the encumbrances
         hit_chance = formulas.getHitChance(self_enc, enemy_enc)
 
-
         for attack in range(self.getAttackRate()):
-
             roll = random.random()
             if roll < hit_chance:
                 Log.addMessage(self.name + " hit " + opponent.name + " for " + str(damage) + " damage")
@@ -137,10 +134,17 @@ class Character(Entity):
         else:
             damage_to_flesh = damage
 
+        # Generator is tagged as being hit this turn
+        if self.inventory.equipped['generator']:
+            self.inventory.equipped['generator'].hit_this_turn = True
+
+        # Determine if the damage to flesh was lethal
         killed = formulas.determineLethal(damage_to_flesh, self.life)
+
 
         if killed:
             self.kill()
+        # If self was not killed, determine if injured
         else:
             injured = formulas.determineInjury(damage_to_flesh, self.life)
             if injured:
