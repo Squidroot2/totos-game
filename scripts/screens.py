@@ -170,11 +170,18 @@ def mainGameScreen(window, fps_clock, game):
     #game loop
     run_game = True
     while run_game:
+
+        # Turns true if player does an action that uses up their turn
+        turn_taken = False
+
         checkForQuit()
         for event in pygame.event.get():
 
             # Determine what to do with Key Presses
             if event.type == KEYDOWN:
+                turn_taken = True
+
+                # Movement Keys
                 if event.key == K_UP or event.key == K_KP8:
                     player.move(0, -1)
                 elif event.key == K_DOWN or event.key == K_KP2:
@@ -191,6 +198,12 @@ def mainGameScreen(window, fps_clock, game):
                     player.move(-1, 1)
                 elif event.key == K_KP3:
                     player.move(1, 1)
+
+                # Wait Key
+                elif event.key == K_KP5:
+                    pass
+
+                # Used for moving downwards
                 elif event.unicode == ">":
                     # Check if player is on down portal
                     if player.x == player.location.portals['down'].x and player.y == player.location.portals['down'].y:
@@ -205,6 +218,11 @@ def mainGameScreen(window, fps_clock, game):
                             player.location = new_floor
                             player.x, player.y = new_floor.portals['up'].x, new_floor.portals['up'].y
 
+                    # If the player does not move, turn is not taken
+                    else:
+                        turn_taken = False
+
+                # Used for moving upwards
                 elif event.unicode == "<":
                     # Check if player is on up portal
                     if player.x == player.location.portals['up'].x and player.y == player.location.portals['up'].y:
@@ -220,18 +238,29 @@ def mainGameScreen(window, fps_clock, game):
                             player.location = new_floor
                             player.x, player.y = new_floor.portals['down'].x, new_floor.portals['down'].y
 
+                    # If the player does not move, turn is not taken
+                    else:
+                        turn_taken = False
+
 
                 elif event.key == K_i:
                     # todo write open inventory screen
-                    pass
+                    turn_taken = False
                 elif event.key == K_f:
                     # todo write ranged attack screen
-                    pass
+                    turn_taken = False
+                elif event.key == K_x:
+                    # todo write explore screen
+                    turn_taken = False
 
+                else:
+                    turn_taken = False
 
-                for entity in player.location.entities:
-                    if entity.ai:
-                        entity.ai.takeTurn()
+                # If turn was taken, every entity with an AI takes a turn
+                if turn_taken:
+                    for entity in player.location.entities:
+                        if entity.ai:
+                            entity.ai.takeTurn()
 
         if player.is_dead:
             run_game = False
