@@ -16,7 +16,10 @@ CELL_SIZE = 32
 COLORS = {'BLACK':      (  0,  0,  0),
           'DARK GRAY':  ( 25, 25, 25),
           'WHITE':      (255,255,255),
-          'RED':        (255,  0,  0)}
+          'RED':        (255,  0,  0),
+          'LIGHT BLUE': (100,255,255),
+          'YELLOW':     (255,255,  0),
+          'GOLDENROD':  (218,165, 32)}
 
 
 pygame.font.init()
