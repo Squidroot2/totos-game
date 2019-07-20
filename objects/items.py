@@ -97,6 +97,8 @@ class Generator(Item):
         self.max_charge =       config[item_id].getint('max_charge')
         self.recharge_rate =    config[item_id].getfloat('recharge_rate')
         self.difficulty =       config[item_id].getint('difficulty')
+
+        self.hit_this_turn = False
         
         # Current Charge Starts at 0
         self.current_charge = 0.0
@@ -106,16 +108,17 @@ class Generator(Item):
         self.current_charge = 0.0
         
     def recharge(self):
-        # Happens once per turn while equipped
-        new_charge_level = self.current_charge + self.recharge_rate
-        if new_charge_level > self.max_charge:
-            self.current_charge = self.max_charge
-        else:
-            self.current_charge = new_charge_level
+        # Happens once per turn while equipped if not hit this turn
+        if not self.hit_this_turn:
+            new_charge_level = self.current_charge + self.recharge_rate
+            if new_charge_level > self.max_charge:
+                self.current_charge = self.max_charge
+            else:
+                self.current_charge = new_charge_level
     
     def rechargeToFull(self):
         self.current_charge = self.max_charge
-        
+
     
 class Battery(Item):
     """Item which can be used to charge energy

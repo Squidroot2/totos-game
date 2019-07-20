@@ -259,6 +259,9 @@ def mainGameScreen(window, fps_clock, game):
                 # If turn was taken, every entity with an AI takes a turn
                 if turn_taken:
                     for entity in player.location.entities:
+                        if entity.inventory and entity.inventory.equipped['generator']:
+                            entity.inventory.equipped['generator'].recharge()
+                            entity.inventory.equipped['generator'].hit_this_turn = False
                         if entity.ai:
                             entity.ai.takeTurn()
 
@@ -386,6 +389,7 @@ def drawStatPane(window, player, pane):
 
     # Strings used
     full_name = player.name + " the " + player.background
+    floor_number = "Floor : %d" % player.location.number
     experience = "XL: %d" % player.level
     defense = "Defense: %d" % player.getDefense()
     life = "Life: %d" % player.life
@@ -395,6 +399,7 @@ def drawStatPane(window, player, pane):
     text_surfs = dict()
 
     text_surfs['name'] = FONTS['INFO'].render(full_name, True, font_color, background_color)
+    text_surfs['floor'] = FONTS['INFO'].render(floor_number, True, font_color, background_color)
     text_surfs['xp'] = FONTS['INFO'].render(experience, True, font_color, background_color)
     text_surfs['defense'] = FONTS['INFO'].render(defense, True, font_color, background_color)
     text_surfs['life'] = FONTS['INFO'].render(life, True, font_color, background_color)
@@ -406,7 +411,8 @@ def drawStatPane(window, player, pane):
 
     # Place rectangles
     text_rects['name'].midleft = (pane.left+X_MARGIN, Y_MARGIN)
-    text_rects['xp'].topleft = (pane.left + X_MARGIN, text_rects['name'].bottom + FONTS['INFO'].get_linesize())
+    text_rects['floor'].topleft = (pane.left + X_MARGIN, text_rects['name'].bottom + FONTS['INFO'].get_linesize())
+    text_rects['xp'].topleft = (pane.left+X_MARGIN, text_rects['floor'].bottom)
     text_rects['defense'].topleft = (pane.left+X_MARGIN, text_rects['xp'].bottom)
     text_rects['life'].topleft = (pane.left + X_MARGIN, text_rects['defense'].bottom)
     text_rects['energy_key'].topleft = (pane.left + X_MARGIN, text_rects['life'].bottom)

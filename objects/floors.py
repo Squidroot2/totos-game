@@ -110,7 +110,7 @@ class Floor:
             number_of_enemies: int
         """
         # todo allow multiple different types of enemies to be generated
-        chance_per_room = .2
+        chance_per_room = .3
 
         for room in self.rooms:
             if room is self.landing_room:
