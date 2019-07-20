@@ -27,6 +27,7 @@ class Floor:
         self.entities = []
         self.rooms = []
         self.portals = {'up': None, 'down': None}
+        self.landing_room = None
 
         # Random Generation of Floor
         self.generateLayout()
@@ -98,6 +99,8 @@ class Floor:
             y = random.randrange(room['y'], room['y'] + room['h'])
 
             self.portals[direction] = Portal(self, x, y, direction)
+            if direction == "up":
+                self.landing_room = room
 
 
     def generateEnemies(self):
@@ -110,6 +113,8 @@ class Floor:
         chance_per_room = .2
 
         for room in self.rooms:
+            if room is self.landing_room:
+                continue
             roll = random.random()
             if roll < chance_per_room:
                 x = random.randrange(room['x'], room['x']+room['w'])
