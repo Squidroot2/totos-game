@@ -118,10 +118,14 @@ class Target(Entity):
 
 class Portal(Entity):
     """Entity used to move player between floors"""
-    image_path = os.path.join('images','other','portal.png')
+
     def __init__(self, location, x, y, direction):
         super().__init__(location, x, y)
         assert direction in ("up", "down")
+        if direction == "down":
+            self.image_path = os.path.join('images', 'other', 'down_portal.png')
+        else:
+            self.image_path = os.path.join('images', 'other', 'up_portal.png')
         self.direction = direction
 
 
