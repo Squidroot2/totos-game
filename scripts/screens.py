@@ -191,12 +191,43 @@ def mainGameScreen(window, fps_clock, game):
                     player.move(-1, 1)
                 elif event.key == K_KP3:
                     player.move(1, 1)
+                elif event.unicode == ">":
+                    # Check if player is on down portal
+                    if player.x == player.location.portals['down'].x and player.y == player.location.portals['down'].y:
+
+                        # If the player is on the last floor, game won
+                        if player.location.number == len(game.dungeon):
+                            # Game won
+                            pass
+                        else:
+                            new_floor = game.dungeon[player.location.number]
+
+                            player.location = new_floor
+                            player.x, player.y = new_floor.portals['up'].x, new_floor.portals['up'].y
+
+                elif event.unicode == "<":
+                    # Check if player is on up portal
+                    if player.x == player.location.portals['up'].x and player.y == player.location.portals['up'].y:
+
+                        # If the player is on the first floor, game over
+                        if player.location.number == 1:
+                            run_game = False
+
+                        # Otherwise, move the player to the previous floor
+                        else:
+                            new_floor = game.dungeon[player.location.number-2]
+
+                            player.location = new_floor
+                            player.x, player.y = new_floor.portals['down'].x, new_floor.portals['down'].y
+
+
                 elif event.key == K_i:
                     # todo write open inventory screen
                     pass
                 elif event.key == K_f:
                     # todo write ranged attack screen
                     pass
+
 
                 for entity in player.location.entities:
                     if entity.ai:
