@@ -19,7 +19,7 @@ COLORS = {'BLACK':      (  0,  0,  0),
           'RED':        (255,  0,  0),
           'LIGHT BLUE': (100,255,255),
           'YELLOW':     (255,255,  0),
-          'GOLDENROD':  (218,165, 32)}
+          'GOLDENROD':  (190,145, 20)}
 
 
 pygame.font.init()
