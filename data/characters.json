@@ -1,0 +1,24 @@
+{
+  "PLAYER" : {
+    "name": null,
+    "image": "player.png",
+    "level": 1,
+    "xp": 0,
+    "life": 5,
+    "damage": 1,
+    "defense": 0,
+    "attack_rate": 1,
+    "ai": null
+  },
+  "BLOB_1": {
+    "name": "Blob",
+    "image": "blob.png",
+    "level": 1,
+    "life": 10,
+    "xp": 1,
+    "damage": 3,
+    "defense": 0,
+    "attack_rate": 1,
+    "ai": "brainless"
+  }
+}

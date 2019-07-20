@@ -119,7 +119,7 @@ class Floor:
             if roll < chance_per_room:
                 x = random.randrange(room['x'], room['x']+room['w'])
                 y = random.randrange(room['y'], room['y']+room['h'])
-                Character("BLOB1", self, x, y)
+                Character("BLOB_1", self, x, y)
 
 
     def updateTiles(self):

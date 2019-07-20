@@ -2,12 +2,13 @@ from objects.items import Weapon, Armor, Generator, Battery
 from objects.entities import Entity, Corpse
 from objects.camera import Camera
 from objects.game import Log
-from scripts.utilities import readINI
+from scripts.utilities import readINI, getItemById
 from scripts import formulas
 import pygame
 import os, random
 
 CHARACTER_INI = os.path.join('data','characters.ini')
+CHARACTER_JSON = os.path.join('data','characters.json')
 
 class Character(Entity):
     """Used for entities which act on the world
@@ -41,29 +42,32 @@ class Character(Entity):
     
     Children:
         Player(Character)"""
-    def __init__(self, char_id, floor, x, y, ai=True, inventory=[]):
+    def __init__(self, char_id, floor, x, y, inventory=[]):
         """Extends the entity init function"""
 
-        # Reads the ini file
-        config = readINI(CHARACTER_INI)
+        # Gets the data from the JSON File
+        data = getItemById(CHARACTER_JSON, char_id)
+
+        # Copies the info from the data
+        self.name = data['name']
+        self.level = data['level']
+        self.xp = data['xp']
+        self.life = data['life']
+        self.base_damage = data['damage']
+        self.base_defense = data['defense']
+        self.base_attack_rate = data['attack_rate']
+
+        # Gets the image
+        image_name = data['image']
+        self.image_path = os.path.join('images', 'characters', image_name)
+
+        # Gets the ai type
+        ai = data['ai']
 
         # todo use the inventory type
 
         # Runs the Entity init method
         super().__init__(floor, x, y, ai=ai, inventory=inventory, obstruct=True)
-
-        # Gets the image
-        image_name = config[char_id].get('image')
-        self.image_path = os.path.join('images', 'characters', image_name)
-
-        # Pull stats from the character ini file
-        self.name =     config[char_id].get('name')
-        self.level =    config[char_id].getint('level')
-        self.xp =       config[char_id].getint('xp')
-        self.life =     config[char_id].getint('life')
-        self.base_damage = config[char_id].getint('damage')
-        self.base_defense = config[char_id].getint('defense')
-        self.base_attack_rate = config[char_id].getint('attack_rate')
 
         # Set the character to not dead
         self.is_dead = False
@@ -257,7 +261,7 @@ class Player(Character):
                 starting y position on the floor
         """
 
-        super().__init__("PLAYER", floor, x, y, ai=None, inventory=[])
+        super().__init__("PLAYER", floor, x, y, inventory=[])
 
         # Overrides the name set by the Character init method
         self.name = name
@@ -268,7 +272,7 @@ class Player(Character):
 
         self.setStartingInventory()
 
-        # Player-Specific Components
+        # Player-Specific Component
         self.camera = Camera(self)
 
     # todo move inventory stuff to inventory class with ids
