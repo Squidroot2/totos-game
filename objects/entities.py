@@ -117,6 +117,15 @@ class Target(Entity):
         self.x += delta_x
         self.y += delta_y
 
+class Portal(Entity):
+    """Entity used to move player between floors"""
+    image_path = os.path.join('images','other','portal.png')
+    def __init__(self, location, x, y, direction):
+        super().__init__(location, x, y)
+        assert direction in ("up", "down")
+        self.direction = direction
+
+
 class Corpse(Entity):
     """This is created when a character object has been killed
     

@@ -4,6 +4,7 @@ import random
 import pygame
 import tcod
 
+from objects.entities import Portal
 from objects.characters import Character
 from scripts.constants import CELL_SIZE, FLOOR_HEIGHT, FLOOR_WIDTH
 
@@ -20,11 +21,15 @@ class Floor:
         self.tile_map = [[Tile(self.map, x, y) for y in range(self.height)] for x in range(self.width)]
         self.entities = []
         self.rooms = []
+        # Initialize the portals
+        self.portals = {'up': None, 'down': None}
 
         # Random Generation of Floor
         self.generateLayout()
         self.updateTiles()
+        self.generatePortals()
         self.generateEnemies()
+
 
     def generateLayout(self):
         """Uses Binary Space Partition to generate the layout of the dungeon"""
@@ -71,6 +76,26 @@ class Floor:
 
         self.rooms.append({"x":x,"y":y,"w":width,"h":height})
 
+    def generatePortals(self):
+        """Creates up and down portals for the floor"""
+        # Choose a random room
+        up_room = random.choice(self.rooms)
+        down_room = random.choice(self.rooms)
+        while up_room is down_room:
+            down_room = random.choice(self.rooms)
+
+        for room in (up_room, down_room):
+            if room is up_room:
+                direction = "up"
+            else:
+                direction ="down"
+
+            x = random.randrange(room['x'], room['x'] + room['w'])
+            y = random.randrange(room['y'], room['y'] + room['h'])
+
+            self.portals[direction] = Portal(self, x, y, direction)
+
+
     def generateEnemies(self):
         """Generates a specified number of enemies for the floor
 
@@ -83,8 +108,8 @@ class Floor:
         for room in self.rooms:
             roll = random.random()
             if roll < chance_per_room:
-                x = random.randint(room['x'], room['x']+room['w'])
-                y = random.randint(room['y'], room['y']+room['h'])
+                x = random.randrange(room['x'], room['x']+room['w'])
+                y = random.randrange(room['y'], room['y']+room['h'])
                 Character("BLOB1", self, x, y)
 
 
