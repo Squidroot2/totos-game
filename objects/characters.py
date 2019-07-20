@@ -78,14 +78,11 @@ class Character(Entity):
     def validateMove(self, destination):
         # If destination is out of range
         if destination[0] < 0 or destination[0] >= self.location.width:
-            print("Invalid move X")
             return False
         elif destination[1] < 0 or destination[1] >= self.location.height:
-            print("invalid move Y")
             return False
         # If destination is blocked
         elif not self.location.map.walkable[destination[1]][destination[0]]:
-            print("Invalid move, blocked")
             return False
         else:
             return True
