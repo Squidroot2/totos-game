@@ -228,6 +228,13 @@ class Character(Entity):
         except:
             print("No Generator to hold energy")
 
+    @property
+    def max_energy(self):
+        if self.inventory.equipped['generator'] is None:
+            return 0
+        else:
+            return self.inventory.equipped['generator'].max_charge
+
 
 class Player(Character):
     image = pygame.image.load(os.path.join('images','characters','player.png'))
