@@ -305,11 +305,18 @@ def getPanes(window_rect):
 
 
 def drawStatPane(window, player, pane):
-    """Draws the players statistics on the right side of the screen"""
+    """Draws the players statistics on the right side of the screen
+
+    Parameters:
+        window : pygame.Surface
+        player : Player
+        pane : pygame.Rect
+    """
 
 
     background_color = COLORS['DARK GRAY']
     font_color = COLORS['WHITE']
+    energy_value_font_color = COLORS['GOLDENROD']
 
     # Fills in the pane in black
     pygame.draw.rect(window, background_color, pane, 0)
@@ -322,6 +329,7 @@ def drawStatPane(window, player, pane):
     experience = "XL: %d" % player.level
     defense = "Defense: %d" % player.getDefense()
     life = "Life: %d" % player.life
+    energy_value = "%.1f / %d" % (player.energy, player.max_energy)
 
     # Dictionary of text surfaces that will be blitted to the screen
     text_surfs = dict()
@@ -330,7 +338,8 @@ def drawStatPane(window, player, pane):
     text_surfs['xp'] = FONTS['INFO'].render(experience, True, font_color, background_color)
     text_surfs['defense'] = FONTS['INFO'].render(defense, True, font_color, background_color)
     text_surfs['life'] = FONTS['INFO'].render(life, True, font_color, background_color)
-    text_surfs['energy_key'] = FONTS['INFO'].render("Energy", True, font_color, background_color)
+    text_surfs['energy_key'] = FONTS['INFO'].render("Energy:", True, font_color, background_color)
+    text_surfs['energy_value'] = FONTS['INFO'].render(energy_value, True, energy_value_font_color)
 
     # Create Dictionary of Rectangle objects for each rect
     text_rects = {surf: text_surfs[surf].get_rect() for surf in text_surfs}
@@ -340,6 +349,33 @@ def drawStatPane(window, player, pane):
     text_rects['xp'].topleft = (pane.left + X_MARGIN, text_rects['name'].bottom + FONTS['INFO'].get_linesize())
     text_rects['defense'].topleft = (pane.left+X_MARGIN, text_rects['xp'].bottom)
     text_rects['life'].topleft = (pane.left + X_MARGIN, text_rects['defense'].bottom)
+    text_rects['energy_key'].topleft = (pane.left + X_MARGIN, text_rects['life'].bottom)
+    # Energy Value is placed after energy bar
+
+    # Define Energy Bar Dimensions
+    energy_bar_width = pane.width/4
+    energy_bar_height = FONTS['INFO'].get_linesize()
+    energy_bar_left = text_rects['energy_key'].right + 20
+    energy_bar_top = text_rects['energy_key'].top
+
+    energy_bar = pygame.Rect(energy_bar_left,energy_bar_top,energy_bar_width,energy_bar_height)
+
+    # Place Energy Value
+    text_rects['energy_value'].center = energy_bar.center
+
+    # Draw to Screen
+    pygame.draw.rect(window, COLORS['WHITE'], energy_bar, 1)
+
+    # Define Energy Fill
+    energy_fill = energy_bar.copy()
+    energy_fill.y += 1
+    energy_fill.x += 1
+    energy_fill.height -= 2
+    energy_fill.width = (energy_bar.width -2) * (player.energy / player.max_energy)
+
+
+    # Draw Energy Fill to Screen
+    pygame.draw.rect(window, COLORS['LIGHT BLUE'], energy_fill, 0)
 
     for text in text_surfs:
         window.blit(text_surfs[text], text_rects[text])
