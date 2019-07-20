@@ -70,7 +70,6 @@ class Entity:
             obstruct : bool
                 Whether the entity obtructs movement or not
         """
-        # todo split the components parameter into inventory and ai
         self.x = x
         self.y = y
         self.location = location
