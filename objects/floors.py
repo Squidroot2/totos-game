@@ -13,15 +13,19 @@ class Floor:
     width = FLOOR_WIDTH
     height = FLOOR_HEIGHT
     
-    def __init__(self):
-        """Init method for the Floor class"""
-        # todo have floor store its floor number
-        # todo add stair generation
+    def __init__(self, floor_number):
+        """Init method for the Floor class
+
+        Parameters:
+            floor_number : int
+        """
         self.map = tcod.map.Map(self.width, self.height)
         self.tile_map = [[Tile(self.map, x, y) for y in range(self.height)] for x in range(self.width)]
+        self.number = floor_number
+
+        # Initialize empty variable
         self.entities = []
         self.rooms = []
-        # Initialize the portals
         self.portals = {'up': None, 'down': None}
 
         # Random Generation of Floor
@@ -154,7 +158,7 @@ class Floor:
         floor_list = list()
 
         for index in range(num_of_floors):
-            floor_list.append(Floor())
+            floor_list.append(Floor(index+1))
             print(index)
 
         return floor_list
