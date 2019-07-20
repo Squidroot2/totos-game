@@ -29,4 +29,4 @@ FONTS = {'TITLE': pygame.font.Font('freesansbold.ttf', 70),
          'LOG': pygame.font.Font('freesansbold.ttf', 12)}
 
 FONTS['TITLE'].set_underline(True)
-FPS = 144
+FPS = 60
