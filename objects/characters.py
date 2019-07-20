@@ -277,33 +277,33 @@ class Player(Character):
         # Create Initial Items in Inventory
         if self.background == "Officer":
             weapon = Weapon("PISTOL_1", self.inventory)
-            armor = Armor("ARMOR1", self.inventory)
-            generator = Generator("QUICK1", self.inventory)
+            armor = Armor("ARMOR_1", self.inventory)
+            generator = Generator("QUICK_1", self.inventory)
             Weapon("KNIFE_1", self.inventory)
 
         elif self.background == "Marksman":
             weapon = Weapon("RIFLE_1", self.inventory)
-            armor = Armor("ARMOR1", self.inventory)
-            generator = Generator("RANGER1", self.inventory)
+            armor = Armor("ARMOR_1", self.inventory)
+            generator = Generator("RANGER_1", self.inventory)
 
         elif self.background == "Agent":
             weapon = Weapon("PDW_1", self.inventory)
-            armor = Armor("ARMOR1", self.inventory)
-            generator = Generator("FEEDER1", self.inventory)
+            armor = Armor("ARMOR_1", self.inventory)
+            generator = Generator("FEEDER_1", self.inventory)
 
         elif self.background == "Pointman":
             weapon = Weapon("CANNON_1", self.inventory)
-            armor = Armor("ARMOR1", self.inventory)
-            generator = Generator("RANGER1", self.inventory)
+            armor = Armor("ARMOR_1", self.inventory)
+            generator = Generator("RANGER_1", self.inventory)
 
         elif self.background == "Gladiator":
             weapon = Weapon("SWORD_1", self.inventory)
-            armor = Armor("ARMOR2", self.inventory)
-            generator = Generator("BRAWLER1", self.inventory)
+            armor = Armor("ARMOR_2", self.inventory)
+            generator = Generator("BRAWLER_1", self.inventory)
 
         # Player starts with 2 batteries
         for i in range(2):
-            Battery("TINY", self.inventory)
+            Battery("BATTERY_1", self.inventory)
         
         # Equip Items
         weapon.equip()

@@ -256,7 +256,7 @@ def mainGameScreen(window, fps_clock, game):
                 else:
                     turn_taken = False
 
-                # If turn was taken, iterate through all entities in the
+                # If turn was taken, iterate through all entities in the entities list
                 if turn_taken:
                     for entity in player.location.entities:
                         #  every entity with an AI takes a turn

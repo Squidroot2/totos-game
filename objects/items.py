@@ -1,11 +1,8 @@
 from objects.entities import Entity
 import os
-from scripts.utilities import readINI
+from scripts.utilities import getItemById
 
-WEAPON_INI = os.path.join('data','weapons.ini')
-ARMOR_INI = os.path.join('data','armor.ini')
-GENERATOR_INI = os.path.join('data','generator.ini')
-BATTERY_INI = os.path.join('data','battery.ini')
+ITEM_JSON = os.path.join('data','items.json')
 
 class Item(Entity):
     #todo finish Item docstrings
@@ -45,19 +42,19 @@ class Weapon(Item):
     def __init__(self, item_id, location, x=None, y=None):
         super().__init__(location, x, y)
         
-        config = readINI(WEAPON_INI)
-        self.name =             config[item_id].get('name')
-        self.melee_damage =     config[item_id].getint('melee_damage')
-        self.is_quick_draw =    config[item_id].getboolean('quick_draw')
-        self.melee_speed =      config[item_id].getint('melee_speed')
-        self.difficulty =       config[item_id].getint('difficulty')
-        self.is_ranged =        config[item_id].getboolean('is_ranged')
-        if self.is_ranged:
-            self.ranged_damage =    config[item_id].getint('ranged_damage')
-            self.energy_per_shot =  config[item_id].getint('energy_per_shot')
-            self.fire_rate =        config[item_id].getint('fire_rate')
-            self.range =       config[item_id].getint('range')
+        data = getItemById(ITEM_JSON, item_id, "WEAPONS")
 
+        self.name = data['name']
+        self.melee_damage = data['melee_damage']
+        self.melee_speed = data['melee_speed']
+        self.is_quick_draw = data['quick_draw']
+        self.difficulty = data['difficulty']
+        self.is_ranged = bool(data['ranged'])
+        if self.is_ranged:
+            self.ranged_damage = data['ranged']['damage']
+            self.energy_per_shot = data['ranged']['energy']
+            self.fire_rate = data['ranged']['fire_rate']
+            self.range = data['ranged']['range']
 
     def equip(self):
         self.location.equipped['weapon'] = self
@@ -73,10 +70,11 @@ class Armor(Item):
     def __init__(self, item_id, location, x=None, y=None):
         super().__init__(location, x, y)
         
-        config = readINI(ARMOR_INI)
-        self.name =         config[item_id].get('name')
-        self.defense =      config[item_id].getint('defense')
-        self.difficulty =   config[item_id].getint('difficulty')
+        data = getItemById(ITEM_JSON, item_id, "ARMOR")
+
+        self.name = data['name']
+        self.defense = data['defense']
+        self.difficulty = data['difficulty']
     
     def equip(self):
         self.location.equipped['armor'] = self
@@ -92,11 +90,14 @@ class Generator(Item):
     def __init__(self, item_id, location, x=None, y=None):
         super().__init__(location, x, y)
     
-        config = readINI(GENERATOR_INI)
-        self.name =             config[item_id].get('name')
-        self.max_charge =       config[item_id].getint('max_charge')
-        self.recharge_rate =    config[item_id].getfloat('recharge_rate')
-        self.difficulty =       config[item_id].getint('difficulty')
+        data = getItemById(ITEM_JSON, item_id, "GENERATORS")
+
+        self.name = data['name']
+        self.max_charge = data['max_charge']
+        self.recharge_rate = data['recharge_rate']
+        self.recoil_charge = data['recoil_charge']
+        self.difficulty = data['difficulty']
+
 
         self.hit_this_turn = False
         
@@ -132,9 +133,11 @@ class Battery(Item):
         """Extends the Entity init method"""
         super().__init__(location, x, y)
         
-        config = readINI(BATTERY_INI)
-        self.name = config[item_id].get('name')
-        self.power = config[item_id].getint('power')
+        data = getItemById(ITEM_JSON, item_id, "BATTERIES")
+
+        self.name = data['name']
+        self.power = data['power']
+
     
     def use(self):
         target = self.location.equipped['generator']

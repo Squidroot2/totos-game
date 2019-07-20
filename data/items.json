@@ -1,0 +1,227 @@
+{
+  "ARMOR": {
+    "ARMOR_1": {
+      "name": "Space Silk",
+      "defense": 1,
+      "difficulty": 1
+    },
+    "ARMOR_2": {
+      "name": "Cosmic Cloth",
+      "defense": 2,
+      "difficulty": 2
+    },
+    "ARMOR_3": {
+      "name": "Heavenly Hide",
+      "defense": 3,
+      "difficulty": 2
+    },
+    "ARMOR_4": {
+      "name": "Lunar Leather",
+      "defense": 4,
+      "difficulty": 3
+    },
+    "ARMOR_5": {
+      "name": "Galactic Glass",
+      "defense": 5,
+      "difficulty": 3
+    },
+    "ARMOR_6": {
+      "name": "Irradient Iron",
+      "defense": 6,
+      "difficulty": 4
+    },
+    "ARMOR_7": {
+      "name": "Celestrial Steel",
+      "defense": 7,
+      "difficulty": 4
+    },
+    "ARMOR_8": {
+      "name": "Transcendent Titanium",
+      "defense": 8,
+      "difficulty": 5
+    },
+    "ARMOR_9": {
+      "name": "Dimensional Diamond",
+      "defense": 9,
+      "difficulty": 5
+    },
+    "ARMOR_10": {
+      "name": "Grandoise Graphene",
+      "defense": 10,
+      "difficulty": 6
+    },
+    "ARMOR_11": {
+      "name": "Etherium ARMOR_",
+      "defense": 11,
+      "difficulty": 7
+    },
+    "ARMOR_12": {
+      "name": "Gelorium ARMOR_",
+      "defense": 12,
+      "difficulty": 8
+    },
+    "ARMOR_13": {
+      "name": "Adamantium ARMOR_",
+      "defense": 13,
+      "difficulty": 9
+    },
+    "ARMOR_14": {
+      "name": "Plasmium ARMOR_",
+      "defense": 14,
+      "difficulty": 10
+    },
+    "ARMOR_15": {
+      "name": "Lunarium ARMOR_",
+      "defense": 15,
+      "difficulty": 11
+    },
+    "ARMOR_16": {
+      "name": "Solarium ARMOR_",
+      "defense": 16,
+      "difficulty": 12
+    },
+    "ARMOR_17": {
+      "name": "Galaxium ARMOR_",
+      "defense": 17,
+      "difficulty": 13
+    },
+    "ARMOR_18": {
+      "name": "Lamdium ARMOR_",
+      "defense": 18,
+      "difficulty": 14
+    },
+    "ARMOR_19": {
+      "name": "Phantomium",
+      "defense": 19,
+      "difficulty": 15
+    },
+    "ARMOR_20": {
+      "name": "Quantonium",
+      "defense": 20,
+      "difficulty": 15
+    },
+    "ARMOR_21": {
+      "name": "Dark Armor",
+      "defense": 25,
+      "difficulty": 20
+    },
+    "ARMOR_22": {
+      "name": "Void Armor",
+      "defense": 26,
+      "difficulty": 20
+    },
+    "ARMOR_23": {
+      "name": "Heavenly Armor",
+      "defense": 27,
+      "difficulty": 20
+    },
+    "ARMOR_24": {
+      "name": "Angelic Armor",
+      "defense": 28,
+      "difficulty": 20
+    },
+    "ARMOR_25": {
+      "name": "Rapture Armor",
+      "defense": 29,
+      "difficulty": 20
+    },
+    "ARMOR_26": {
+      "name": "Flesh of the Gods",
+      "defense": 30,
+      "difficulty": 20
+    }
+  },
+  "WEAPONS": {
+    "PISTOL_1" : {
+      "name": "Pi Shooter",
+      "melee_damage" : 2,
+      "melee_speed" : 1,
+      "quick_draw": true,
+      "difficulty": 2,
+      "ranged": {
+        "damage": 5,
+        "energy": 2,
+        "fire_rate": 1,
+        "range": 3
+      }
+    },
+    "RIFLE_1": {
+      "name": "Hunting Rifle",
+      "melee_damage": 1,
+      "melee_speed": 1,
+      "quick_draw": false,
+      "difficulty": 1,
+      "ranged": {
+        "damage": 10,
+        "energy": 3,
+        "fire_rate": 1,
+        "range": 2
+      }
+    },
+    "CANNON_1": {
+      "name": "Pounder",
+      "melee_damage": 2,
+      "melee_speed": 1,
+      "quick_draw": false,
+      "difficulty": 2,
+      "ranged": {
+        "damage": 10,
+        "energy": 3,
+        "fire_rate": 1,
+        "range": 2
+      }
+    },
+    "KNIFE_1": {
+      "name": "Simple Knife",
+      "melee_damage": 3,
+      "melee_speed": 2,
+      "quick_draw": true,
+      "difficulty": 1,
+      "ranged": null
+    },
+    "SWORD_1": {
+      "name": "Nu-Steel Sword",
+      "melee_damage": 5,
+      "melee_speed": 2,
+      "quick_draw": false,
+      "difficulty": 1,
+      "ranged": null
+    }
+  },
+  "GENERATORS": {
+    "QUICK_1": {
+      "name": "Squire MK1",
+      "max_charge": 5,
+      "recharge_rate": 0.5,
+      "recoil_charge": 1,
+      "difficulty": 1
+    },
+    "BRAWLER_1": {
+      "name": "Knight MK1",
+      "max_charge": 10,
+      "recharge_rate": 0.3,
+      "recoil_charge": 0,
+      "difficulty": 2
+    },
+    "FEEDER_1": {
+      "name": "Archer MK1",
+      "max_charge": 5,
+      "recharge_rate": 0.1,
+      "recoil_charge": 3,
+      "difficulty": 1
+    },
+    "RANGER_1": {
+      "name": "Lancer MK1",
+      "max_charge": 8,
+      "recharge_rate": 0.2,
+      "recoil_charge": 2,
+      "difficulty": 1
+    }
+  },
+  "BATTERIES": {
+    "BATTERY_1": {
+      "name": "Tiny Battery",
+      "power": 5
+    }
+  }
+}

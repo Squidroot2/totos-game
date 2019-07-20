@@ -5,7 +5,9 @@ Classes:
     Log : Keeps track of game messages
 """
 import pygame
+from scripts.utilities import loadJson
 from scripts.constants import CELL_SIZE, FLOOR_WIDTH, FLOOR_HEIGHT
+import os
 
 
 class Game:
@@ -19,6 +21,7 @@ class Game:
         surface : pygame.Surface
             Objects in the game are drawn to here, then this is blitted to the main window
     """
+    items_path = os.path.join('data','items.json')
     def __init__(self, dungeon, player):
         """Init method for Game
 
@@ -30,6 +33,7 @@ class Game:
         self.player = player
         self.log = Log(self)
         self.surface = pygame.Surface((FLOOR_WIDTH*CELL_SIZE,FLOOR_HEIGHT*CELL_SIZE))
+
         
 
 
