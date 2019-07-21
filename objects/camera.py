@@ -1,10 +1,11 @@
 from scripts.constants import CELL_SIZE
 import pygame
 
+
 class Camera:
     """Used for display the part of the game surface centered on a particular entity such as the player"""
     # 10, above, 10 below, 10 right, 10 left
-    width = 21
+    width = 29
     height = 21
     
     def __init__(self, owner):
