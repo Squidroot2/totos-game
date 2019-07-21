@@ -178,11 +178,13 @@ class Tile:
         self.transparent = map.transparent[y][x]
         self.x = x
         self.y = y
+        self.discovered = False
 
 
     def draw(self, surface):
         """Blits the tile to the screen"""
-        surface.blit(self.image, (self.x * self.CELL_SIZE, self.y * self.CELL_SIZE))
+        if self.discovered:
+            surface.blit(self.image, (self.x * self.CELL_SIZE, self.y * self.CELL_SIZE))
 
     def update(self, map):
         """Loads the image for each image depending on the values in the walkable and transparent array"""

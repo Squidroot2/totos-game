@@ -78,7 +78,7 @@ class Entity:
         self.image = None
 
         if ai:
-            self.ai = AI(self)
+            self.ai = AI(self, ai)
         else:
             self.ai = None
         

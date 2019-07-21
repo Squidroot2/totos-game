@@ -17,8 +17,19 @@
     "life": 10,
     "xp": 1,
     "damage": 3,
-    "defense": 0,
+    "defense": 2,
     "attack_rate": 1,
     "ai": "brainless"
+  },
+  "WEIRDMONK": {
+    "name": "Weirdmonk",
+    "image": "weirdmonk.png",
+    "level": 1,
+    "life": 5,
+    "xp": 2,
+    "damage": 5,
+    "defense": 0,
+    "attack_rate": 1,
+    "ai": "basic"
   }
 }

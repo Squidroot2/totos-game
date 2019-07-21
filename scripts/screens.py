@@ -266,6 +266,8 @@ def mainGameScreen(window, fps_clock, game):
                         if entity.inventory and entity.inventory.equipped['generator']:
                             entity.inventory.equipped['generator'].recharge()
                             entity.inventory.equipped['generator'].hit_this_turn = False
+                    player.calculateFOV()
+                    player.discoverTiles()
 
         if player.is_dead:
             run_game = False
@@ -278,7 +280,8 @@ def mainGameScreen(window, fps_clock, game):
         for entity in player.location.entities:
             if entity is player:
                 continue
-            entity.draw(game.surface)
+            if player.getFOV()[entity.y][entity.x]:
+                entity.draw(game.surface)
         player.draw(game.surface)
 
         # Draw the side and log panes

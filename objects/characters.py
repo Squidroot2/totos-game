@@ -4,7 +4,7 @@ from objects.camera import Camera
 from objects.game import Log
 from scripts.utilities import getItemById
 from scripts import formulas
-import pygame
+import pygame, numpy
 import os, random
 
 CHARACTER_JSON = os.path.join('data','characters.json')
@@ -274,6 +274,10 @@ class Player(Character):
         # Player-Specific Component
         self.camera = Camera(self)
 
+        # Start with a calculated FOV
+        self.calculateFOV()
+        self.discoverTiles()
+
     # todo move inventory stuff to inventory class with ids
     def setStartingInventory(self):
     
@@ -315,3 +319,14 @@ class Player(Character):
         
         # Shield Starts charged
         generator.rechargeToFull()
+
+    def calculateFOV(self):
+        self.location.map.compute_fov(self.x, self.y)
+
+    def getFOV(self):
+        return self.location.map.fov
+
+    def discoverTiles(self):
+        fov = numpy.where(self.getFOV())
+        for i in range(len(fov[0])):
+            self.location.tile_map[(fov[1][i])][(fov[0][i])].discovered = True
