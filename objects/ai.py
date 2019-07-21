@@ -11,10 +11,9 @@ class AI:
     # todo figure out a way to identify the player as the opponent
     def findPlayer(self):
         """Searches through the list of entities in the location"""
-        # for entity in self.owner.location.entities:
-        #     if
-        #         return entity
-
+        for entity in self.owner.location.entities:
+            if entity.is_player:
+                return entity
         return None
 
     def takeTurn(self):

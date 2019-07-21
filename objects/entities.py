@@ -1,13 +1,16 @@
-'''
+"""
 Contains the classes used to construct actors(player,enemies,items)
 
 Classes:
     Entity
+    Target(Entity)
+    Portal(Entity)
     Corpse(Entity)
-'''
-from objects.ai import AI
-from scripts.constants import *
+"""
+
 import os, pygame
+
+from objects.ai import AI
 from objects.inventory import *
 from scripts.constants import CELL_SIZE
 
@@ -55,7 +58,7 @@ class Entity:
     image_path = os.path.join('images', 'unknown.png')
     CELL_SIZE = CELL_SIZE
 
-    def __init__(self, location, x=None, y=None, ai=None, inventory=None, obstruct=False):
+    def __init__(self, location, x=None, y=None, ai=None, inventory=None, obstruct=False, is_player=False):
         """Init method for Entity
         
         Parameters: 
@@ -79,6 +82,10 @@ class Entity:
         self.discovered = False
         self.last_known_x = None
         self.last_known_y = None
+        if is_player:
+            self.is_player = True
+        else:
+            self.is_player = False
 
         if ai:
             self.ai = AI(self, ai)

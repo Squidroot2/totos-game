@@ -39,7 +39,7 @@ class Character(Entity):
     
     Children:
         Player(Character)"""
-    def __init__(self, char_id, floor, x, y, inventory=[]):
+    def __init__(self, char_id, floor, x, y, inventory=[], is_player=False):
         """Extends the entity init function"""
 
         # Gets the data from the JSON File
@@ -64,7 +64,7 @@ class Character(Entity):
         # todo use the inventory type
 
         # Runs the Entity init method
-        super().__init__(floor, x, y, ai=ai, inventory=inventory, obstruct=True)
+        super().__init__(floor, x, y, ai=ai, inventory=inventory, obstruct=True, is_player=is_player)
 
         # Set the character to not dead
         self.is_dead = False

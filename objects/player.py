@@ -28,7 +28,7 @@ class Player(Character):
                 starting y position on the floor
         """
 
-        super().__init__("PLAYER", floor, x, y, inventory=[])
+        super().__init__("PLAYER", floor, x, y, inventory=[], is_player=True)
 
         # Overrides the name set by the Character init method
         self.name = name
