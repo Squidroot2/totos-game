@@ -6,7 +6,7 @@ import tcod
 
 from objects.entities import Portal
 from objects.characters import Character
-from scripts.constants import CELL_SIZE, FLOOR_HEIGHT, FLOOR_WIDTH
+from scripts.constants import CELL_SIZE, FLOOR_HEIGHT, FLOOR_WIDTH, COLORS
 
 
 class Floor:
@@ -23,7 +23,7 @@ class Floor:
         self.tile_map = [[Tile(self.map, x, y) for y in range(self.height)] for x in range(self.width)]
         self.number = floor_number
 
-        # Initialize empty variable
+        # Initialize empty variables
         self.entities = []
         self.rooms = []
         self.portals = {'up': None, 'down': None}
@@ -121,7 +121,6 @@ class Floor:
                 y = random.randrange(room['y'], room['y']+room['h'])
                 Character("BLOB_1", self, x, y)
 
-
     def updateTiles(self):
         """Runs the update method on every tile in the tile_map"""
         for xtile in range(self.width):
@@ -152,6 +151,14 @@ class Floor:
         """Removes an entity from the entities list attribute"""
         self.entities.remove(entity)
 
+    def drawFog(self, surface):
+        """Grays out areas that have been discovered but are no longer in FOV"""
+
+        for x in range(self.width):
+            for y in range(self.height):
+                if self.tile_map[x][y].discovered and not self.map.fov[y][x]:
+                    self.tile_map[x][y].drawFog(surface)
+
     @staticmethod
     def generateDungeon(num_of_floors):
         """Returns a list of a specified number of floors
@@ -179,12 +186,14 @@ class Tile:
         self.x = x
         self.y = y
         self.discovered = False
+        self.pixel_x = self.x*self.CELL_SIZE
+        self.pixel_y = self.y*self.CELL_SIZE
 
 
     def draw(self, surface):
         """Blits the tile to the screen"""
         if self.discovered:
-            surface.blit(self.image, (self.x * self.CELL_SIZE, self.y * self.CELL_SIZE))
+            surface.blit(self.image, (self.pixel_x, self.pixel_y))
 
     def update(self, map):
         """Loads the image for each image depending on the values in the walkable and transparent array"""
@@ -194,3 +203,19 @@ class Tile:
             self.image = pygame.image.load(os.path.join('images', 'tiles', 'white-tile.png'))
         else:
             self.image = pygame.image.load(os.path.join('images', 'tiles', 'wall.png'))
+
+    def drawFog(self, surface):
+        """Covers the tile in a translucent gray surface"""
+
+        surf = pygame.Surface((self.CELL_SIZE, self.CELL_SIZE))
+        surf.set_alpha(128)
+        surf.fill(COLORS['DARK GRAY'])
+        surface.blit(surf, (self.pixel_x, self.pixel_y))
+
+    def getRect(self):
+        """Returns a rect representing the area and location of the tile"""
+        left = self.x*self.CELL_SIZE
+        top = self.y*self.CELL_SIZE
+        width = self.CELL_SIZE
+        height = self.CELL_SIZE
+        return pygame.Rect(left,top,width,height)

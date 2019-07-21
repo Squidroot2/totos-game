@@ -76,6 +76,9 @@ class Entity:
         self.location.addEntity(self)
         self.obstruct = obstruct
         self.image = None
+        self.discovered = False
+        self.last_known_x = None
+        self.last_known_y = None
 
         if ai:
             self.ai = AI(self, ai)
@@ -106,6 +109,10 @@ class Entity:
         if self.image is None:
                 self.loadImage()
         surface.blit(self.image, (self.x*self.CELL_SIZE, self.y*self.CELL_SIZE))
+
+    def drawAtLastKnown(self, surface):
+        """Draws the entity at the last known location rather than necessarily the actual location"""
+        surface.blit(self.image, (self.last_known_x*self.CELL_SIZE, self.last_known_y*self.CELL_SIZE))
 
 
 # todo finish Target  class

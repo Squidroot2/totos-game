@@ -217,6 +217,7 @@ def mainGameScreen(window, fps_clock, game):
 
                             player.location = new_floor
                             player.x, player.y = new_floor.portals['up'].x, new_floor.portals['up'].y
+                            game.surface.fill(COLORS['BLACK'])
 
                     # If the player does not move, turn is not taken
                     else:
@@ -237,6 +238,7 @@ def mainGameScreen(window, fps_clock, game):
 
                             player.location = new_floor
                             player.x, player.y = new_floor.portals['down'].x, new_floor.portals['down'].y
+                            game.surface.fill(COLORS['BLACK'])
 
                     # If the player does not move, turn is not taken
                     else:
@@ -281,8 +283,16 @@ def mainGameScreen(window, fps_clock, game):
             if entity is player:
                 continue
             if player.getFOV()[entity.y][entity.x]:
+                entity.discovered = True
+                entity.last_known_x = entity.x
+                entity.last_known_y = entity.y
                 entity.draw(game.surface)
+            elif entity.discovered:
+                entity.drawAtLastKnown(game.surface)
         player.draw(game.surface)
+
+        # Draw Fog over the map
+        player.location.drawFog(game.surface)
 
         # Draw the side and log panes
         drawStatPane(window, player, panes['side'])
