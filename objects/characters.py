@@ -7,7 +7,8 @@ from scripts import formulas
 import pygame, numpy
 import os, random
 
-CHARACTER_JSON = os.path.join('data','characters.json')
+CHARACTER_JSON = os.path.join('data', 'characters.json')
+
 
 class Character(Entity):
     """Used for entities which act on the world
@@ -31,7 +32,7 @@ class Character(Entity):
         base_damage : int : amount of melee damage done with no weapon
         base_defense : int : amount of defense with no armor
         base_attack_rate : int : amount of melee attacks that can be performed
-        isDead : bool
+        is_dead : bool
     
     Methods:
         loadImage(self) : INHERITED
@@ -144,7 +145,6 @@ class Character(Entity):
         # Determine if the damage to flesh was lethal
         killed = formulas.determineLethal(damage_to_flesh, self.life)
 
-
         if killed:
             self.kill()
         # If self was not killed, determine if injured
@@ -225,6 +225,7 @@ class Character(Entity):
             return 0
         else:
             return self.inventory.equipped['generator'].current_charge
+
     @energy.setter
     def energy(self, value):
         try:
@@ -241,7 +242,7 @@ class Character(Entity):
 
 
 class Player(Character):
-    image = pygame.image.load(os.path.join('images','characters','player.png'))
+    image = pygame.image.load(os.path.join('images', 'characters', 'player.png'))
     
     def __init__(self, name, background, floor, x, y):
         """Extends the Character init method
@@ -251,7 +252,7 @@ class Player(Character):
                 name of the player
             background : string
                 background of the player which determines the starting items
-                Valid Attributes are ['officer','marksman','agent','pointman','gladiator']
+                Valid Attributes are ['Officer','Marksman','Agent','Pointman','Gladiator']
             floor : Floor
                 the starting location of the player
             x : int
@@ -266,7 +267,7 @@ class Player(Character):
         self.name = name
 
         # Stores the background
-        assert background in ("Officer","Marksman","Agent","Pointman","Gladiator")
+        assert background in ("Officer", "Marksman", "Agent", "Pointman", "Gladiator")
         self.background = background
 
         self.setStartingInventory()
@@ -330,13 +331,13 @@ class Player(Character):
             portal = "up"
 
         self.location.removeEntity(self)
-        self.x = new_floor.portals[direction].x
-        self.y = new_floor.portals[direction].y
+        self.x = new_floor.portals[portal].x
+        self.y = new_floor.portals[portal].y
         self.location = new_floor
         self.location.addEntity(self)
 
     def calculateFOV(self):
-        self.location.map.compute_fov(self.x, self.y)
+        self.location.map.compute_fov(self.x, self.y, radius=8)
 
     def getFOV(self):
         return self.location.map.fov
