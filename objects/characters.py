@@ -73,6 +73,7 @@ class Character(Entity):
         self.is_dead = False
 
     def move(self, delta_x, delta_y):
+        """Moves the character by specified x and y values"""
         destination = ((self.x+delta_x), (self.y+delta_y))
         if self.validateMove(destination):
             if not self.checkEntityObstruct(destination):
@@ -80,13 +81,8 @@ class Character(Entity):
                 self.y += delta_y
 
     def validateMove(self, destination):
-        # If destination is out of range
-        if destination[0] < 0 or destination[0] >= self.location.width:
-            return False
-        elif destination[1] < 0 or destination[1] >= self.location.height:
-            return False
         # If destination is blocked
-        elif not self.location.map.walkable[destination[1]][destination[0]]:
+        if not self.location.map.walkable[destination[1]][destination[0]]:
             return False
         else:
             return True
