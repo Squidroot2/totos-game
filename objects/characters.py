@@ -1,10 +1,7 @@
-from objects.items import Weapon, Armor, Generator, Battery
 from objects.entities import Entity, Corpse
-from objects.camera import Camera
 from objects.game import Log
 from scripts.utilities import getItemById
 from scripts import formulas
-import pygame, numpy
 import os, random
 
 CHARACTER_JSON = os.path.join('data', 'characters.json')
@@ -72,27 +69,36 @@ class Character(Entity):
         # Set the character to not dead
         self.is_dead = False
 
-    def move(self, delta_x, delta_y):
+    def move(self, delta_x, delta_y, peacefully=False):
         """Moves the character by specified x and y values"""
         destination = ((self.x+delta_x), (self.y+delta_y))
         if self.validateMove(destination):
-            if not self.checkEntityObstruct(destination):
+            if not self.checkEntityObstruct(destination, peacefully):
                 self.x += delta_x
                 self.y += delta_y
 
     def validateMove(self, destination):
+        """Returns True if the destination is walkable and False if it isn't"""
         # If destination is blocked
-        if not self.location.map.walkable[destination[1]][destination[0]]:
-            return False
-        else:
+        if self.location.map.walkable[destination[1]][destination[0]]:
             return True
+        else:
+            return False
 
-    def checkEntityObstruct(self, destination):
+    def checkEntityObstruct(self, destination, peacefully):
+        """Checks if an obstructing entity is in the destination. If it is, attack it.
+
+        Parameters:
+            destination : 2-tuple of ints : (x,y) format
+            peacefully : boolean : If true, does not attack
+
+         """
         for entity in self.location.entities:
             if entity is self or not entity.obstruct:
                 continue
             elif entity.x == destination[0] and entity.y == destination[1]:
-                self.meleeAttack(entity)
+                if not peacefully:
+                    self.meleeAttack(entity)
                 return True
         return False
 
@@ -237,108 +243,3 @@ class Character(Entity):
             return self.inventory.equipped['generator'].max_charge
 
 
-class Player(Character):
-    image = pygame.image.load(os.path.join('images', 'characters', 'player.png'))
-    
-    def __init__(self, name, background, floor, x, y):
-        """Extends the Character init method
-
-        Parameters:
-            name : string
-                name of the player
-            background : string
-                background of the player which determines the starting items
-                Valid Attributes are ['Officer','Marksman','Agent','Pointman','Gladiator']
-            floor : Floor
-                the starting location of the player
-            x : int
-                starting x position on the floor
-            y : int
-                starting y position on the floor
-        """
-
-        super().__init__("PLAYER", floor, x, y, inventory=[])
-
-        # Overrides the name set by the Character init method
-        self.name = name
-
-        # Stores the background
-        assert background in ("Officer", "Marksman", "Agent", "Pointman", "Gladiator")
-        self.background = background
-
-        self.setStartingInventory()
-
-        # Player-Specific Component
-        self.camera = Camera(self)
-
-        # Start with a calculated FOV
-        self.calculateFOV()
-        self.discoverTiles()
-
-    # todo move inventory stuff to inventory class with ids
-    def setStartingInventory(self):
-    
-        # Create Initial Items in Inventory
-        if self.background == "Officer":
-            weapon = Weapon("PISTOL_1", self.inventory)
-            armor = Armor("ARMOR_1", self.inventory)
-            generator = Generator("QUICK_1", self.inventory)
-            Weapon("KNIFE_1", self.inventory)
-
-        elif self.background == "Marksman":
-            weapon = Weapon("RIFLE_1", self.inventory)
-            armor = Armor("ARMOR_1", self.inventory)
-            generator = Generator("RANGER_1", self.inventory)
-
-        elif self.background == "Agent":
-            weapon = Weapon("PDW_1", self.inventory)
-            armor = Armor("ARMOR_1", self.inventory)
-            generator = Generator("FEEDER_1", self.inventory)
-
-        elif self.background == "Pointman":
-            weapon = Weapon("CANNON_1", self.inventory)
-            armor = Armor("ARMOR_1", self.inventory)
-            generator = Generator("RANGER_1", self.inventory)
-
-        elif self.background == "Gladiator":
-            weapon = Weapon("SWORD_1", self.inventory)
-            armor = Armor("ARMOR_2", self.inventory)
-            generator = Generator("BRAWLER_1", self.inventory)
-
-        # Player starts with 2 batteries
-        for i in range(2):
-            Battery("BATTERY_1", self.inventory)
-        
-        # Equip Items
-        weapon.equip()
-        armor.equip()
-        generator.equip()
-        
-        # Shield Starts charged
-        generator.rechargeToFull()
-
-    def changeFloors(self, new_floor, direction):
-        """Change player's location to a specified floor"""
-        assert direction in ("up", "down")
-        # If you are going up, you will land on the new floors down portal and vice versa
-        if direction == "up":
-            portal = "down"
-        else:
-            portal = "up"
-
-        self.location.removeEntity(self)
-        self.x = new_floor.portals[portal].x
-        self.y = new_floor.portals[portal].y
-        self.location = new_floor
-        self.location.addEntity(self)
-
-    def calculateFOV(self):
-        self.location.map.compute_fov(self.x, self.y, radius=8)
-
-    def getFOV(self):
-        return self.location.map.fov
-
-    def discoverTiles(self):
-        fov = numpy.where(self.getFOV())
-        for i in range(len(fov[0])):
-            self.location.tile_map[(fov[1][i])][(fov[0][i])].discovered = True

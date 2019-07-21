@@ -9,6 +9,7 @@ from objects.characters import Character
 from scripts.constants import CELL_SIZE, FLOOR_HEIGHT, FLOOR_WIDTH, COLORS
 
 
+
 class Floor:
     width = FLOOR_WIDTH
     height = FLOOR_HEIGHT
@@ -21,6 +22,7 @@ class Floor:
         """
         self.map = tcod.map.Map(self.width, self.height)
         self.tile_map = [[Tile(self.map, x, y) for y in range(self.height)] for x in range(self.width)]
+        self.path_finder = tcod.path.AStar(self.map, diagonal=1)
         self.number = floor_number
 
         # Initialize empty variables
@@ -188,7 +190,6 @@ class Tile:
         self.discovered = False
         self.pixel_x = self.x*self.CELL_SIZE
         self.pixel_y = self.y*self.CELL_SIZE
-
 
     def draw(self, surface):
         """Blits the tile to the screen"""
