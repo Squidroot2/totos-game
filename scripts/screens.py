@@ -6,11 +6,12 @@ Functions:
     drawClassSelect(window)
     mainGameScreen(window, fps_clock, game)
     gameOverScreen(window, fps_clock) 
-    getPanes(window_rect) : Takes a pygame.Rect object representing the window and returns a dictionray of Rect Objects
+    getPanes(window_rect) : Takes a pygame.Rect object representing the window and returns a dictionary of Rect Objects
     drawStatPane(window, player, pane) : Draws the player's statistic on the right side of the screen
     drawLogPane(window, log, pane) : Draws the messages in the log pane
 
 """
+
 import pygame
 from pygame.constants import *
 from scripts.constants import COLORS, FONTS, FPS
@@ -93,6 +94,7 @@ def titleScreen(window, fps_clock):
         pygame.display.flip()
         fps_clock.tick(FPS)
 
+
 def playerCreateScreen(window, fps_clock):
     """Displays the player creation window where the player can choose their name and class
 
@@ -109,7 +111,7 @@ def playerCreateScreen(window, fps_clock):
 
     window_rect = window.get_rect()
 
-
+    # Shows the name prompt
     name_prompt = FONTS['MAIN'].render("Name: ", True, COLORS['BLACK'])
     name_prompt_rect = name_prompt.get_rect()
     name_prompt_rect.midright = (window_rect.centerx, window_rect.height/6)
@@ -124,7 +126,7 @@ def playerCreateScreen(window, fps_clock):
         window.fill(COLORS['WHITE'])
         window.blit(name_prompt, name_prompt_rect)
 
-        #drawClassSelect()
+        # drawClassSelect()
 
         checkForQuit()
         for event in pygame.event.get():
@@ -148,6 +150,7 @@ def playerCreateScreen(window, fps_clock):
     # todo have the player choose class in this function and return it
     return name
 
+
 # todo finish drawClassSelect
 def drawClassSelect(window):
     window.get_rect()
@@ -167,13 +170,14 @@ def mainGameScreen(window, fps_clock, game):
     game_area = player.camera.getRect().copy()
     game_area.center = panes['main'].center
 
-    #game loop
+    # game loop
     run_game = True
     while run_game:
 
         # Turns true if player does an action that uses up their turn
         turn_taken = False
 
+        # Event Handler
         checkForQuit()
         for event in pygame.event.get():
 
@@ -241,7 +245,6 @@ def mainGameScreen(window, fps_clock, game):
                     else:
                         turn_taken = False
 
-
                 elif event.key == K_i:
                     # todo write open inventory screen
                     turn_taken = False
@@ -255,18 +258,18 @@ def mainGameScreen(window, fps_clock, game):
                 else:
                     turn_taken = False
 
-                # If turn was taken, iterate through all entities in the entities list
-                if turn_taken:
-                    for entity in player.location.entities:
-                        #  every entity with an AI takes a turn
-                        if entity.ai:
-                            entity.ai.takeTurn()
-                        # Recharge all equipped generators
-                        if entity.inventory and entity.inventory.equipped['generator']:
-                            entity.inventory.equipped['generator'].recharge()
-                            entity.inventory.equipped['generator'].hit_this_turn = False
-                    player.calculateFOV()
-                    player.discoverTiles()
+        # If turn was taken, iterate through all entities in the entities list
+        if turn_taken:
+            for entity in player.location.entities:
+                #  every entity with an AI takes a turn
+                if entity.ai:
+                    entity.ai.takeTurn()
+                # Recharge all equipped generators
+                if entity.inventory and entity.inventory.equipped['generator']:
+                    entity.inventory.equipped['generator'].recharge()
+                    entity.inventory.equipped['generator'].hit_this_turn = False
+            player.calculateFOV()
+            player.discoverTiles()
 
         if player.is_dead:
             run_game = False
@@ -305,6 +308,7 @@ def mainGameScreen(window, fps_clock, game):
         pygame.display.update()
         fps_clock.tick(FPS)
 
+
 def gameOverScreen(window, fps_clock):
     """Shown after the player dies
 
@@ -319,7 +323,7 @@ def gameOverScreen(window, fps_clock):
 
     text = FONTS['TITLE'].render('Game Over', True, COLORS['RED'])
     text_rect = text.get_rect()
-    text_rect.center = (window_rect.center)
+    text_rect.center = window_rect.center
 
     window.blit(text, text_rect)
     show_game_over = True
@@ -332,6 +336,7 @@ def gameOverScreen(window, fps_clock):
 
         pygame.display.flip()
         fps_clock.tick(FPS)
+
 
 def getPanes(window_rect):
     """Takes a pygame.Rect object representing the window and returns a dictionary of Rect Objects for the four panes
@@ -363,8 +368,8 @@ def getPanes(window_rect):
     # Create Rect Objects
     bottom_pane = pygame.Rect(0, bottom_pane_top, bottom_pane_width, bottom_pane_height)
     side_pane = pygame.Rect(side_pane_left, 0, side_pane_width, window_rect.height)
-    main_pane = pygame.Rect(0,0, main_pane_width, main_pane_height)
-    log_pane = pygame.Rect(0,0, log_pane_width, log_pane_height)
+    main_pane = pygame.Rect(0, 0, main_pane_width, main_pane_height)
+    log_pane = pygame.Rect(0, 0, log_pane_width, log_pane_height)
 
     # Align log pane within the side pane
     log_pane.midbottom = (side_pane.centerx, log_pane_bottom)
@@ -388,7 +393,7 @@ def drawStatPane(window, player, pane):
         pane : pygame.Rect
     """
 
-
+    # Define the colors used
     background_color = COLORS['DARK GRAY']
     font_color = COLORS['WHITE']
     energy_value_font_color = COLORS['GOLDENROD']
@@ -436,7 +441,7 @@ def drawStatPane(window, player, pane):
     energy_bar_left = text_rects['energy_key'].right + 20
     energy_bar_top = text_rects['energy_key'].top
 
-    energy_bar = pygame.Rect(energy_bar_left,energy_bar_top,energy_bar_width,energy_bar_height)
+    energy_bar = pygame.Rect(energy_bar_left, energy_bar_top, energy_bar_width, energy_bar_height)
 
     # Place Energy Value
     text_rects['energy_value'].center = energy_bar.center
@@ -449,8 +454,7 @@ def drawStatPane(window, player, pane):
     energy_fill.y += 1
     energy_fill.x += 1
     energy_fill.height -= 2
-    energy_fill.width = (energy_bar.width -2) * (player.energy / player.max_energy)
-
+    energy_fill.width = (energy_bar.width - 2) * (player.energy / player.max_energy)
 
     # Draw Energy Fill to Screen
     pygame.draw.rect(window, COLORS['LIGHT BLUE'], energy_fill, 0)
@@ -494,6 +498,3 @@ def drawLogPane(window, log, pane):
     # Blits all text surfaces to the location of their Rect
     for i, surf in enumerate(text_surfs):
         window.blit(surf, text_rects[i])
-
-
-
