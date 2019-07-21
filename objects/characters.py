@@ -320,6 +320,21 @@ class Player(Character):
         # Shield Starts charged
         generator.rechargeToFull()
 
+    def changeFloors(self, new_floor, direction):
+        """Change player's location to a specified floor"""
+        assert direction in ("up", "down")
+        # If you are going up, you will land on the new floors down portal and vice versa
+        if direction == "up":
+            portal = "down"
+        else:
+            portal = "up"
+
+        self.location.removeEntity(self)
+        self.x = new_floor.portals[direction].x
+        self.y = new_floor.portals[direction].y
+        self.location = new_floor
+        self.location.addEntity(self)
+
     def calculateFOV(self):
         self.location.map.compute_fov(self.x, self.y)
 

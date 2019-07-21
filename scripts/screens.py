@@ -210,13 +210,11 @@ def mainGameScreen(window, fps_clock, game):
 
                         # If the player is on the last floor, game won
                         if player.location.number == len(game.dungeon):
-                            # Game won
+                            # todo make Game won screen
                             pass
                         else:
                             new_floor = game.dungeon[player.location.number]
-
-                            player.location = new_floor
-                            player.x, player.y = new_floor.portals['up'].x, new_floor.portals['up'].y
+                            player.changeFloors(new_floor, "down")
                             game.surface.fill(COLORS['BLACK'])
 
                     # If the player does not move, turn is not taken
@@ -236,8 +234,7 @@ def mainGameScreen(window, fps_clock, game):
                         else:
                             new_floor = game.dungeon[player.location.number-2]
 
-                            player.location = new_floor
-                            player.x, player.y = new_floor.portals['down'].x, new_floor.portals['down'].y
+                            player.changeFloors(new_floor, "up")
                             game.surface.fill(COLORS['BLACK'])
 
                     # If the player does not move, turn is not taken

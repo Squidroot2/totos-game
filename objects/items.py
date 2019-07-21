@@ -21,15 +21,22 @@ class Item(Entity):
     def drop(self):
         """Item is moved from inventory to floor"""
         self.location.removeEntity(self)
-        self.x = self.owner.x
-        self.y = self.owner.y
-        self.owner.floor.addEntity(self)
+        self.x = self.location.owner.x
+        self.y = self.location.owner.y
+
+        # The destination floor is the inventory's owner's location
+        floor = self.location.owner.location
+
+        # Add entity to floor
+        floor.addEntity(self)
+        self.location = floor
     
     def pickUp(self, inventory):
         """Item is moved from floor to specified Inventory"""
         self.location.removeEntity(self)
         self.x = None
         self.y = None
+        self.location = inventory
         inventory.addEntity(self)        
         
         
