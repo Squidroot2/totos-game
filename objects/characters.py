@@ -4,6 +4,7 @@ from scripts.utilities import getItemById
 from scripts import formulas
 import os, random
 
+# Location of the json file which holds the character data
 CHARACTER_JSON = os.path.join('data', 'characters.json')
 
 
@@ -35,7 +36,9 @@ class Character(Entity):
         loadImage(self) : INHERITED
         draw(self) : INHERITED
         
-        
+    Properties:
+        energy : int : RW; Amount of energy in the Character's Generator
+        max_energy : int : RO; Amount of energy that a Character's Generator could hold
     
     Children:
         Player(Character)"""
@@ -93,6 +96,7 @@ class Character(Entity):
             peacefully : boolean : If true, does not attack
 
          """
+         # todo make it so this method merely returns the obstructing entity at this location
         for entity in self.location.entities:
             if entity is self or not entity.obstruct:
                 continue
@@ -103,6 +107,11 @@ class Character(Entity):
         return False
 
     def meleeAttack(self, opponent):
+        """Attacks a specified opponent with a melee attack
+        
+        Parameters:
+            opponent : Character
+        """
         attack = self.getMeleeDamage()
         defense = opponent.getDefense()
 
@@ -116,15 +125,27 @@ class Character(Entity):
         # Determines the hit chance based on the encumbrances
         hit_chance = formulas.getHitChance(self_enc, enemy_enc)
 
+        # For every attack in the quantity of attack rate...
         for attack in range(self.getAttackRate()):
+            # Roll to determine if attack landed
             roll = random.random()
             if roll < hit_chance:
                 Log.addMessage(self.name + " hit " + opponent.name + " for " + str(damage) + " damage")
                 opponent.takeDamage(damage)
+        # Send a message if the opponent was killed
         if opponent.is_dead:
             Log.addMessage(self.name + " killed " + opponent.name)
 
     def takeDamage(self, damage):
+        """Reduces the amount of energy in the character's generator and deals any remaining to flesh
+        
+        Attacks to flesh do not nessearilly reduce life points but rather affect the chance to kill or chance to injure
+        
+        Paramaters:
+            damage : int
+        """
+        
+        # If the character has some energy, damage is dealt to it first
         if not self.energy == 0:
 
             # If energy exceeds damage, it is completely absorbed by the shields
@@ -147,11 +168,15 @@ class Character(Entity):
         # Determine if the damage to flesh was lethal
         killed = formulas.determineLethal(damage_to_flesh, self.life)
 
+        # If killed, run kill method on self
         if killed:
             self.kill()
+            
         # If self was not killed, determine if injured
         else:
             injured = formulas.determineInjury(damage_to_flesh, self.life)
+            
+            # If injured, log message and reduce life by 1
             if injured:
                 Log.addMessage(self.name + " suffered an injury")
                 self.life -= 1
@@ -178,6 +203,7 @@ class Character(Entity):
         return defense
         
     def getMeleeDamage(self):
+        """Gets the amount of melee damage that a character can deal per attack including weapon damage"""
         damage = self.base_damage
         if self.inventory and self.inventory.equipped['weapon']:
             weapon = self.inventory.equipped['weapon']
@@ -223,6 +249,10 @@ class Character(Entity):
 
     @property
     def energy(self):
+        """Amount of energy currently in the character's generator
+        
+        Returns: int
+        """
         if self.inventory is None or self.inventory.equipped['generator'] is None:
             return 0
         else:
@@ -230,6 +260,7 @@ class Character(Entity):
 
     @energy.setter
     def energy(self, value):
+        """Setter method for energy"""
         try:
             self.inventory.equipped['generator'].current_charge = value
         except:
@@ -237,6 +268,9 @@ class Character(Entity):
 
     @property
     def max_energy(self):
+        """Amount of energy the character's generator could hold
+        
+        Returns:: int"""
         if self.inventory.equipped['generator'] is None:
             return 0
         else:
