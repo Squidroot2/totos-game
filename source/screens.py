@@ -14,8 +14,8 @@ Functions:
 
 import pygame
 from pygame.constants import *
-from scripts.constants import COLORS, FONTS, FPS
-from scripts.utilities import checkForQuit
+from source.constants import COLORS, FONTS, FPS
+from source.utilities import checkForQuit
 
 
 def titleScreen(window, fps_clock):

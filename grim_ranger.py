@@ -4,15 +4,13 @@ Functions:
     main() : main function of the program
     initializePygame: Initializes the pygame module and returns pygame objects
     setupGame(window, fps_clock) : Gets information from the user then creaetes player and dungeon and puts them in a Game object"""
-    
-
-
 import pygame
-from scripts.constants import WINDOW_WIDTH, WINDOW_HEIGHT
-from objects.player import Player
-from objects.floors import Floor
-from objects.game import Game
-from scripts.screens import mainGameScreen, titleScreen, playerCreateScreen, gameOverScreen
+
+from source.constants import WINDOW_WIDTH, WINDOW_HEIGHT
+from source.entities import Player
+from source.floors import Floor
+from source.game import Game
+from source.screens import mainGameScreen, titleScreen, playerCreateScreen, gameOverScreen
 
 def main():
     """The main function of the program

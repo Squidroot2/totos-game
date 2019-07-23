@@ -4,9 +4,9 @@ import random
 import pygame
 import tcod
 
-from objects.entities import Portal
-from objects.characters import Character
-from scripts.constants import CELL_SIZE, FLOOR_HEIGHT, FLOOR_WIDTH, COLORS
+from source.entities import Portal
+from source.entities import Character
+from source.constants import CELL_SIZE, FLOOR_HEIGHT, FLOOR_WIDTH, COLORS
 
 
 
