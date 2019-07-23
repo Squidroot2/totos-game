@@ -1,3 +1,12 @@
+""" The main module for the grim ranger game
+
+Functions:
+    main() : main function of the program
+    initializePygame: Initializes the pygame module and returns pygame objects
+    setupGame(window, fps_clock) : Gets information from the user then creaetes player and dungeon and puts them in a Game object"""
+    
+
+
 import pygame
 from scripts.constants import WINDOW_WIDTH, WINDOW_HEIGHT
 from objects.player import Player
@@ -6,6 +15,9 @@ from objects.game import Game
 from scripts.screens import mainGameScreen, titleScreen, playerCreateScreen, gameOverScreen
 
 def main():
+    """The main function of the program
+    
+    Initializes pygame. Setups Game, Runs the game, finally presents game over screen before repeating loop"""
     window, fps_clock = initializePygame()
     while True:
         game = setupGame(window, fps_clock)
@@ -13,7 +25,12 @@ def main():
         gameOverScreen(window, fps_clock)
 
 def initializePygame():
-    """Initializes the pygame modules and returns SCREEN and FPS_CLOCK"""
+    """Initializes the pygame modules and returns SCREEN and FPS_CLOCK
+    
+    Returns:
+        window : pygame.Surface
+        fps_clock : pygame.Clock
+    """
 
     pygame.init()
     fps_clock = pygame.time.Clock()
@@ -23,6 +40,15 @@ def initializePygame():
 
 # Todo make this a static method of Game
 def setupGame(window, fps_clock):
+    """Runs the titleScreen and the playerCreateScreen to get information from user. Then, creates player and dungeon and puts them in a game object
+    
+    Parameters:
+        window : pygame.Surface
+        fps_clock : pygame.Clock
+    
+    Returns
+        game : Game
+    """
 
     titleScreen(window, fps_clock)
     name = playerCreateScreen(window, fps_clock)
