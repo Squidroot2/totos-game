@@ -1,3 +1,10 @@
+"""Contains the objects reprenting the Floor and the Tiles on items
+
+Classes:
+    Floor
+    Tile
+"""
+
 import os
 import random
 

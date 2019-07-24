@@ -1,3 +1,10 @@
+"""Contains objects which act as components of Entities
+
+Classes:
+    AI
+    Camera
+    Inventory
+"""
 import random
 
 import pygame

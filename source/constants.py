@@ -1,6 +1,16 @@
-'''
-This module contains constants used throughout the grim ranger game
-'''
+"""
+This module contains constants used throughout the game
+
+Variables:
+    WINDOW_HEIGHT : int
+    WINDOW_WIDTH : int
+    FLOOR_HEIGHT :int
+    FLOOR_WIDTH : int
+    CELL_SIZE : int
+    COLORS : dictionary of 3-item tuples
+    FONTS : dictioanry of pygame.Fonts
+    FPS : int
+"""
 import pygame
 
 WINDOW_WIDTH = 1280
