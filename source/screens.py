@@ -360,6 +360,8 @@ def targetScreen(window, fps_clock, game, panes):
                 # Shoot
                 elif event.key in (K_f, K_RETURN) and target.on_top_of is not None:
                     player.rangedAttack(target.on_top_of)
+                    target_mode = False
+                    turn_taken = True
 
 
 

@@ -23,6 +23,7 @@ from source.utilities import getItemById
 CHARACTER_JSON = os.path.join('data', 'characters.json')
 ITEM_JSON = os.path.join('data','items.json')
 
+
 class Entity:
     """Represents any object that can act and be drawn into the world
     
@@ -362,7 +363,7 @@ class Character(Entity):
         for attack in range(self.getAttackRate(ranged=True)):
             while self.energy > self.energy_per_shot:
                 # Reduce current energy
-                self.energy -= self.energy_per_shot - self.recoil_recharge
+                self.energy -= self.energy_per_shot - self.recoil_charge
 
                 # Roll to determine if attack landed
                 roll = random.random()
@@ -528,11 +529,12 @@ class Character(Entity):
             return 0
 
     @property
-    def recoil_recharge(self):
-        if self.energy_per_shot < self.inventory.equipped['generator'].recoil_recharge:
+    def recoil_charge(self):
+        if self.energy_per_shot < self.inventory.equipped['generator'].recoil_charge:
             return self.energy_per_shot
         else:
-            return self.inventory.equipped['generator'].recoil_recharge
+            return self.inventory.equipped['generator'].recoil_charge
+
 
 class Player(Character):
     image = pygame.image.load(os.path.join('images', 'characters', 'player.png'))
