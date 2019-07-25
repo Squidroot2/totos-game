@@ -60,6 +60,25 @@ def getItemById(json_path, id, category=None):
     else:
         return json_file[category][id]
 
+def getDistanceBetweenEntities(coordsA, coordsB):
+    """Gets the distance betweeen two points on a map
+    
+    Different from euclidean distance in that diagonal distance = 1
+    
+    Parameters:
+        coordsA : tuple of 2 ints 
+        coordsB : tuple of 2 ints
+    
+    Returns : int
+    """
+    x_dis = abs(coordsA[0] - coordsB[0])
+    y_dis = abs(coordsA[1] - coordsB[1])
+    
+    if x_dis > y_dis:
+        return x_dis
+    else:
+        return y_dis
+        
 
 def terminateGame():
     """Quits the program"""

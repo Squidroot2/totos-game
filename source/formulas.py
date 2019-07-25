@@ -16,11 +16,32 @@ def getMeleeHitChance(attacker_enc, defender_enc):
     """ Takes the attackers encumbrance and the defender's encumbrance and returns a floating number between representing the chance to hit the defender
 
     Values 0 and lower represent 0 chance while 1 and above is guaranteed chance"""
-    return 1 - (attacker_enc * .1) + (defender_enc * .1)
+    # Base chance to hit
+    base = 1
+    
+    # Calculate Penalty
+    enc_penalty = attack_enc * -0.1
+    
+    # Calculate Bonus
+    enc_boost = defender_enc * 0.1
+        
+    # Return sum of base, penalty and bonus
+    return math.fsum([base,enc_penalty, enc_bonus])
+    
 
-
-def getRangedHitChance(attack_enc, defender_enc):
-    return .95 - (attack_enc * .15) + (defender_enc * .1)
+def getRangedHitChance(attack_enc, defender_enc, range_exceeded):
+    # Base chance to hit
+    base = .95
+    
+    # Calculate Penalties
+    enc_penalty = attack_enc * -0.15
+    range_penalty = range_exceeded * -0.15
+    
+    # Calculate Bonus
+    enc_bonus = defender_enc * .1
+    
+    # Return sum of base, penalities, and bonus
+    return math.fsum([base, enc_penalty, range_penalty, enc_bonus])
 
 
 def getDamageDealt(attack, defense):

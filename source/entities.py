@@ -17,7 +17,7 @@ from source.components import AI, Inventory, Camera
 from source.constants import CELL_SIZE
 from source.game import Log
 from source import formulas
-from source.utilities import getItemById
+from source.utilities import getItemById, getDistanceBetweenEntities
 
 # Location of the json file which holds the character data
 CHARACTER_JSON = os.path.join('data', 'characters.json')
@@ -355,9 +355,14 @@ class Character(Entity):
         # Gets the encumbrance of the two characters
         self_enc = self.getEncumbrance()
         enemy_enc = opponent.getEncumbrance()
-
+        
+        # Find the range exceeded by getting the distance between then subtracting the range
+        range_exceeded = getDistanceBetweenEntities((self.x,self.y),(opponent.x,opponent.y)) - self.range
+        if range_exceeded < 0:
+            range_exceeded = 0
+        
         # Determines the hit chance based on the encumbrances
-        hit_chance = formulas.getRangedHitChance(self_enc, enemy_enc)
+        hit_chance = formulas.getRangedHitChance(self_enc, enemy_enc, range_exceeded)
 
         # For every attack in the quantity of attack rate...
         for attack in range(self.getAttackRate(ranged=True)):
@@ -525,7 +530,7 @@ class Character(Entity):
         try:
             return self.inventory.equipped['weapon'].fire_rate
         except:
-            print("Error: Could get fire rate from equipped weapon")
+            print("Error: Could not get fire rate from equipped weapon")
             return 0
 
     @property
@@ -534,6 +539,13 @@ class Character(Entity):
             return self.energy_per_shot
         else:
             return self.inventory.equipped['generator'].recoil_charge
+    
+    @property
+    def range(self):
+        try:
+            return self.invenotry.equipped['weapon'].range
+        except:
+            print("Error: Could not get range from equipped weapon")
 
 
 class Player(Character):
