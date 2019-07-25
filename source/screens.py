@@ -14,8 +14,10 @@ Functions:
 
 import pygame
 from pygame.constants import *
+
 from source.constants import COLORS, FONTS, FPS
 from source.utilities import checkForQuit
+from source.entities import Target
 
 
 def titleScreen(window, fps_clock):
@@ -166,10 +168,6 @@ def mainGameScreen(window, fps_clock, game):
     # Gets a dict of Rects
     panes = getPanes(window_rect)
 
-    # Create a Rect with the same dimensions as the camera; center it in the main pane
-    game_area = player.camera.getRect().copy()
-    game_area.center = panes['main'].center
-
     # game loop
     run_game = True
     while run_game:
@@ -250,7 +248,7 @@ def mainGameScreen(window, fps_clock, game):
                     turn_taken = False
                 elif event.key == K_f:
                     # todo write ranged attack screen
-                    turn_taken = False
+                    turn_taken = targetScreen(window, fps_clock, game, panes)
                 elif event.key == K_x:
                     # todo write explore screen
                     turn_taken = False
@@ -274,36 +272,15 @@ def mainGameScreen(window, fps_clock, game):
         if player.is_dead:
             run_game = False
 
+        # Fill in the background of the window with black
         window.fill(COLORS['BLACK'])
-        # Draw the map
-        player.location.draw(game.surface)
-
-        # Draw the entities in the map
-        for entity in player.location.entities:
-            if entity is player:
-                continue
-            if player.getFOV()[entity.y][entity.x]:
-                entity.discovered = True
-                entity.last_known_x = entity.x
-                entity.last_known_y = entity.y
-                entity.draw(game.surface)
-            elif entity.discovered:
-                entity.drawAtLastKnown(game.surface)
-        player.draw(game.surface)
-
-        # Draw Fog over the map
-        player.location.drawFog(game.surface)
 
         # Draw the side and log panes
         drawStatPane(window, player, panes['side'])
         drawLogPane(window, game.log, panes['log'])
-
+        drawGamePane(window, game, panes['main'])
         pygame.draw.rect(window, COLORS['DARK GRAY'], panes['bottom'], 0)
-        player.camera.update()
 
-        # todo add the following line after camera and game.surface are finished
-        window.blit(game.surface, game_area, player.camera.getRect())
-            
         # Update the screen and wait for clock to tick; repeat the while loop
         pygame.display.update()
         fps_clock.tick(FPS)
@@ -337,6 +314,62 @@ def gameOverScreen(window, fps_clock):
         pygame.display.flip()
         fps_clock.tick(FPS)
 
+
+def targetScreen(window, fps_clock, game, panes):
+    """Used for targeting ranged attack"""
+    player = game.player
+    floor = player.location
+    target = Target(floor, player.x, player.y)
+
+    target_mode = True
+    while target_mode:
+
+        # Event Handler
+        checkForQuit()
+        for event in pygame.event.get():
+
+            # Determine what to do with Key Presses
+            if event.type == KEYDOWN:
+
+                # Movement Keys
+                if event.key == K_UP or event.key == K_KP8:
+                    target.move(0, -1)
+                elif event.key == K_DOWN or event.key == K_KP2:
+                    target.move(0, 1)
+                elif event.key == K_LEFT or event.key == K_KP4:
+                    target.move(-1, 0)
+                elif event.key == K_RIGHT or event.key == K_KP6:
+                    target.move(1, 0)
+                elif event.key == K_KP7:
+                    target.move(-1, -1)
+                elif event.key == K_KP9:
+                    target.move(1, -1)
+                elif event.key == K_KP1:
+                    target.move(-1, 1)
+                elif event.key == K_KP3:
+                    target.move(1, 1)
+
+                # Exit targeting
+                elif event.key == K_ESCAPE:
+                    target_mode = False
+                    turn_taken = False
+
+        # Fill in the background of the window with black
+        window.fill(COLORS['BLACK'])
+
+        # Draw the side and log panes
+        drawStatPane(window, player, panes['side'])
+        drawLogPane(window, game.log, panes['log'])
+        drawGamePane(window, game, panes['main'])
+
+        # Update the screen and wait for clock to tick; repeat the while loop
+        pygame.display.update()
+        fps_clock.tick(FPS)
+
+    # Clean up target after no longer used
+    target.remove()
+
+    return turn_taken
 
 def getPanes(window_rect):
     """Takes a pygame.Rect object representing the window and returns a dictionary of Rect Objects for the four panes
@@ -498,3 +531,45 @@ def drawLogPane(window, log, pane):
     # Blits all text surfaces to the location of their Rect
     for i, surf in enumerate(text_surfs):
         window.blit(surf, text_rects[i])
+
+
+def drawGamePane(window, game, pane):
+    """Draws on the game surface then blits game surface to the window"""
+
+    # Pulls the player and current floor from the game object
+    player = game.player
+    floor = player.location
+
+    # Run the draw method on floor
+    floor.draw(game.surface)
+
+    # Draw the entities in the map
+    for entity in floor.entities:
+        # Skip the player until the end
+        if entity is player:
+            continue
+        if player.getFOV()[entity.y][entity.x]:
+            # If the entity is in fov, mark as discovered, update last known coords, and draw
+            entity.discovered = True
+            entity.last_known_x = entity.x
+            entity.last_known_y = entity.y
+            entity.draw(game.surface)
+        elif entity.discovered:
+            # If the entity is not in fov but is discovered, draw at last known coords
+            entity.drawAtLastKnown(game.surface)
+
+    # Draw the player after all other entities
+    player.draw(game.surface)
+
+    # Draw Fog over the map
+    floor.drawFog(game.surface)
+
+    # Update the camera's position
+    player.camera.update()
+
+    # Create a Rect with the same dimensions as the camera; center it in the main pane
+    game_area = player.camera.getRect().copy()
+    game_area.center = pane.center
+
+    # Blit everything on the game surface to the window
+    window.blit(game.surface, game_area, player.camera.getRect())

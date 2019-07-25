@@ -42,6 +42,7 @@ def loadJson(json_path):
     with open(json_path) as json_file:
         return json.load(json_file)
 
+
 def getItemById(json_path, id, category=None):
     """Returns a Dictionary containing the particular information from the json file
     
@@ -60,7 +61,6 @@ def getItemById(json_path, id, category=None):
         return json_file[category][id]
 
 
-
 def terminateGame():
     """Quits the program"""
     pygame.quit()
@@ -70,7 +70,3 @@ def checkForQuit():
     """Terminates the game if the QUIT event is present or the Escape key has been pressed"""
     for event in pygame.event.get(QUIT): # get all the QUIT events
         terminateGame() # terminate if any QUIT events are present
-    for event in pygame.event.get(KEYDOWN): # get all the KEYDOWN events
-       if event.key == K_ESCAPE:
-          terminateGame() # terminate if the KEYDOWN event was for the Esc key
-       pygame.event.post(event) # put the other KEYDOWN event objects back

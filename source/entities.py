@@ -130,13 +130,16 @@ class Entity:
         surface.blit(self.image, (self.last_known_x*self.CELL_SIZE, self.last_known_y*self.CELL_SIZE))
 
 
-# todo finish Target  class
 class Target(Entity):
-    # todo give Target an image or draw method
     """Represents the player's target when aiming or exploring"""
+    image_path = os.path.join('images','other','target.png')
     def move(self, delta_x, delta_y):
         self.x += delta_x
         self.y += delta_y
+
+    def remove(self):
+        self.location.removeEntity(self)
+
 
 class Portal(Entity):
     """Entity used to move player between floors"""
@@ -192,10 +195,6 @@ class Corpse(Entity):
         else:
             inventory_contents = []
         super().__init__(character.location, character.x, character.y, inventory=inventory_contents)
-        
-    # todo add image for corpse
-
-
 
 
 class Character(Entity):
