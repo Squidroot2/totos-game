@@ -247,7 +247,6 @@ def mainGameScreen(window, fps_clock, game):
                     # todo write open inventory screen
                     turn_taken = False
                 elif event.key == K_f:
-                    # todo write ranged attack screen
                     turn_taken = targetScreen(window, fps_clock, game, panes)
                 elif event.key == K_x:
                     # todo write explore screen
@@ -317,8 +316,12 @@ def gameOverScreen(window, fps_clock):
 
 def targetScreen(window, fps_clock, game, panes):
     """Used for targeting ranged attack"""
+
+    # Create aliases for player and floor
     player = game.player
     floor = player.location
+
+    # Create target
     target = Target(floor, player.x, player.y)
 
     target_mode = True
@@ -354,6 +357,12 @@ def targetScreen(window, fps_clock, game, panes):
                     target_mode = False
                     turn_taken = False
 
+                # Shoot
+                elif event.key in (K_f, K_RETURN) and target.on_top_of is not None:
+                    player.rangedAttack(target.on_top_of)
+
+
+
         # Fill in the background of the window with black
         window.fill(COLORS['BLACK'])
 
@@ -361,6 +370,7 @@ def targetScreen(window, fps_clock, game, panes):
         drawStatPane(window, player, panes['side'])
         drawLogPane(window, game.log, panes['log'])
         drawGamePane(window, game, panes['main'])
+        pygame.draw.rect(window, COLORS['DARK GRAY'], panes['bottom'], 0)
 
         # Update the screen and wait for clock to tick; repeat the while loop
         pygame.display.update()
@@ -370,6 +380,7 @@ def targetScreen(window, fps_clock, game, panes):
     target.remove()
 
     return turn_taken
+
 
 def getPanes(window_rect):
     """Takes a pygame.Rect object representing the window and returns a dictionary of Rect Objects for the four panes

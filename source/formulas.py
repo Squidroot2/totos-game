@@ -12,9 +12,15 @@ import math
 import random
 
 
-def getHitChance(attacker_enc,defender_enc):
-    """ Takes the attackers encumbrance and the defender's encumbrance and returns a floating number between 0 and 1 representing the chance to hit the defender"""
-    return 1 - (attacker_enc * .15) + (defender_enc * .1)
+def getMeleeHitChance(attacker_enc, defender_enc):
+    """ Takes the attackers encumbrance and the defender's encumbrance and returns a floating number between representing the chance to hit the defender
+
+    Values 0 and lower represent 0 chance while 1 and above is guaranteed chance"""
+    return 1 - (attacker_enc * .1) + (defender_enc * .1)
+
+
+def getRangedHitChance(attack_enc, defender_enc):
+    return .95 - (attack_enc * .15) + (defender_enc * .1)
 
 
 def getDamageDealt(attack, defense):

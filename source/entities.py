@@ -140,6 +140,23 @@ class Target(Entity):
     def remove(self):
         self.location.removeEntity(self)
 
+    @property
+    def on_top_of(self):
+        floor = self.location
+        for entity in floor.entities:
+            if not entity.obstruct:
+                continue
+            elif self.x == entity.x and self.y == entity.y:
+                return entity
+
+        # If for loop finds no match
+        return None
+
+    @on_top_of.setter
+    def on_top_of(self, entity):
+        self.x = entity.x
+        self.y = entity.y
+
 
 class Portal(Entity):
     """Entity used to move player between floors"""
@@ -304,7 +321,7 @@ class Character(Entity):
         attack = self.getMeleeDamage()
         defense = opponent.getDefense()
 
-        # Determines the damage based on the
+        # Determines the damage based on the attack and defense
         damage = formulas.getDamageDealt(attack, defense)
 
         # Gets the encumbrance of the two characters
@@ -312,7 +329,7 @@ class Character(Entity):
         enemy_enc = opponent.getEncumbrance()
 
         # Determines the hit chance based on the encumbrances
-        hit_chance = formulas.getHitChance(self_enc, enemy_enc)
+        hit_chance = formulas.getMeleeHitChance(self_enc, enemy_enc)
 
         # For every attack in the quantity of attack rate...
         for attack in range(self.getAttackRate()):
@@ -322,8 +339,41 @@ class Character(Entity):
                 Log.addMessage(self.name + " hit " + opponent.name + " for " + str(damage) + " damage")
                 opponent.takeDamage(damage)
         # Send a message if the opponent was killed
-        if opponent.is_dead:
-            Log.addMessage(self.name + " killed " + opponent.name)
+            if opponent.is_dead:
+                Log.addMessage(self.name + " killed " + opponent.name)
+                break
+
+    def rangedAttack(self, opponent):
+        """Attacks a specified opponent with a ranged attack"""
+        attack = self.getRangedDamage()
+        defense = opponent.getDefense()
+
+        # Determines the damage based on the attack and defense
+        damage = formulas.getDamageDealt(attack, defense)
+
+        # Gets the encumbrance of the two characters
+        self_enc = self.getEncumbrance()
+        enemy_enc = opponent.getEncumbrance()
+
+        # Determines the hit chance based on the encumbrances
+        hit_chance = formulas.getRangedHitChance(self_enc, enemy_enc)
+
+        # For every attack in the quantity of attack rate...
+        for attack in range(self.getAttackRate(ranged=True)):
+            while self.energy > self.energy_per_shot:
+                # Reduce current energy
+                self.energy -= self.energy_per_shot - self.recoil_recharge
+
+                # Roll to determine if attack landed
+                roll = random.random()
+                if roll < hit_chance:
+                    Log.addMessage(self.name + " hit " + opponent.name + " for " + str(damage) + " damage")
+                    opponent.takeDamage(damage)
+
+                # Send a message if the opponent was killed
+                if opponent.is_dead:
+                    Log.addMessage(self.name + " killed " + opponent.name)
+                    break
 
     def takeDamage(self, damage):
         """Reduces the amount of energy in the character's generator and deals any remaining to flesh
@@ -400,6 +450,10 @@ class Character(Entity):
 
         return damage
 
+    def getRangedDamage(self):
+        if self.inventory.equipped['weapon'] and self.inventory.equipped['weapon'].is_ranged:
+            return self.inventory.equipped['weapon'].ranged_damage
+
     def getAttackRate(self, ranged=False):
         """Gets the number of attacks that can be performed in a turn
 
@@ -464,6 +518,21 @@ class Character(Entity):
             return 0
         else:
             return self.inventory.equipped['generator'].max_charge
+
+    @property
+    def energy_per_shot(self):
+        try:
+            return self.inventory.equipped['weapon'].fire_rate
+        except:
+            print("Error: Could get fire rate from equipped weapon")
+            return 0
+
+    @property
+    def recoil_recharge(self):
+        if self.energy_per_shot < self.inventory.equipped['generator'].recoil_recharge:
+            return self.energy_per_shot
+        else:
+            return self.inventory.equipped['generator'].recoil_recharge
 
 class Player(Character):
     image = pygame.image.load(os.path.join('images', 'characters', 'player.png'))
