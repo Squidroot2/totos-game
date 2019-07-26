@@ -369,7 +369,7 @@ class Character(Entity):
         enemy_enc = opponent.getEncumbrance()
         
         # Find the range exceeded by getting the distance between then subtracting the range
-        range_exceeded = getDistanceBetweenEntities((self.x,self.y),(opponent.x,opponent.y)) - self.range
+        range_exceeded = getDistanceBetweenEntities((self.x,self.y),(opponent.x,opponent.y)) - self.getWeaponRange()
         if range_exceeded < 0:
             range_exceeded = 0
         
@@ -378,9 +378,9 @@ class Character(Entity):
 
         # For every attack in the quantity of attack rate...
         for attack in range(self.getAttackRate(ranged=True)):
-            if self.energy > self.energy_per_shot:
+            if self.energy > self.getEnergyPerShot:
                 # Reduce current energy
-                self.energy -= self.energy_per_shot - self.recoil_charge
+                self.energy -= self.getEnergyPerShot - self.getRecoilCharge()
 
                 # Roll to determine if attack landed
                 roll = random.random()
@@ -508,6 +508,18 @@ class Character(Entity):
 
         return encumbrance
 
+    def getEnergyPerShot(self):
+        return self.inventory.equipped['weapon'].energy_per_shot
+
+    def getRecoilCharge(self):
+        if self.getEnergyPerShot() < self.inventory.equipped['generator'].recoil_charge:
+            return self.getEnergyPerShot()
+        else:
+            return self.inventory.equipped['generator'].recoil_charge
+
+    def getWeaponRange(self):
+        return self.inventory.equipped['weapon'].range
+
     @property
     def energy(self):
         """Amount of energy currently in the character's generator
@@ -537,25 +549,7 @@ class Character(Entity):
         else:
             return self.inventory.equipped['generator'].max_charge
 
-    @property
-    def energy_per_shot(self):
-        try:
-            return self.inventory.equipped['weapon'].fire_rate
-        except:
-            print("Error: Could not get fire rate from equipped weapon")
-            return None
 
-    @property
-    def recoil_charge(self):
-        if self.energy_per_shot < self.inventory.equipped['generator'].recoil_charge:
-            return self.energy_per_shot
-        else:
-            return self.inventory.equipped['generator'].recoil_charge
-
-    
-    @property
-    def range(self):
-        return self.inventory.equipped['weapon'].range
 
 
 class Player(Character):
