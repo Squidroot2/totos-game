@@ -4,6 +4,7 @@ Classes:
     Game : Stores high level game information
     Log : Keeps track of game messages
 """
+from collections import Counter
 import pygame
 from source.constants import CELL_SIZE, FLOOR_WIDTH, FLOOR_HEIGHT
 import os
@@ -51,6 +52,7 @@ class Log:
             attribute
         addMessage(cls, message) : CLASS; Used by external functions to add messages to the current instance
         """
+    # todo remove instance variable
     instance = None
     def __init__(self, game):
         """Init method for Log
@@ -62,6 +64,7 @@ class Log:
         self.game = game
         # Starts off with a welcome message
         self.messages = ["Welcome to the Dungeon, " + self.game.player.name]
+        self.buffer = []
         self.setInstance(self)
 
     def getLastMessages(self, num):
@@ -71,7 +74,31 @@ class Log:
     def addEOTUnderscore(self):
         """Adds an underscore to the last message of the turn"""
         self.messages[-1] = self.messages[-1] + "_"
+    
+    def addToBuffer(self, message):
+        """Adds messages to the buffer"""
+        self.buffer.append(message)
+    
+    def write(self):
+        """Adds the messages in the buffer to the messages list"""
+        # Condense the Buffer Using a Counter
+        buffer_counter = Counter(self.buffer)
+       
+       # For every message in the buffer_counter object...
+        for message in buffer_counter:
+            
+            # If the number of occurences(N) is greater than 1, add " xN" to message
+            if buffer_counter[message] > 1:
+                message += " x%d" %buffer_counter[message]
+            
+            # Add the message to the list of messages
+            self.messages.append(message)
+        
+        # Clear the buffer
+        self.buffer = []
+        
 
+    # todo remove use of class methods
     @classmethod
     def setInstance(cls, instance):
         """Used by the init function to keep track of the current instance in a class attribute"""
