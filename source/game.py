@@ -72,7 +72,8 @@ class Log:
 
     def addEOTUnderscore(self):
         """Adds an underscore to the last message of the turn"""
-        self.messages[-1] = self.messages[-1] + "_"
+        if self.messages[-1] != "_":
+            self.messages[-1] = self.messages[-1] + "_"
 
     def write(self):
         """Adds the messages in the buffer to the messages list"""

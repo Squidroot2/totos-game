@@ -255,8 +255,9 @@ def mainGameScreen(window, fps_clock, game):
                 else:
                     turn_taken = False
 
-        # If turn was taken, iterate through all entities in the entities list
+        # If turn was taken,
         if turn_taken:
+            # iterate through all entities in the entities list
             for entity in player.location.entities:
                 #  every entity with an AI takes a turn
                 if entity.ai:
@@ -265,8 +266,14 @@ def mainGameScreen(window, fps_clock, game):
                 if entity.inventory and entity.inventory.equipped['generator']:
                     entity.inventory.equipped['generator'].recharge()
                     entity.inventory.equipped['generator'].hit_this_turn = False
+
+            # See what the player can see
             player.calculateFOV()
             player.discoverTiles()
+
+            # Also do stuff to the log
+            game.log.write()
+            game.log.addEOTUnderscore()
 
         if player.is_dead:
             run_game = False
@@ -360,7 +367,7 @@ def targetScreen(window, fps_clock, game, panes):
                 # Shoot
                 elif event.key in (K_f, K_RETURN):
                     if target.on_top_of is not None:
-                        player.rangedAttack(target.on_top_of, game.log)
+                        player.rangedAttack(target.on_top_of)
                         target_mode = False
                         turn_taken = True
                     else:
