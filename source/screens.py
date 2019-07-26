@@ -358,12 +358,13 @@ def targetScreen(window, fps_clock, game, panes):
                     turn_taken = False
 
                 # Shoot
-                elif event.key in (K_f, K_RETURN) and target.on_top_of is not None:
-                    player.rangedAttack(target.on_top_of)
-                    target_mode = False
-                    turn_taken = True
-
-
+                elif event.key in (K_f, K_RETURN):
+                    if target.on_top_of is not None:
+                        player.rangedAttack(target.on_top_of)
+                        target_mode = False
+                        turn_taken = True
+                    else:
+                        game.log.addMessage("Not A Valid Target")
 
         # Fill in the background of the window with black
         window.fill(COLORS['BLACK'])
