@@ -509,15 +509,18 @@ class Character(Entity):
         return encumbrance
 
     def getEnergyPerShot(self):
+        """The energy that every shot uses"""
         return self.inventory.equipped['weapon'].energy_per_shot
 
     def getRecoilCharge(self):
+        """The amount of energy that is recycled back into the generator after every shot"""
         if self.getEnergyPerShot() < self.inventory.equipped['generator'].recoil_charge:
             return self.getEnergyPerShot()
         else:
             return self.inventory.equipped['generator'].recoil_charge
 
     def getWeaponRange(self):
+        """The range of the currently equipped ranged weapon"""
         return self.inventory.equipped['weapon'].range
 
     @property
