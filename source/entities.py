@@ -135,11 +135,23 @@ class Target(Entity):
     """Represents the player's target when aiming or exploring"""
     image_path = os.path.join('images','other','target.png')
     def move(self, delta_x, delta_y):
-        self.x += delta_x
-        self.y += delta_y
+        destination = ((self.x+delta_x), (self.y+delta_y))
+        if self.validateMove(destination):
+            self.x += delta_x
+            self.y += delta_y
 
     def remove(self):
         self.location.removeEntity(self)
+
+    def validateMove(self, destination):
+        """Validates the move for the target entity to ensure it does not move out of bounds"""
+        floor_width = self.location.width
+        floor_height = self.location.height
+
+        if destination[0] in range(0, floor_width) and destination[1] in range(0, floor_height):
+            return True
+        else:
+            return False
 
     @property
     def on_top_of(self):
@@ -366,7 +378,7 @@ class Character(Entity):
 
         # For every attack in the quantity of attack rate...
         for attack in range(self.getAttackRate(ranged=True)):
-            while self.energy > self.energy_per_shot:
+            if self.energy > self.energy_per_shot:
                 # Reduce current energy
                 self.energy -= self.energy_per_shot - self.recoil_charge
 
@@ -543,7 +555,7 @@ class Character(Entity):
     @property
     def range(self):
         try:
-            return self.invenotry.equipped['weapon'].range
+            return self.inventory.equipped['weapon'].range
         except:
             print("Error: Could not get range from equipped weapon")
 
