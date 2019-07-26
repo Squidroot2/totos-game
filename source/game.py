@@ -21,7 +21,8 @@ class Game:
         surface : pygame.Surface
             Objects in the game are drawn to here, then this is blitted to the main window
     """
-    items_path = os.path.join('data','items.json')
+    items_path = os.path.join('data', 'items.json')
+
     def __init__(self, dungeon, player):
         """Init method for Game
 
@@ -32,7 +33,7 @@ class Game:
         self.dungeon = dungeon
         self.player = player
         self.log = Log(self)
-        self.surface = pygame.Surface((FLOOR_WIDTH*CELL_SIZE,FLOOR_HEIGHT*CELL_SIZE))
+        self.surface = pygame.Surface((FLOOR_WIDTH*CELL_SIZE, FLOOR_HEIGHT*CELL_SIZE))
 
 
 class Log:
@@ -53,6 +54,7 @@ class Log:
         addMessage(cls, message) : CLASS; Used by external functions to add messages to the current instance
         """
     instance = None
+
     def __init__(self, game):
         """Init method for Log
 
