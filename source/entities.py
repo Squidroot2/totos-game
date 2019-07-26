@@ -543,7 +543,7 @@ class Character(Entity):
             return self.inventory.equipped['weapon'].fire_rate
         except:
             print("Error: Could not get fire rate from equipped weapon")
-            return 0
+            return None
 
     @property
     def recoil_charge(self):
@@ -551,13 +551,11 @@ class Character(Entity):
             return self.energy_per_shot
         else:
             return self.inventory.equipped['generator'].recoil_charge
+
     
     @property
     def range(self):
-        try:
-            return self.inventory.equipped['weapon'].range
-        except:
-            print("Error: Could not get range from equipped weapon")
+        return self.inventory.equipped['weapon'].range
 
 
 class Player(Character):
