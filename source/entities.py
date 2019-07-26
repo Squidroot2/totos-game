@@ -15,7 +15,6 @@ import numpy
 
 from source.components import AI, Inventory, Camera
 from source.constants import CELL_SIZE
-from source.game import Log
 from source import formulas
 from source.utilities import getItemById, getDistanceBetweenEntities
 
@@ -325,7 +324,8 @@ class Character(Entity):
                 return True
         return False
 
-    def meleeAttack(self, opponent):
+    
+    def meleeAttack(self, opponent, log):
         """Attacks a specified opponent with a melee attack
 
         Parameters:
@@ -349,14 +349,14 @@ class Character(Entity):
             # Roll to determine if attack landed
             roll = random.random()
             if roll < hit_chance:
-                Log.addMessage(self.name + " hit " + opponent.name + " for " + str(damage) + " damage")
-                opponent.takeDamage(damage)
+                log.addMessage(self.name + " hit " + opponent.name + " for " + str(damage) + " damage")
+                opponent.takeDamage(damage, log)
         # Send a message if the opponent was killed
             if opponent.is_dead:
-                Log.addMessage(self.name + " killed " + opponent.name)
+                log.addMessage(self.name + " killed " + opponent.name)
                 break
 
-    def rangedAttack(self, opponent):
+    def rangedAttack(self, opponent, log):
         """Attacks a specified opponent with a ranged attack"""
         attack = self.getRangedDamage()
         defense = opponent.getDefense()
@@ -385,15 +385,15 @@ class Character(Entity):
                 # Roll to determine if attack landed
                 roll = random.random()
                 if roll < hit_chance:
-                    Log.addMessage(self.name + " hit " + opponent.name + " for " + str(damage) + " damage")
-                    opponent.takeDamage(damage)
+                    log.addMessage(self.name + " hit " + opponent.name + " for " + str(damage) + " damage")
+                    opponent.takeDamage(damage, log)
 
                 # Send a message if the opponent was killed
                 if opponent.is_dead:
-                    Log.addMessage(self.name + " killed " + opponent.name)
+                    log.addMessage(self.name + " killed " + opponent.name)
                     break
 
-    def takeDamage(self, damage):
+    def takeDamage(self, damage, log):
         """Reduces the amount of energy in the character's generator and deals any remaining to flesh
 
         Attacks to flesh do not nessearilly reduce life points but rather affect the chance to kill or chance to injure
@@ -401,7 +401,6 @@ class Character(Entity):
         Paramaters:
             damage : int
         """
-
         # If the character has some energy, damage is dealt to it first
         if not self.energy == 0:
 
@@ -414,7 +413,7 @@ class Character(Entity):
             else:
                 damage_to_flesh = damage - self.energy
                 self.energy = 0
-                Log.addMessage(self.name + " energy depleted")
+                log.addMessage(self.name + " energy depleted")
         else:
             damage_to_flesh = damage
 
@@ -435,7 +434,7 @@ class Character(Entity):
 
             # If injured, log message and reduce life by 1
             if injured:
-                Log.addMessage(self.name + " suffered an injury")
+                log.addMessage(self.name + " suffered an injury")
                 self.life -= 1
 
     def kill(self):
