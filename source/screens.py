@@ -567,8 +567,9 @@ def drawGamePane(window, game, pane):
             entity.last_known_x = entity.x
             entity.last_known_y = entity.y
             entity.draw(game.surface)
-        elif entity.discovered:
-            # If the entity is not in fov but is discovered, draw at last known coords
+        elif entity.discovered and not player.getFOV()[entity.last_known_y][entity.last_known_x]:
+            # If the entity is not in fov but is discovered, draw at last known coords...
+            # unless the last known coords are in FOV
             entity.drawAtLastKnown(game.surface)
 
     # Draw the player after all other entities
