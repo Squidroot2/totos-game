@@ -52,7 +52,6 @@ class Log:
             attribute
         addMessage(cls, message) : CLASS; Used by external functions to add messages to the current instance
         """
-    # todo remove instance variable
     instance = None
     def __init__(self, game):
         """Init method for Log
@@ -74,31 +73,30 @@ class Log:
     def addEOTUnderscore(self):
         """Adds an underscore to the last message of the turn"""
         self.messages[-1] = self.messages[-1] + "_"
-    
-    def addToBuffer(self, message):
-        """Adds messages to the buffer"""
-        self.buffer.append(message)
-    
+
     def write(self):
         """Adds the messages in the buffer to the messages list"""
         # Condense the Buffer Using a Counter
         buffer_counter = Counter(self.buffer)
        
-       # For every message in the buffer_counter object...
+        # For every message in the buffer_counter object...
         for message in buffer_counter:
             
-            # If the number of occurences(N) is greater than 1, add " xN" to message
+            # If the number of occurrences(N) is greater than 1, add " xN" to message
             if buffer_counter[message] > 1:
-                message += " x%d" %buffer_counter[message]
+                message += " x%d" % buffer_counter[message]
             
             # Add the message to the list of messages
             self.messages.append(message)
         
         # Clear the buffer
         self.buffer = []
-        
 
-    # todo remove use of class methods
+    @classmethod
+    def addToBuffer(cls, message):
+        """Adds messages to the buffer"""
+        cls.instance.buffer.append(message)
+
     @classmethod
     def setInstance(cls, instance):
         """Used by the init function to keep track of the current instance in a class attribute"""

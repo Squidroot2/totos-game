@@ -36,7 +36,6 @@ def initializePygame():
     return window, fps_clock
 
 
-# Todo make this a static method of Game
 def setupGame(window, fps_clock):
     """Runs the titleScreen and the playerCreateScreen to get information from user. Then, creates player and dungeon and puts them in a game object
     

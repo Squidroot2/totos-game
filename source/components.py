@@ -30,7 +30,6 @@ class AI:
         self.type = ai_type
         self.opponent = None
 
-    # todo figure out a way to identify the player as the opponent
     def findPlayer(self):
         """Searches through the list of entities in the location to find the player"""
         for entity in self.owner.location.entities:

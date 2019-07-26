@@ -15,6 +15,7 @@ import numpy
 
 from source.components import AI, Inventory, Camera
 from source.constants import CELL_SIZE
+from source.game import Log
 from source import formulas
 from source.utilities import getItemById, getDistanceBetweenEntities
 
@@ -294,38 +295,39 @@ class Character(Entity):
         """Moves the character by specified x and y values"""
         destination = ((self.x+delta_x), (self.y+delta_y))
         if self.validateMove(destination):
-            if not self.checkEntityObstruct(destination, peacefully):
+            entity_at_dest = self.checkEntityObstruct(destination)
+            if entity_at_dest is None:
                 self.x += delta_x
                 self.y += delta_y
+            elif not peacefully:
+                self.meleeAttack(entity_at_dest)
 
     def validateMove(self, destination):
         """Returns True if the destination is walkable and False if it isn't"""
-        # If destination is blocked
+        # Reminder: Floor.map.walkable uses row major order
         if self.location.map.walkable[destination[1]][destination[0]]:
             return True
         else:
             return False
 
-    def checkEntityObstruct(self, destination, peacefully):
-        """Checks if an obstructing entity is in the destination. If it is, attack it.
+    def checkEntityObstruct(self, destination):
+        """Checks if an obstructing entity is in the destination. If it is, return it
 
         Parameters:
             destination : 2-tuple of ints : (x,y) format
             peacefully : boolean : If true, does not attack
 
+        Returns:
+            None or Entity : Entity that is obstructing the move
+
          """
-         # todo make it so this method merely returns the obstructing entity at this location
         for entity in self.location.entities:
             if entity is self or not entity.obstruct:
                 continue
             elif entity.x == destination[0] and entity.y == destination[1]:
-                if not peacefully:
-                    self.meleeAttack(entity)
-                return True
-        return False
+                return entity
 
-    
-    def meleeAttack(self, opponent, log):
+    def meleeAttack(self, opponent):
         """Attacks a specified opponent with a melee attack
 
         Parameters:
@@ -349,14 +351,14 @@ class Character(Entity):
             # Roll to determine if attack landed
             roll = random.random()
             if roll < hit_chance:
-                log.addMessage(self.name + " hit " + opponent.name + " for " + str(damage) + " damage")
-                opponent.takeDamage(damage, log)
+                Log.addToBuffer(self.name + " hit " + opponent.name + " for " + str(damage) + " damage")
+                opponent.takeDamage(damage)
         # Send a message if the opponent was killed
             if opponent.is_dead:
-                log.addMessage(self.name + " killed " + opponent.name)
+                Log.addToBuffer(self.name + " killed " + opponent.name)
                 break
 
-    def rangedAttack(self, opponent, log):
+    def rangedAttack(self, opponent):
         """Attacks a specified opponent with a ranged attack"""
         attack = self.getRangedDamage()
         defense = opponent.getDefense()
@@ -385,15 +387,15 @@ class Character(Entity):
                 # Roll to determine if attack landed
                 roll = random.random()
                 if roll < hit_chance:
-                    log.addMessage(self.name + " hit " + opponent.name + " for " + str(damage) + " damage")
-                    opponent.takeDamage(damage, log)
+                    Log.addToBuffer(self.name + " hit " + opponent.name + " for " + str(damage) + " damage")
+                    opponent.takeDamage(damage)
 
                 # Send a message if the opponent was killed
                 if opponent.is_dead:
-                    log.addMessage(self.name + " killed " + opponent.name)
+                    Log.addToBuffer(self.name + " killed " + opponent.name)
                     break
 
-    def takeDamage(self, damage, log):
+    def takeDamage(self, damage):
         """Reduces the amount of energy in the character's generator and deals any remaining to flesh
 
         Attacks to flesh do not nessearilly reduce life points but rather affect the chance to kill or chance to injure
@@ -413,7 +415,7 @@ class Character(Entity):
             else:
                 damage_to_flesh = damage - self.energy
                 self.energy = 0
-                log.addMessage(self.name + " energy depleted")
+                Log.addToBuffer(self.name + " energy depleted")
         else:
             damage_to_flesh = damage
 
@@ -434,7 +436,7 @@ class Character(Entity):
 
             # If injured, log message and reduce life by 1
             if injured:
-                log.addMessage(self.name + " suffered an injury")
+                Log.addToBuffer(self.name + " suffered an injury")
                 self.life -= 1
 
     def kill(self):
@@ -662,7 +664,6 @@ class Player(Character):
 
 
 class Item(Entity):
-    #todo finish Item docstrings
     """Represents entities which can be inside of an Inventory
 
     Child of Entity
