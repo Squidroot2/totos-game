@@ -380,9 +380,9 @@ class Character(Entity):
 
         # For every attack in the quantity of attack rate...
         for attack in range(self.getAttackRate(ranged=True)):
-            if self.energy > self.getEnergyPerShot:
+            if self.energy > self.getEnergyPerShot():
                 # Reduce current energy
-                self.energy -= self.getEnergyPerShot - self.getRecoilCharge()
+                self.energy -= self.getEnergyPerShot() - self.getRecoilCharge()
 
                 # Roll to determine if attack landed
                 roll = random.random()
