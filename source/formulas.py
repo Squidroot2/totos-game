@@ -20,21 +20,21 @@ def getMeleeHitChance(attacker_enc, defender_enc):
     base = 1
     
     # Calculate Penalty
-    enc_penalty = attack_enc * -0.1
+    enc_penalty = attacker_enc * -0.1
     
     # Calculate Bonus
-    enc_boost = defender_enc * 0.1
+    enc_bonus = defender_enc * 0.1
         
     # Return sum of base, penalty and bonus
     return math.fsum([base,enc_penalty, enc_bonus])
     
 
-def getRangedHitChance(attack_enc, defender_enc, range_exceeded):
+def getRangedHitChance(attacker_enc, defender_enc, range_exceeded):
     # Base chance to hit
     base = .95
     
     # Calculate Penalties
-    enc_penalty = attack_enc * -0.15
+    enc_penalty = attacker_enc * -0.15
     range_penalty = range_exceeded * -0.15
     
     # Calculate Bonus
