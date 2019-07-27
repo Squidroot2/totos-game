@@ -7,6 +7,7 @@ Classes:
 
 import os
 import random
+import queue
 
 import pygame
 import tcod
@@ -184,9 +185,22 @@ class Floor:
 
         return floor_list
 
+    @staticmethod
+    def generateDungeonProcess(floors_to_make, floors_made):
+        """To be run from a Process. Saves the floors in floors_made"""
+        while True:
+            try:
+                number = floors_to_make.get_nowait()
+            except queue.Empty:
+                return
+            else:
+                floors_made.put(Floor(number))
+                print("Finished floor %d" % number)
+
 
 class Tile:
     CELL_SIZE = CELL_SIZE
+    image_folder = os.path.join('images', 'tiles')
 
     def __init__(self, map, x, y):
         # Row Major Order
@@ -197,9 +211,15 @@ class Tile:
         self.discovered = False
         self.pixel_x = self.x*self.CELL_SIZE
         self.pixel_y = self.y*self.CELL_SIZE
+        self.image_path = os.path.join(self.image_folder, "white-tile.png")
+        self.image = None
+
 
     def draw(self, surface):
         """Blits the tile to the screen"""
+        if self.image is None:
+            self.image = pygame.image.load(self.image_path)
+
         if self.discovered:
             surface.blit(self.image, (self.pixel_x, self.pixel_y))
 
@@ -208,9 +228,9 @@ class Tile:
         self.walkable = map.walkable[self.y][self.x]
         self.transparent = map.transparent[self.y][self.x]
         if self.walkable and self.transparent:
-            self.image = pygame.image.load(os.path.join('images', 'tiles', 'white-tile.png'))
+            self.image_path = os.path.join(self.image_folder, 'white-tile.png')
         else:
-            self.image = pygame.image.load(os.path.join('images', 'tiles', 'wall.png'))
+            self.image_path = os.path.join(self.image_folder, 'wall.png')
 
     def drawFog(self, surface):
         """Covers the tile in a translucent gray surface"""
