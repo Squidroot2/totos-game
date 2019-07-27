@@ -6,11 +6,10 @@ Functions:
     setupGame(window, fps_clock) : Gets information from the user then creaetes player and dungeon and puts them in a Game object"""
 import pygame
 
-from source.constants import WINDOW_WIDTH, WINDOW_HEIGHT
-from source.entities import Player
-from source.floors import Floor
-from source.game import Game
-from source.screens import mainGameScreen, titleScreen, playerCreateScreen, gameOverScreen
+from constants import WINDOW_WIDTH, WINDOW_HEIGHT
+from entities import Player
+from game import Game
+from screens import mainGameScreen, titleScreen, playerCreateScreen, gameOverScreen, generateDungeonScreen
 
 def main():
     """The main function of the program
@@ -50,8 +49,7 @@ def setupGame(window, fps_clock):
     titleScreen(window, fps_clock)
     name, background = playerCreateScreen(window, fps_clock)
 
-    # Generate a dungeon with a specified number of floors
-    dungeon = Floor.generateDungeon(num_of_floors=5)
+    dungeon = generateDungeonScreen(window)
 
     # Player starts on the first floor at th location of the up portal
     player_start_x = dungeon[0].portals['up'].x

@@ -13,11 +13,11 @@ import random
 
 import numpy
 
-from source.components import AI, Inventory, Camera
-from source.constants import CELL_SIZE, BACKGROUNDS
-from source.game import Log
-from source import formulas
-from source.utilities import getItemById, getDistanceBetweenEntities
+import formulas
+from components import AI, Inventory, Camera
+from constants import CELL_SIZE, BACKGROUNDS
+from game import Log
+from utilities import getItemById, getDistanceBetweenEntities
 
 # Location of the json file which holds the character data
 CHARACTER_JSON = os.path.join('data', 'characters.json')

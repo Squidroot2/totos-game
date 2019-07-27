@@ -12,14 +12,19 @@ Functions:
 
 """
 
+
+import multiprocessing
+
 import pygame
 from pygame.constants import *
 
-from source.constants import COLORS, FONTS, FPS, BACKGROUNDS
-from source.utilities import checkForQuit
-from source.entities import Target
+from floors import Floor
+from constants import COLORS, FONTS, FPS, BACKGROUNDS
+from utilities import checkForQuit
+from entities import Target
+from floors import Floor
 
-
+# todo have titleScreen use a background
 def titleScreen(window, fps_clock):
     """Displays the Title Screen. Runs its own while loop until the player hits enter to continue
 
@@ -158,11 +163,9 @@ def playerCreateScreen(window, fps_clock):
         fps_clock.tick(FPS)
         pygame.display.flip()
 
-    # todo have the player choose class in this function and return it
     return name, BACKGROUNDS[bg_chosen_index]
 
 
-# todo finish drawClassSelect
 def drawClassSelect(window, selected_class):
     """Draw the Class Selection Buttons"""
     assert selected_class in BACKGROUNDS
@@ -171,6 +174,7 @@ def drawClassSelect(window, selected_class):
 
     x_margin = window_rect.width / 25
 
+    # Button Dimensions
     button_width = (window_rect.width-x_margin*2) / len(BACKGROUNDS)
     button_height = window_rect.height / 3
     button_top = window_rect.height / 3
@@ -203,9 +207,7 @@ def drawClassSelect(window, selected_class):
         background_text_rect.center = border_rect.center
         window.blit(background_text, background_text_rect)
 
-
-
-    # The horizontal distance between the rects and the text below them
+    # The vertical margin for the text
     text_margin = FONTS['SUBMAIN'].get_linesize()
     
     choose_prompt = FONTS['SUBMAIN'].render('Choose Background with arrow keys', True, COLORS['BLACK'], COLORS['WHITE'])
@@ -213,6 +215,31 @@ def drawClassSelect(window, selected_class):
     choose_rect.midtop = (window_rect.centerx, border_rect.bottom + text_margin)
 
     window.blit(choose_prompt, choose_rect)
+
+
+def generateDungeonScreen(window):
+    """A loading screen for generating the dungeon. Returns the dungeon"""
+    window_rect = window.get_rect()
+
+    # Text and Background colors
+    text_color = COLORS['WHITE']
+    bg_color = COLORS['BLACK']
+
+    # Prompt
+    window.fill(bg_color)
+    prompt = FONTS['MAIN'].render("Generating Dungeon...",  True, text_color, bg_color)
+    prompt_rect = prompt.get_rect()
+    prompt_rect.center = window_rect.center
+
+    window.blit(prompt, prompt_rect)
+
+    pygame.display.flip()
+
+    # Generate a dungeon with a specified number of floors
+    dungeon = Floor.generateDungeon(num_of_floors=100)
+
+    return dungeon
+
 
 def mainGameScreen(window, fps_clock, game):
     """runs the main game loop as long as the run_game boolean is true"""
