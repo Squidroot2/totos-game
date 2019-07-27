@@ -353,6 +353,8 @@ class Character(Entity):
             if roll < hit_chance:
                 Log.addToBuffer(self.name + " hit " + opponent.name + " for " + str(damage) + " damage")
                 opponent.takeDamage(damage)
+            else:
+                Log.addToBuffer(self.name + " missed")
         # Send a message if the opponent was killed
             if opponent.is_dead:
                 Log.addToBuffer(self.name + " killed " + opponent.name)
@@ -389,6 +391,8 @@ class Character(Entity):
                 if roll < hit_chance:
                     Log.addToBuffer(self.name + " hit " + opponent.name + " for " + str(damage) + " damage")
                     opponent.takeDamage(damage)
+                else:
+                    Log.addToBuffer(self.name + " missed")
 
                 # Send a message if the opponent was killed
                 if opponent.is_dead:
@@ -436,7 +440,7 @@ class Character(Entity):
 
             # If injured, log message and reduce life by 1
             if injured:
-                Log.addToBuffer(self.name + " suffered an injury")
+                Log.addToBuffer(self.name + " was weakened")
                 self.life -= 1
 
     def kill(self):
