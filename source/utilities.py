@@ -4,6 +4,7 @@ Functions:
     readINI(config_path) : Takes the location of the config and returns a ConfigParser object containg the contents
     loadJson(json_path) : Takes the location of the json file and returns a dictionary containing the contents
     getItemById(json_path, id, category=None) : Returns a dictionary containing the particular information from the json file
+    getDistanceBetweenEntities(coordsA, coordsB) : Takes two coordinates and returns the distance between them
     terminateGame() : Quits the program
     checkForQuit() : Terminates the game if the QUIT event is present or the Escape key has been pressed
 """
