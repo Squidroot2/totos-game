@@ -14,7 +14,7 @@ import random
 import numpy
 
 from source.components import AI, Inventory, Camera
-from source.constants import CELL_SIZE
+from source.constants import CELL_SIZE, BACKGROUNDS
 from source.game import Log
 from source import formulas
 from source.utilities import getItemById, getDistanceBetweenEntities
@@ -582,7 +582,7 @@ class Player(Character):
         self.name = name
 
         # Stores the background
-        assert background in ("Officer", "Marksman", "Agent", "Pointman", "Gladiator")
+        assert background in BACKGROUNDS
         self.background = background
 
         self.setStartingInventory()

@@ -15,7 +15,7 @@ Functions:
 import pygame
 from pygame.constants import *
 
-from source.constants import COLORS, FONTS, FPS
+from source.constants import COLORS, FONTS, FPS, BACKGROUNDS
 from source.utilities import checkForQuit
 from source.entities import Target
 
@@ -120,6 +120,8 @@ def playerCreateScreen(window, fps_clock):
 
     name = ''
 
+    bg_chosen_index = 0
+
     # Clear the events to ensure no keys previously pressed show up in the name
     pygame.event.clear()
 
@@ -128,15 +130,21 @@ def playerCreateScreen(window, fps_clock):
         window.fill(COLORS['WHITE'])
         window.blit(name_prompt, name_prompt_rect)
 
-        # drawClassSelect()
-
         checkForQuit()
         for event in pygame.event.get():
             if event.type == KEYDOWN:
                 if event.key == K_RETURN and name != '':
                     name_chosen = True
+
+                # If Backspace, remove character
                 elif event.key == K_BACKSPACE:
                     name = name[:-1]
+
+                # If left or right, change chosen background index
+                elif event.key in (K_KP4, K_LEFT) and bg_chosen_index > 0:
+                    bg_chosen_index -= 1
+                elif event.key in (K_KP6, K_RIGHT) and bg_chosen_index < len(BACKGROUNDS)-1:
+                    bg_chosen_index += 1
                 else:
                     name += event.unicode
 
@@ -145,18 +153,66 @@ def playerCreateScreen(window, fps_clock):
         input_rect.midleft = (name_prompt_rect.right, name_prompt_rect.centery)
 
         window.blit(name_text, input_rect)
+        drawClassSelect(window, BACKGROUNDS[bg_chosen_index])
 
         fps_clock.tick(FPS)
         pygame.display.flip()
 
     # todo have the player choose class in this function and return it
-    return name
+    return name, BACKGROUNDS[bg_chosen_index]
 
 
 # todo finish drawClassSelect
-def drawClassSelect(window):
-    window.get_rect()
+def drawClassSelect(window, selected_class):
+    """Draw the Class Selection Buttons"""
+    assert selected_class in BACKGROUNDS
 
+    window_rect = window.get_rect()
+
+    x_margin = window_rect.width / 25
+
+    button_width = (window_rect.width-x_margin*2) / len(BACKGROUNDS)
+    button_height = window_rect.height / 3
+    button_top = window_rect.height / 3
+    border_thickness = 1
+
+    for i, background in enumerate(BACKGROUNDS):
+
+        # Identify colors for buttons and text
+        if background == selected_class:
+            button_color = COLORS['BLACK']
+            text_color = COLORS['WHITE']
+        else:
+            button_color = COLORS['WHITE']
+            text_color = COLORS['BLACK']
+
+        # Render text for background and get associated rect
+        background_text = FONTS['MAIN'].render(background, True, text_color, button_color)
+        background_text_rect = background_text.get_rect()
+
+        # Determine horizontal location for rect and create inner and outer
+        left = x_margin + button_width*i
+        border_rect = pygame.Rect(left, button_top, button_width, button_height)
+        inner_rect = pygame.Rect(left+border_thickness, button_top+border_thickness, button_width-border_thickness, button_height-border_thickness)
+
+        # Inner and outer Rect
+        pygame.draw.rect(window, button_color, inner_rect, 0)
+        pygame.draw.rect(window, COLORS['BLACK'], border_rect, border_thickness)
+
+        # Draw text in center of button
+        background_text_rect.center = border_rect.center
+        window.blit(background_text, background_text_rect)
+
+
+
+    # The horizontal distance between the rects and the text below them
+    text_margin = FONTS['SUBMAIN'].get_linesize()
+    
+    choose_prompt = FONTS['SUBMAIN'].render('Choose Background with arrow keys', True, COLORS['BLACK'], COLORS['WHITE'])
+    choose_rect = choose_prompt.get_rect()
+    choose_rect.midtop = (window_rect.centerx, border_rect.bottom + text_margin)
+
+    window.blit(choose_prompt, choose_rect)
 
 def mainGameScreen(window, fps_clock, game):
     """runs the main game loop as long as the run_game boolean is true"""
@@ -255,7 +311,7 @@ def mainGameScreen(window, fps_clock, game):
                 else:
                     turn_taken = False
 
-        # If turn was taken,
+        # If turn was taken...
         if turn_taken:
             # iterate through all entities in the entities list
             for entity in player.location.entities:
@@ -330,7 +386,7 @@ def targetScreen(window, fps_clock, game, panes):
 
     # Create target
     target = Target(floor, player.x, player.y)
-
+    turn_taken = False
     target_mode = True
     while target_mode:
 
@@ -362,7 +418,6 @@ def targetScreen(window, fps_clock, game, panes):
                 # Exit targeting
                 elif event.key == K_ESCAPE:
                     target_mode = False
-                    turn_taken = False
 
                 # Shoot
                 elif event.key in (K_f, K_RETURN):
@@ -455,8 +510,8 @@ def drawStatPane(window, player, pane):
     # Fills in the pane in black
     pygame.draw.rect(window, background_color, pane, 0)
 
-    X_MARGIN = pane.width/10
-    Y_MARGIN = pane.height/25
+    x_margin = pane.width/10
+    y_margin = pane.height/25
 
     # Strings used
     full_name = player.name + " the " + player.background
@@ -481,12 +536,12 @@ def drawStatPane(window, player, pane):
     text_rects = {surf: text_surfs[surf].get_rect() for surf in text_surfs}
 
     # Place rectangles
-    text_rects['name'].midleft = (pane.left+X_MARGIN, Y_MARGIN)
-    text_rects['floor'].topleft = (pane.left + X_MARGIN, text_rects['name'].bottom + FONTS['INFO'].get_linesize())
-    text_rects['xp'].topleft = (pane.left+X_MARGIN, text_rects['floor'].bottom)
-    text_rects['defense'].topleft = (pane.left+X_MARGIN, text_rects['xp'].bottom)
-    text_rects['life'].topleft = (pane.left + X_MARGIN, text_rects['defense'].bottom)
-    text_rects['energy_key'].topleft = (pane.left + X_MARGIN, text_rects['life'].bottom)
+    text_rects['name'].midleft = (pane.left+x_margin, y_margin)
+    text_rects['floor'].topleft = (pane.left + x_margin, text_rects['name'].bottom + FONTS['INFO'].get_linesize())
+    text_rects['xp'].topleft = (pane.left+x_margin, text_rects['floor'].bottom)
+    text_rects['defense'].topleft = (pane.left+x_margin, text_rects['xp'].bottom)
+    text_rects['life'].topleft = (pane.left + x_margin, text_rects['defense'].bottom)
+    text_rects['energy_key'].topleft = (pane.left + x_margin, text_rects['life'].bottom)
     # Energy Value is placed after energy bar
 
     # Define Energy Bar Dimensions
@@ -524,10 +579,10 @@ def drawLogPane(window, log, pane):
     pygame.draw.rect(window, COLORS['WHITE'], pane, 0)
 
     # Adds a Margin to the top and left side of the messages box
-    X_MARGIN = 10
-    Y_MARGIN = 5
-    log_left = pane.left + X_MARGIN
-    log_top = pane.top + Y_MARGIN
+    x_margin = 10
+    y_margin = 5
+    log_left = pane.left + x_margin
+    log_top = pane.top + y_margin
 
     # Get tha last messages from the log
     messages = log.getLastMessages(8)
@@ -570,14 +625,14 @@ def drawGamePane(window, game, pane):
         if entity is player:
             continue
         if player.getFOV()[entity.y][entity.x]:
-            # If the entity is in fov, mark as discovered, update last known coords, and draw
+            # If the entity is in fov, mark as discovered, update last known coordinates, and draw
             entity.discovered = True
             entity.last_known_x = entity.x
             entity.last_known_y = entity.y
             entity.draw(game.surface)
         elif entity.discovered and not player.getFOV()[entity.last_known_y][entity.last_known_x]:
-            # If the entity is not in fov but is discovered, draw at last known coords...
-            # unless the last known coords are in FOV
+            # If the entity is not in fov but is discovered, draw at last known coordinates...
+            # unless the last known coordinates are in FOV
             entity.drawAtLastKnown(game.surface)
 
     # Draw the player after all other entities

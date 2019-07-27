@@ -171,6 +171,19 @@
         "range": 2
       }
     },
+    "PDW_1": {
+      "name": "Phopion",
+      "melee_damage": 1,
+      "melee_speed": 1,
+      "quick_draw": false,
+      "difficulty": 2,
+      "ranged": {
+        "damage": 2,
+        "energy": 2,
+        "fire_rate": 3,
+        "range": 2
+      }
+    },
     "KNIFE_1": {
       "name": "Simple Knife",
       "melee_damage": 3,

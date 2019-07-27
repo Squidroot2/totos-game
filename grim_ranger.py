@@ -48,7 +48,7 @@ def setupGame(window, fps_clock):
     """
 
     titleScreen(window, fps_clock)
-    name = playerCreateScreen(window, fps_clock)
+    name, background = playerCreateScreen(window, fps_clock)
 
     # Generate a dungeon with a specified number of floors
     dungeon = Floor.generateDungeon(num_of_floors=5)
@@ -58,10 +58,10 @@ def setupGame(window, fps_clock):
     player_start_y = dungeon[0].portals['up'].y
 
     # Generates player
-    player = Player(name,"Officer",dungeon[0],player_start_x,player_start_y)
+    player = Player(name, background, dungeon[0], player_start_x, player_start_y)
 
     # Creates game from player and dungeon
-    game = Game(dungeon,player)
+    game = Game(dungeon, player)
 
     return game
 

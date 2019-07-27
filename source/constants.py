@@ -35,8 +35,11 @@ COLORS = {'BLACK':      (  0,  0,  0),
 pygame.font.init()
 FONTS = {'TITLE': pygame.font.Font('freesansbold.ttf', 70),
          'MAIN': pygame.font.Font('freesansbold.ttf', 28),
+         'SUBMAIN': pygame.font.Font('freesansbold.ttf', 20),
          'INFO': pygame.font.Font('freesansbold.ttf', 14),
          'LOG': pygame.font.Font('freesansbold.ttf', 12)}
 
 FONTS['TITLE'].set_underline(True)
 FPS = 60
+
+BACKGROUNDS = ("Officer", "Marksman", "Agent", "Pointman", "Gladiator")
