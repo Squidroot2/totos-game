@@ -4,10 +4,14 @@ Classes:
     Game : Stores high level game information
     Log : Keeps track of game messages
 """
-from collections import Counter
-import pygame
-from source.constants import CELL_SIZE, FLOOR_WIDTH, FLOOR_HEIGHT
+# Standard Library
 import os
+from collections import Counter
+# Third-Party
+import pygame
+# My Modules
+from source.constants import CELL_SIZE, FLOOR_WIDTH, FLOOR_HEIGHT
+
 
 
 class Game:

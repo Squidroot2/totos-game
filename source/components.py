@@ -5,9 +5,11 @@ Classes:
     Camera
     Inventory
 """
+# Standard Library
 import random
-
+# Third Party
 import pygame
+# My Modules
 from source.constants import CELL_SIZE
 
 class AI:

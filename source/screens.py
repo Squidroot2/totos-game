@@ -13,16 +13,15 @@ Functions:
 """
 
 
-import multiprocessing
-
+# Third Party
 import pygame
 from pygame.constants import *
 
-from floors import Floor
-from constants import COLORS, FONTS, FPS, BACKGROUNDS
-from utilities import checkForQuit
-from entities import Target
-from floors import Floor
+# My Modules
+from source.constants import COLORS, FONTS, FPS, BACKGROUNDS
+from source.utilities import checkForQuit
+from source.entities import Target
+from source.floors import Floor
 
 # todo have titleScreen use a background
 def titleScreen(window, fps_clock):

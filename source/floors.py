@@ -4,14 +4,14 @@ Classes:
     Floor
     Tile
 """
-
+# Standard Library
 import os
 import random
 import queue
-
+# Third Party
 import pygame
 import tcod
-
+# My Modules
 from source.entities import Portal
 from source.entities import Character
 from source.constants import CELL_SIZE, FLOOR_HEIGHT, FLOOR_WIDTH, COLORS

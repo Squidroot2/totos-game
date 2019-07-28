@@ -6,10 +6,10 @@ Functions:
     setupGame(window, fps_clock) : Gets information from the user then creaetes player and dungeon and puts them in a Game object"""
 import pygame
 
-from constants import WINDOW_WIDTH, WINDOW_HEIGHT
-from entities import Player
-from game import Game
-from screens import mainGameScreen, titleScreen, playerCreateScreen, gameOverScreen, generateDungeonScreen
+from source.constants import WINDOW_WIDTH, WINDOW_HEIGHT
+from source.entities import Player
+from source.game import Game
+from source.screens import mainGameScreen, titleScreen, playerCreateScreen, gameOverScreen, generateDungeonScreen
 
 def main():
     """The main function of the program

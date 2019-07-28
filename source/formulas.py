@@ -7,7 +7,7 @@ Functions:
 ....determineLethal(damage, life)
 ....determineInjury(damage, life)
 """
-
+# Standard Library
 import math
 import random
 
