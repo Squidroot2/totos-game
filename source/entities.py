@@ -6,6 +6,14 @@ Classes:
     Target(Entity)
     Portal(Entity)
     Corpse(Entity)
+    Character(Entity)
+    Player(Character)
+    Item(Entity)
+    Weapon(Item)
+    Armor(Item)
+    Generator(Item)
+    Battery(Item)
+    
 """
 # Standard Library
 import os
@@ -557,8 +565,6 @@ class Character(Entity):
             return 0
         else:
             return self.inventory.equipped['generator'].max_charge
-
-
 
 
 class Player(Character):

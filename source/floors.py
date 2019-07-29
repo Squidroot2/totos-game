@@ -15,6 +15,7 @@ import tcod
 from source.entities import Portal
 from source.entities import Character
 from source.constants import CELL_SIZE, FLOOR_HEIGHT, FLOOR_WIDTH, COLORS
+from source.assets import Assets
 
 
 
@@ -74,7 +75,7 @@ class Floor:
         self.map.walkable[y][x] = True
 
     def makeRoom(self,node):
-        """Uses the properties of the given node to dig out a room
+        """Uses the properties of the given node to dig out a room. Appends the room to the instance's list of rooms
 
         Parameters:
             node : tcod.bsp.BSP
@@ -187,7 +188,9 @@ class Floor:
 
     @staticmethod
     def generateDungeonProcess(floors_to_make, floors_made):
-        """To be run from a Process. Saves the floors in floors_made"""
+        """To be run from a Process. Saves the floors in floors_made
+        
+        Currently unused"""
         while True:
             try:
                 number = floors_to_make.get_nowait()
@@ -200,7 +203,8 @@ class Floor:
 
 class Tile:
     CELL_SIZE = CELL_SIZE
-    image_folder = os.path.join('images', 'tiles')
+    #image_folder = os.path.join('images', 'tiles')
+    image_dir = "Tiles"
 
     def __init__(self, map, x, y):
         # Row Major Order
@@ -211,14 +215,16 @@ class Tile:
         self.discovered = False
         self.pixel_x = self.x*self.CELL_SIZE
         self.pixel_y = self.y*self.CELL_SIZE
-        self.image_path = os.path.join(self.image_folder, "white-tile.png")
-        self.image = None
-
+        #self.image_path = os.path.join(self.image_folder, "white-tile.png")
+        #self.image = None
+        self.image_name = 'white-tile'
+        self.image = Assets.images[self.image_dir][self.image_name]
 
     def draw(self, surface):
-        """Blits the tile to the screen"""
-        if self.image is None:
-            self.image = pygame.image.load(self.image_path)
+        """Blits the tile to the screen if it has been discovered"""
+        #if self.image is None:
+            #self.image = pygame.image.load(self.image_path)
+            
 
         if self.discovered:
             surface.blit(self.image, (self.pixel_x, self.pixel_y))
@@ -228,9 +234,14 @@ class Tile:
         self.walkable = map.walkable[self.y][self.x]
         self.transparent = map.transparent[self.y][self.x]
         if self.walkable and self.transparent:
-            self.image_path = os.path.join(self.image_folder, 'white-tile.png')
+            #self.image_path = os.path.join(self.image_folder, 'white-tile.png')
+            self.image_name = 'white-tile'
+            
         else:
-            self.image_path = os.path.join(self.image_folder, 'wall.png')
+            #self.image_path = os.path.join(self.image_folder, 'wall.png')
+            self.image_name = 'wall'
+        
+        self.image = Assets.images[self.image_dir][self.image_name]
 
     def drawFog(self, surface):
         """Covers the tile in a translucent gray surface"""

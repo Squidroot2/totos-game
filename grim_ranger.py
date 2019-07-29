@@ -10,6 +10,7 @@ from source.constants import WINDOW_WIDTH, WINDOW_HEIGHT
 from source.entities import Player
 from source.game import Game
 from source.screens import mainGameScreen, titleScreen, playerCreateScreen, gameOverScreen, generateDungeonScreen
+from source.assets import Assets
 
 def main():
     """The main function of the program
@@ -45,13 +46,14 @@ def setupGame(window, fps_clock):
     Returns
         game : Game
     """
-
+    Assets.loadImages()
     titleScreen(window, fps_clock)
     name, background = playerCreateScreen(window, fps_clock)
 
+    # Shows loading screen for generating dungeon
     dungeon = generateDungeonScreen(window)
 
-    # Player starts on the first floor at th location of the up portal
+    # Player starts on the first floor at the location of the up portal
     player_start_x = dungeon[0].portals['up'].x
     player_start_y = dungeon[0].portals['up'].y
 
