@@ -27,6 +27,7 @@ from source.components import AI, Inventory, Camera
 from source.constants import CELL_SIZE, BACKGROUNDS
 from source.game import Log
 from source.utilities import getItemById, getDistanceBetweenEntities
+from source.assets import Assets
 
 # Location of the json file which holds the character data
 CHARACTER_JSON = os.path.join('data', 'characters.json')
@@ -119,7 +120,8 @@ class Entity:
         """Loads the image stored at the image_path attribute
 
         Requires pygame to be initialized"""
-        self.image = pygame.image.load(self.image_path).convert_alpha()
+        #self.image = pygame.image.load(self.image_path).convert_alpha()
+        self.image = Assets.getImage(self.image_dir, self.image_name)
 
     def draw(self, surface):
         """Takes a pygame surface object and blits the object's 'image' to it at the determined x and y coordinates
@@ -142,7 +144,9 @@ class Entity:
 
 class Target(Entity):
     """Represents the player's target when aiming or exploring"""
-    image_path = os.path.join('images','other','target.png')
+    #image_path = os.path.join('images','other','target.png')
+    image_dir = 'Other'
+    image_name = 'target'
     def move(self, delta_x, delta_y):
         destination = ((self.x+delta_x), (self.y+delta_y))
         if self.validateMove(destination):
@@ -182,14 +186,16 @@ class Target(Entity):
 
 class Portal(Entity):
     """Entity used to move player between floors"""
-
+    image_dir = 'Other'
     def __init__(self, location, x, y, direction):
         super().__init__(location, x, y)
         assert direction in ("up", "down")
         if direction == "down":
-            self.image_path = os.path.join('images', 'other', 'down_portal.png')
+            #self.image_path = os.path.join('images', 'other', 'down_portal.png')
+            self.image_name = 'down_portal'
         else:
-            self.image_path = os.path.join('images', 'other', 'up_portal.png')
+            #self.image_path = os.path.join('images', 'other', 'up_portal.png')
+            self.image_name = 'up_portal'
         self.direction = direction
 
 
@@ -220,7 +226,10 @@ class Corpse(Entity):
             INHERITED; the corpse's Inventory component
     """
 
-    image_path = os.path.join('images', 'other', 'headstone.png')
+    #image_path = os.path.join('images', 'other', 'headstone.png')
+    image_dir = 'Other'
+    image_name = 'headstone'
+    
     def __init__(self, character):
         """Init method for Corpse. Extends the init method of Entity
         
@@ -270,6 +279,8 @@ class Character(Entity):
 
     Children:
         Player(Character)"""
+        
+    image_dir = 'Characters'
     def __init__(self, char_id, floor, x, y, inventory=[], is_player=False):
         """Extends the entity init function"""
 

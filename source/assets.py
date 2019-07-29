@@ -2,6 +2,15 @@
 import os
 import pygame
 
+from source.utilities import loadJson
+
+def loadAssets()
+    """Runs the load method on all classes"""
+    Assets.load()
+    Data.load()
+
+
+
 # todo have tiles and enties pull from the loaded assets
 class Assets:
     # Image Folders
@@ -45,11 +54,8 @@ class Assets:
             images[folder][image] = None
     
     
-    
-   
-
     @classmethod
-    def loadImages(cls):
+    def load(cls):
         """Loads the images into the class dictionary
         
         Requires pygame to be initialized and video mode to be set
@@ -74,3 +80,29 @@ class Assets:
         except KeyError:
             return cls.missing_image
 
+class Data:
+    """Contains data pulled from json files"""
+    data_folder = 'data'
+    
+    json_files = {'Characters': os.path.join(data_folder, 'characters.json'),
+                  'Items': os.path.join(data_folder, 'items.json')}
+    
+    data = {file: None for file in json_file}
+        
+        
+    
+    def load(cls):
+        """Loads the data from the json files"""
+        for file in cls.json_files:
+            cls.data[file] = loadJson(cls.json_files[file])
+    
+    
+    def getCharacter(cls, id):
+        """Returns the data for a charcter with a given id"""
+        return cls.data['Characters'][id]
+    
+    
+    def getItem(cls, category, id):
+        """Returns the data for an item for given category and id"""
+        return cls.data['Items'][category][id]
+        
