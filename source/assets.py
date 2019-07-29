@@ -9,7 +9,12 @@ class Assets:
     character_images = os.path.join(images_folder, 'characters')
     other_images = os.path.join(images_folder, 'other')
     tile_images = os.path.join(images_folder, 'tiles')
-
+    
+    # Missing Image
+    missing_image_path = os.path.join(images_folder, 'unknown.png')
+    missing_image = None
+    
+    # Image Paths
     image_paths = { 'Characters': {
                         'blob': os.path.join(character_images,'blob.png'),
                         'blue_slinger': os.path.join(character_images,'blue_slinger.png'),
@@ -39,15 +44,33 @@ class Assets:
         for image in image_paths[folder]:
             images[folder][image] = None
     
+    
+    
    
 
     @classmethod
     def loadImages(cls):
-    """Loads the images into the class dictionary
-    
-    Requires pygame to be initialized and video mod to be set
-    """
+        """Loads the images into the class dictionary
+        
+        Requires pygame to be initialized and video mode to be set
+        """
         for folder in cls.image_paths:
             for image in cls.image_paths[folder]:
                 cls.images[folder][image] = pygame.image.load(cls.image_paths[folder][image]).convert_alpha()
+        cls.missing_image = pygame.image.load(cls.missing_image_path)
+    
+    @classmethod
+    def getImage(cls, directory, image):
+        """Returns the correct image unless it cannot be found in which case it returns the missing_image surface
+        
+        Parameters:
+            directory : string
+            image : string
+        
+        Returns: pygame.Surface
+        """
+        try:
+            return cls.images[directory][image]
+        except KeyError:
+            return cls.missing_image
 

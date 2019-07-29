@@ -217,8 +217,8 @@ class Tile:
         self.pixel_y = self.y*self.CELL_SIZE
         #self.image_path = os.path.join(self.image_folder, "white-tile.png")
         #self.image = None
-        self.image_name = 'white-tile'
-        self.image = Assets.images[self.image_dir][self.image_name]
+        self.image_name = None
+        self.image = None
 
     def draw(self, surface):
         """Blits the tile to the screen if it has been discovered"""
@@ -241,7 +241,7 @@ class Tile:
             #self.image_path = os.path.join(self.image_folder, 'wall.png')
             self.image_name = 'wall'
         
-        self.image = Assets.images[self.image_dir][self.image_name]
+        self.image = Assets.getImage(self.image_dir, self.image_name)
 
     def drawFog(self, surface):
         """Covers the tile in a translucent gray surface"""
