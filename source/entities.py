@@ -14,7 +14,7 @@ import random
 import numpy
 import pygame
 # My Modules
-import source.formulas
+from source import formulas
 from source.components import AI, Inventory, Camera
 from source.constants import CELL_SIZE, BACKGROUNDS
 from source.game import Log
