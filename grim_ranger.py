@@ -10,7 +10,7 @@ from source.constants import WINDOW_WIDTH, WINDOW_HEIGHT
 from source.entities import Player
 from source.game import Game
 from source.screens import mainGameScreen, titleScreen, playerCreateScreen, gameOverScreen, generateDungeonScreen
-from source.assets import Assets
+from source.assets import loadAssets
 
 def main():
     """The main function of the program
@@ -46,7 +46,7 @@ def setupGame(window, fps_clock):
     Returns
         game : Game
     """
-    Assets.loadImages()
+    loadAssets()
     titleScreen(window, fps_clock)
     name, background = playerCreateScreen(window, fps_clock)
 

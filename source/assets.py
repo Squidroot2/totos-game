@@ -1,7 +1,9 @@
 """Module which will hold a struct-like class which wiil load all assets to one place"""
+# Standard Library
 import os
+# Third Party
 import pygame
-
+# My Modules
 from source.utilities import loadJson
 
 def loadAssets()
@@ -11,7 +13,8 @@ def loadAssets()
 
 
 
-# todo have tiles and enties pull from the loaded assets
+# todo have tiles and entities pull from the loaded assets
+# todo rename this to Images
 class Assets:
     # Image Folders
     images_folder = 'images'
