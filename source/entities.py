@@ -29,11 +29,6 @@ from source.game import Log
 from source.utilities import getDistanceBetweenEntities
 from source.assets import Images, Data
 
-# todo remove the locations of the JSON files from here
-# Location of the json file which holds the character data
-CHARACTER_JSON = os.path.join('data', 'characters.json')
-ITEM_JSON = os.path.join('data','items.json')
-
 
 class Entity:
     """Represents any object that can act and be drawn into the world
@@ -396,12 +391,7 @@ class Character(Entity):
             hit_chance = formulas.getMeleeHitChance(self_enc, oppo_enc)
             verb = self.getMeleeVerb()
         
-        # Create a "with_string" that describes the weapon used or is empty if no weapon was used
-        if self.inventory.equipped['weapon'] is not None:
-            with_string = "with their %s" %self.inventory.equipped['weapon'].name
-        else:
-            with_string = ""
-        
+
         # Calculate the damage
         damage = formulas.getDamageDealt(attack, defense)
         
@@ -423,7 +413,7 @@ class Character(Entity):
             
             # If attack landed deal damage to buffer and 
             if roll < hit_chance:
-                Log.addToBuffer("%s %s %s %s" %(self.name, verb, opponent.name, with_string))
+                Log.addToBuffer("%s %s %s" % (self.name, verb, opponent.name))
                 opponent.takeDamage(damage)
             else:
                 Log.addToBuffer(self.name + " missed")
