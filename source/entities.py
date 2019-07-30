@@ -341,14 +341,19 @@ class Character(Entity):
                 continue
             elif entity.x == destination[0] and entity.y == destination[1]:
                 return entity
-                
+    
+    # todo use this method instead of meleeAttack() and rangedAttack()
     def attack(self, opponent, is_ranged=False)
     
+        # Get defense of opponent character
         defense = opponent.getDefense()
+        
+        # Get the encumbrance of both characters
         self_enc = self.getEncumbrance()
         oppo_enc = opponent.getEncumbrance()
         
-    
+        
+        # Get attack, hit_chance, and verb depending if ranged to melee attack
         if ranged:
             attack = self.getRangedDamage()
             hit_chance = self.getRangedHitChance()
@@ -358,21 +363,26 @@ class Character(Entity):
             attack = self.getMeleeDamage()
             hit_Chance = self.getMeleeHitChance()
             verb = self.getMeleeVerb()
-            
+        
+        # Create a "with_string" that describes the weapon used or is empty if no weapon was used
         if self.inventory.equipped['weapon'] is not None:
             with_string = "with their %d" %self.inventory.equipped['weapon'].name
         else:
             with_string = ""
-            
+        
+        # Calculate the damage
         damage = formulas.getDamageDealt(attack, defense)
-            
+        
+        # Boolean that determines if energy is being used on the attack
+        using_energy = bool(is_ranged and self.inventory.equipped['weapon'])
+        
+        # For every strike in the number of attacks...
         for strike in range(self.getAttackRate(is_ranged))
-            #todo change conditional to support innate ranged attacks
-            if is_ranged and self.energy > self.getEnergyPerShot():
+            if using_energy and self.energy > self.getEnergyPerShot():
                 # Reduce current energy
                 self.energy -= self.getEnergyPerShot() - self.getRecoilCharge()
-            elif is_ranged:
-                # is_ranged but doesn't have enough energy
+            elif using_energy:
+                # using_energy but doesn't have enough energy
                 Log.addToBuffer("Not enough Energy")
                 break
                 
