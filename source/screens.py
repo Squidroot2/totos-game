@@ -578,7 +578,7 @@ def drawStatPane(window, player, pane):
 
     energy_bar = pygame.Rect(energy_bar_left, energy_bar_top, energy_bar_width, energy_bar_height)
 
-    # Place Energy Value
+    # Place Energy Value over the Energy Bar
     text_rects['energy_value'].center = energy_bar.center
 
     # Draw to Screen
@@ -594,6 +594,29 @@ def drawStatPane(window, player, pane):
     # Draw Energy Fill to Screen
     pygame.draw.rect(window, COLORS['LIGHT BLUE'], energy_fill, 0)
 
+
+
+    # todo figure out printing items to pane
+    # Get Images of equipped weapons
+    # item_images = dict()
+    #
+    # for item in player.inventory.equipped:
+    #     if player[item] is not None:
+    #         item_images[item] = player.inventory.equipped[item]
+    #     except AttributeError:
+    #         item_images[item] = pygame.Surface((32, 32))
+    #
+    # # Create Dictionary of Rects for the images
+    # item_image_rects = {item: item_images[item].get_rect() for item in item_images}
+    #
+    # # Define Location of Images of Items
+    # item_image_rects['weapon'].midleft = (pane.left+x_margin, pane.centery)
+    #
+    # # Draw picture of images
+    # for item in item_images:
+    #     window.blit(item_images[item], item_image_rects[item])
+
+    # Print Text
     for text in text_surfs:
         window.blit(text_surfs[text], text_rects[text])
 
