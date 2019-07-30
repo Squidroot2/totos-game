@@ -74,8 +74,9 @@ class Entity:
     """
     
     # Default image_path value for all entities
-    image_path = os.path.join('images', 'unknown.png')
     CELL_SIZE = CELL_SIZE
+    image_dir = None
+    image_name = None
 
     def __init__(self, location, x=None, y=None, ai=None, inventory=None, obstruct=False, is_player=False):
         """Init method for Entity
@@ -97,7 +98,7 @@ class Entity:
         self.location = location
         self.location.addEntity(self)
         self.obstruct = obstruct
-        self.image = None
+        self.image = Images.getImage(self.image_dir, self.image_name)
         self.discovered = False
         self.last_known_x = None
         self.last_known_y = None
@@ -116,11 +117,11 @@ class Entity:
         else:
             self.inventory = None
 
-    def loadImage(self):
-        """Loads the image stored at the image_path attribute
-
-        Requires pygame to be initialized"""
-        self.image = Images.getImage(self.image_dir, self.image_name)
+    # def loadImage(self):
+    #     """Loads the image stored at the image_path attribute
+    #
+    #     Requires pygame to be initialized"""
+    #
 
     def draw(self, surface):
         """Takes a pygame surface object and blits the object's 'image' to it at the determined x and y coordinates
@@ -131,9 +132,6 @@ class Entity:
             surface : pygame.Surface
                 The surface that the image will get written to
         """
-        # First load the image if it hasn't been loaded
-        if self.image is None:
-            self.loadImage()
         surface.blit(self.image, (self.x*self.CELL_SIZE, self.y*self.CELL_SIZE))
 
     def drawAtLastKnown(self, surface):
@@ -185,17 +183,15 @@ class Target(Entity):
 class Portal(Entity):
     """Entity used to move player between floors"""
     image_dir = 'Other'
+
     def __init__(self, location, x, y, direction):
-        super().__init__(location, x, y)
         assert direction in ("up", "down")
         if direction == "down":
-            #self.image_path = os.path.join('images', 'other', 'down_portal.png')
             self.image_name = 'down_portal'
         else:
-            #self.image_path = os.path.join('images', 'other', 'up_portal.png')
             self.image_name = 'up_portal'
         self.direction = direction
-
+        super().__init__(location, x, y)
 
 class Corpse(Entity):
     """This is created when a character object has been killed
@@ -725,8 +721,6 @@ class Weapon(Item):
 
     """
     def __init__(self, item_id, location, x=None, y=None):
-        super().__init__(location, x, y)
-
         data = Data.getItem("WEAPONS", item_id)
 
         self.name = data['name']
@@ -742,6 +736,8 @@ class Weapon(Item):
             self.fire_rate = data['ranged']['fire_rate']
             self.range = data['ranged']['range']
 
+        super().__init__(location, x, y)
+
     def equip(self):
         self.location.equipped['weapon'] = self
 
@@ -754,13 +750,14 @@ class Armor(Item):
 
     """
     def __init__(self, item_id, location, x=None, y=None):
-        super().__init__(location, x, y)
 
         data = Data.getItem("ARMOR", item_id)
 
         self.name = data['name']
         self.defense = data['defense']
         self.difficulty = data['difficulty']
+
+        super().__init__(location, x, y)
 
     def equip(self):
         self.location.equipped['armor'] = self
@@ -774,7 +771,6 @@ class Generator(Item):
     """
 
     def __init__(self, item_id, location, x=None, y=None):
-        super().__init__(location, x, y)
 
         data = Data.getItem("GENERATORS", item_id)
 
@@ -784,11 +780,12 @@ class Generator(Item):
         self.recoil_charge = data['recoil_charge']
         self.difficulty = data['difficulty']
 
-
         self.hit_this_turn = False
 
         # Current Charge Starts at 0
         self.current_charge = 0.0
+
+        super().__init__(location, x, y)
 
     def equip(self):
         self.location.equipped['generator'] = self
@@ -817,12 +814,13 @@ class Battery(Item):
 
     def __init__(self, item_id, location, x=None, y=None):
         """Extends the Entity init method"""
-        super().__init__(location, x, y)
 
         data = Data.getItem("BATTERIES", item_id)
 
         self.name = data['name']
         self.power = data['power']
+
+        super().__init__(location, x, y)
 
 
     def use(self):
