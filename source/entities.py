@@ -385,8 +385,11 @@ class Character(Entity):
                 # using_energy but doesn't have enough energy
                 Log.addToBuffer("Not enough Energy")
                 break
-                
+            
+            # rolls random float 0-1 to determine if attack landed
             roll = random.random()
+            
+            # If attack landed deal damage to buffer and 
             if roll < hit_chance:
                 Log.addToBuffer("%s %s %s %s" %(self.name, verb, opponent.name, with_string))
                 opponent.takeDamage(damage)
