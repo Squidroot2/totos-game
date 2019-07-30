@@ -1,4 +1,12 @@
-"""Module which will hold a struct-like class which wiil load all assets to one place"""
+"""Module which will hold struct-like classes which wiil load all assets into memory before the game starts
+
+Functions:
+    loadAssets() : Runs the load method on all classes
+
+Classes:
+    Images : Contains the png files for use throughout the game
+    Data : Contains data pulled from json files
+"""
 # Standard Library
 import os
 # Third Party
@@ -14,7 +22,7 @@ def loadAssets():
 
 
 class Images:
-    """Loads the png files for use throughout the game"""
+    """Contains the png files for use throughout the game"""
     # Image Folders
     main_folder = 'images'
     character_images = os.path.join(main_folder, 'characters')
