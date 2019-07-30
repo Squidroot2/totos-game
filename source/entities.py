@@ -343,7 +343,7 @@ class Character(Entity):
                 return entity
     
     # todo use this method instead of meleeAttack() and rangedAttack()
-    def attack(self, opponent, is_ranged=False)
+    def attack(self, opponent, is_ranged=False):
         """Attack a specified opponent
         
         Paramaters:
@@ -380,7 +380,7 @@ class Character(Entity):
         
         
         # Get attack, hit_chance, and verb depending if ranged to melee attack
-        if ranged:
+        if is_ranged:
             attack = self.getRangedDamage()
             
             # Gets the difference betwween the distance and the maximum range and sets it to at least 0
@@ -388,17 +388,17 @@ class Character(Entity):
             if range_exceeded < 0: 
                 range_exceeded = 0
             
-            hit_chance = formulas.getRangedHitChance(self_enc, enemy_enc, range_exceeded)
+            hit_chance = formulas.getRangedHitChance(self_enc, oppo_enc, range_exceeded)
             verb = self.getRangedVerb()
            
         else:
             attack = self.getMeleeDamage()
-            hit_chance = formulas.getMeleeHitChance(self_enc, enemy_enc)
+            hit_chance = formulas.getMeleeHitChance(self_enc, oppo_enc)
             verb = self.getMeleeVerb()
         
         # Create a "with_string" that describes the weapon used or is empty if no weapon was used
         if self.inventory.equipped['weapon'] is not None:
-            with_string = "with their %d" %self.inventory.equipped['weapon'].name
+            with_string = "with their %s" %self.inventory.equipped['weapon'].name
         else:
             with_string = ""
         
@@ -409,7 +409,7 @@ class Character(Entity):
         using_energy = bool(is_ranged and self.inventory.equipped['weapon'])
         
         # For every strike in the number of attacks...
-        for strike in range(self.getAttackRate(is_ranged))
+        for strike in range(self.getAttackRate(is_ranged)):
             if using_energy and self.energy >= self.getEnergyPerShot():
                 # Reduce current energy
                 self.energy -= self.getEnergyPerShot() - self.getRecoilCharge()
@@ -481,7 +481,7 @@ class Character(Entity):
         verb = self.getRangedVerb()
         if self.inventory.equipped['weapon'] is not None:
             verb = self.inventory.equipped['weapon'].ranged_verb
-            with_string = " with their %d" self.inventory.equipped['weapon'].name
+            with_string = " with their %d" %self.inventory.equipped['weapon'].name
         else:
             # todo support innate ranged attacks
             #verb = self.ranged_verb
@@ -646,7 +646,7 @@ class Character(Entity):
 
     def getEnergyPerShot(self):
         """The energy that every shot uses"""
-        if self.inventory.equipped['weapon'] is not None
+        if self.inventory.equipped['weapon'] is not None:
             return self.inventory.equipped['weapon'].energy_per_shot
         else:
             return 0

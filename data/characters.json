@@ -14,7 +14,7 @@
   "BLOB_1": {
     "name": "Blob",
     "image": "blob",
-	"verb": "depleted life from"
+	"verb": "depleted life from",
     "level": 1,
     "life": 10,
     "xp": 1,
