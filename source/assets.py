@@ -6,24 +6,22 @@ import pygame
 # My Modules
 from source.utilities import loadJson
 
-def loadAssets()
+
+def loadAssets():
     """Runs the load method on all classes"""
-    Assets.load()
+    Images.load()
     Data.load()
 
 
-
-# todo have tiles and entities pull from the loaded assets
-# todo rename this to Images
-class Assets:
+class Images:
     # Image Folders
-    images_folder = 'images'
-    character_images = os.path.join(images_folder, 'characters')
-    other_images = os.path.join(images_folder, 'other')
-    tile_images = os.path.join(images_folder, 'tiles')
+    main_folder = 'images'
+    character_images = os.path.join(main_folder, 'characters')
+    other_images = os.path.join(main_folder, 'other')
+    tile_images = os.path.join(main_folder, 'tiles')
     
     # Missing Image
-    missing_image_path = os.path.join(images_folder, 'unknown.png')
+    missing_image_path = os.path.join(main_folder, 'unknown.png')
     missing_image = None
     
     # Image Paths
@@ -90,22 +88,24 @@ class Data:
     json_files = {'Characters': os.path.join(data_folder, 'characters.json'),
                   'Items': os.path.join(data_folder, 'items.json')}
     
-    data = {file: None for file in json_file}
+    data = dict()
+    for file in json_files:
+        data[file] = None
         
         
-    
+    @classmethod
     def load(cls):
         """Loads the data from the json files"""
         for file in cls.json_files:
             cls.data[file] = loadJson(cls.json_files[file])
     
-    
-    def getCharacter(cls, id):
+    @classmethod
+    def getCharacter(cls, identifier):
         """Returns the data for a charcter with a given id"""
-        return cls.data['Characters'][id]
+        return cls.data['Characters'][identifier]
     
-    
-    def getItem(cls, category, id):
+    @classmethod
+    def getItem(cls, category, identifier):
         """Returns the data for an item for given category and id"""
-        return cls.data['Items'][category][id]
-        
+        return cls.data['Items'][category][identifier]
+

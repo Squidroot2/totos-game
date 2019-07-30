@@ -15,7 +15,7 @@ import tcod
 from source.entities import Portal
 from source.entities import Character
 from source.constants import CELL_SIZE, FLOOR_HEIGHT, FLOOR_WIDTH, COLORS
-from source.assets import Assets
+from source.assets import Images
 
 
 
@@ -241,7 +241,7 @@ class Tile:
             #self.image_path = os.path.join(self.image_folder, 'wall.png')
             self.image_name = 'wall'
         
-        self.image = Assets.getImage(self.image_dir, self.image_name)
+        self.image = Images.getImage(self.image_dir, self.image_name)
 
     def drawFog(self, surface):
         """Covers the tile in a translucent gray surface"""

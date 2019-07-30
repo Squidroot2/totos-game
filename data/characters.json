@@ -1,7 +1,7 @@
 {
   "PLAYER" : {
     "name": null,
-    "image": "player.png",
+    "image": "player",
     "level": 1,
     "xp": 0,
     "life": 5,
@@ -12,7 +12,7 @@
   },
   "BLOB_1": {
     "name": "Blob",
-    "image": "blob.png",
+    "image": "blob",
     "level": 1,
     "life": 10,
     "xp": 1,
@@ -23,7 +23,7 @@
   },
   "WEIRDMONK": {
     "name": "Weirdmonk",
-    "image": "weirdmonk.png",
+    "image": "weirdmonk",
     "level": 1,
     "life": 5,
     "xp": 2,
