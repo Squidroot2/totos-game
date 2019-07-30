@@ -104,7 +104,7 @@ class Floor:
             if room is up_room:
                 direction = "up"
             else:
-                direction ="down"
+                direction = "down"
 
             x = random.randrange(room['x'], room['x'] + room['w'])
             y = random.randrange(room['y'], room['y'] + room['h'])
@@ -203,7 +203,6 @@ class Floor:
 
 class Tile:
     CELL_SIZE = CELL_SIZE
-    #image_folder = os.path.join('images', 'tiles')
     image_dir = "Tiles"
 
     def __init__(self, map, x, y):
@@ -215,16 +214,11 @@ class Tile:
         self.discovered = False
         self.pixel_x = self.x*self.CELL_SIZE
         self.pixel_y = self.y*self.CELL_SIZE
-        #self.image_path = os.path.join(self.image_folder, "white-tile.png")
-        #self.image = None
         self.image_name = None
         self.image = None
 
     def draw(self, surface):
         """Blits the tile to the screen if it has been discovered"""
-        #if self.image is None:
-            #self.image = pygame.image.load(self.image_path)
-            
 
         if self.discovered:
             surface.blit(self.image, (self.pixel_x, self.pixel_y))
@@ -234,11 +228,9 @@ class Tile:
         self.walkable = map.walkable[self.y][self.x]
         self.transparent = map.transparent[self.y][self.x]
         if self.walkable and self.transparent:
-            #self.image_path = os.path.join(self.image_folder, 'white-tile.png')
             self.image_name = 'white-tile'
             
         else:
-            #self.image_path = os.path.join(self.image_folder, 'wall.png')
             self.image_name = 'wall'
         
         self.image = Images.getImage(self.image_dir, self.image_name)
@@ -257,4 +249,4 @@ class Tile:
         top = self.y*self.CELL_SIZE
         width = self.CELL_SIZE
         height = self.CELL_SIZE
-        return pygame.Rect(left,top,width,height)
+        return pygame.Rect(left, top, width, height)
