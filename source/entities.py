@@ -694,6 +694,7 @@ class Item(Entity):
         drop(self) : Item is moved from inventory to floor
         pickUp(self) : Item is moved from floor to specified Inventory
     """
+    image_dir = "Items"
 
     def drop(self):
         """Item is moved from inventory to floor"""
@@ -729,6 +730,7 @@ class Weapon(Item):
         data = Data.getItem("WEAPONS", item_id)
 
         self.name = data['name']
+        self.image_name = data['image']
         self.melee_damage = data['melee_damage']
         self.melee_speed = data['melee_speed']
         self.is_quick_draw = data['quick_draw']

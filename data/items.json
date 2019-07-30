@@ -134,6 +134,7 @@
   "WEAPONS": {
     "PISTOL_1" : {
       "name": "Pi Shooter",
+      "image": "pistol1",
       "melee_damage" : 2,
       "melee_speed" : 1,
       "quick_draw": true,
@@ -147,6 +148,7 @@
     },
     "RIFLE_1": {
       "name": "Hunting Rifle",
+      "image": null,
       "melee_damage": 1,
       "melee_speed": 1,
       "quick_draw": false,
@@ -160,6 +162,7 @@
     },
     "CANNON_1": {
       "name": "Pounder",
+      "image": null,
       "melee_damage": 2,
       "melee_speed": 1,
       "quick_draw": false,
@@ -173,6 +176,7 @@
     },
     "PDW_1": {
       "name": "Phorpian",
+      "image": null,
       "melee_damage": 1,
       "melee_speed": 1,
       "quick_draw": false,
@@ -186,6 +190,7 @@
     },
     "KNIFE_1": {
       "name": "Simple Knife",
+      "image": null,
       "melee_damage": 3,
       "melee_speed": 2,
       "quick_draw": true,
@@ -194,6 +199,7 @@
     },
     "CLUB_1": {
       "name": "Nightstick",
+      "image": null,
       "melee_damage": 2,
       "melee_speed": 3,
       "quick_draw": true,
@@ -202,6 +208,7 @@
     },
     "SWORD_1": {
       "name": "Nu-Steel Sword",
+      "image": null,
       "melee_damage": 5,
       "melee_speed": 2,
       "quick_draw": false,
