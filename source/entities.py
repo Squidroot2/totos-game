@@ -113,12 +113,6 @@ class Entity:
         else:
             self.inventory = None
 
-    # def loadImage(self):
-    #     """Loads the image stored at the image_path attribute
-    #
-    #     Requires pygame to be initialized"""
-    #
-
     def draw(self, surface):
         """Takes a pygame surface object and blits the object's 'image' to it at the determined x and y coordinates
 
@@ -372,14 +366,13 @@ class Character(Entity):
         # Get the encumbrance of both characters
         self_enc = self.getEncumbrance()
         oppo_enc = opponent.getEncumbrance()
-        
-        
+
         # Get attack, hit_chance, and verb depending if ranged to melee attack
         if is_ranged:
             attack = self.getRangedDamage()
             
-            # Gets the difference betwween the distance and the maximum range and sets it to at least 0
-            range_exceeded = getDistanceBetweenEntities((self.x,self.y),(opponent.x,opponent.y)) - self.getWeaponRange()
+            # Gets the difference between the distance and the maximum range and sets it to at least 0
+            range_exceeded = getDistanceBetweenEntities((self.x, self.y), (opponent.x, opponent.y)) - self.getWeaponRange()
             if range_exceeded < 0: 
                 range_exceeded = 0
             
@@ -423,94 +416,6 @@ class Character(Entity):
                 Log.addToBuffer("%s killed %s" %(self.name, opponent.name))
                 break
          
-    # todo remove meleeAttack and rangedAttack methods
-    def meleeAttack(self, opponent):
-        """Attacks a specified opponent with a melee attack
-
-        Parameters:
-            opponent : Character
-        """
-        # Get attack and defense
-        attack = self.getMeleeDamage()
-        defense = opponent.getDefense()
-        
-        # Get Verb
-        verb = self.getMeleeVerb()
-
-        # Determines the damage based on the attack and defense
-        damage = formulas.getDamageDealt(attack, defense)
-
-        # Gets the encumbrance of the two characters
-        self_enc = self.getEncumbrance()
-        enemy_enc = opponent.getEncumbrance()
-
-        # Determines the hit chance based on the encumbrances
-        hit_chance = formulas.getMeleeHitChance(self_enc, enemy_enc)
-
-        # For every attack in the quantity of attack rate...
-        for attack in range(self.getAttackRate()):
-            # Roll to determine if attack landed
-            roll = random.random()
-            if roll < hit_chance:
-                Log.addToBuffer(self.name + " hit " + opponent.name + " for " + str(damage) + " damage")
-                opponent.takeDamage(damage)
-            else:
-                Log.addToBuffer(self.name + " missed")
-        # Send a message if the opponent was killed
-            if opponent.is_dead:
-                Log.addToBuffer(self.name + " killed " + opponent.name)
-                break
-
-    def rangedAttack(self, opponent):
-        """Attacks a specified opponent with a ranged attack"""
-        # Get attack and defense
-        attack = self.getRangedDamage()
-        defense = opponent.getDefense()
-        
-        # Get string for log out put
-        verb = self.getRangedVerb()
-        if self.inventory.equipped['weapon'] is not None:
-            verb = self.inventory.equipped['weapon'].ranged_verb
-            with_string = " with their %d" %self.inventory.equipped['weapon'].name
-        else:
-            # todo support innate ranged attacks
-            #verb = self.ranged_verb
-            with_string = ""
-        
-
-        # Determines the damage based on the attack and defense
-        damage = formulas.getDamageDealt(attack, defense)
-
-        # Gets the encumbrance of the two characters
-        self_enc = self.getEncumbrance()
-        enemy_enc = opponent.getEncumbrance()
-        
-        # Find the range exceeded by getting the distance between then subtracting the range
-        range_exceeded = getDistanceBetweenEntities((self.x,self.y),(opponent.x,opponent.y)) - self.getWeaponRange()
-        if range_exceeded < 0:
-            range_exceeded = 0
-        
-        # Determines the hit chance based on the encumbrances
-        hit_chance = formulas.getRangedHitChance(self_enc, enemy_enc, range_exceeded)
-
-        # For every attack in the quantity of attack rate...
-        for attack in range(self.getAttackRate(ranged=True)):
-            if self.energy > self.getEnergyPerShot():
-                # Reduce current energy
-                self.energy -= self.getEnergyPerShot() - self.getRecoilCharge()
-
-                # Roll to determine if attack landed
-                roll = random.random()
-                if roll < hit_chance:
-                    Log.addToBuffer("%s %s %s %s") %(self.name, verb, opponent.name, with_string)
-                    opponent.takeDamage(damage)
-                else:
-                    Log.addToBuffer(self.name + " missed")
-
-                # Send a message if the opponent was killed
-                if opponent.is_dead:
-                    Log.addToBuffer(self.name + " killed " + opponent.name)
-                    break
 
     def takeDamage(self, damage):
         """Reduces the amount of energy in the character's generator and deals any remaining to flesh
