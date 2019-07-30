@@ -315,7 +315,7 @@ class Character(Entity):
                 self.x += delta_x
                 self.y += delta_y
             elif not peacefully:
-                self.meleeAttack(entity_at_dest)
+                self.attack(entity_at_dest)
 
     def validateMove(self, destination):
         """Returns True if the destination is walkable and False if it isn't"""
@@ -344,7 +344,33 @@ class Character(Entity):
     
     # todo use this method instead of meleeAttack() and rangedAttack()
     def attack(self, opponent, is_ranged=False)
-    
+        """Attack a specified opponent
+        
+        Paramaters:
+            opponent: Character
+            is_ranged : bool
+        
+        Calls:
+            Character.getDefense()
+            Character.getEncumbrance()
+            Character.getRangedDamage()
+            Character.getWeaponRange()
+            Character.getRangedVerb()
+            Character.getMeleeDamage()
+            Character.getMeleeVerb()
+            Character.getAttackRate(is_ranged)
+            Character.getEnergyPerShot()
+            Character.getRecoilCharge()
+            Character.takeDamage(damage)
+            formulas.getDamageDealt(attack, defense)
+            formulas.getMeleeHitChance(attacker_enc, defender_enc)
+            formualas.getRangedHitChance(attacker_enc, defender_enc, range_exceeded)
+            utilities.getDistanceBetweenEntities(coordsA, coordsB)
+            game.Log.addToBuffer(message)
+            random.random()
+        
+        Returns: None
+        """
         # Get defense of opponent character
         defense = opponent.getDefense()
         
@@ -356,12 +382,18 @@ class Character(Entity):
         # Get attack, hit_chance, and verb depending if ranged to melee attack
         if ranged:
             attack = self.getRangedDamage()
-            hit_chance = self.getRangedHitChance()
+            
+            # Gets the difference betwween the distance and the maximum range and sets it to at least 0
+            range_exceeded = getDistanceBetweenEntities((self.x,self.y),(opponent.x,opponent.y)) - self.getWeaponRange()
+            if range_exceeded < 0: 
+                range_exceeded = 0
+            
+            hit_chance = formulas.getRangedHitChance(self_enc, enemy_enc, range_exceeded)
             verb = self.getRangedVerb()
            
         else:
             attack = self.getMeleeDamage()
-            hit_Chance = self.getMeleeHitChance()
+            hit_chance = formulas.getMeleeHitChance(self_enc, enemy_enc)
             verb = self.getMeleeVerb()
         
         # Create a "with_string" that describes the weapon used or is empty if no weapon was used
@@ -378,7 +410,7 @@ class Character(Entity):
         
         # For every strike in the number of attacks...
         for strike in range(self.getAttackRate(is_ranged))
-            if using_energy and self.energy > self.getEnergyPerShot():
+            if using_energy and self.energy >= self.getEnergyPerShot():
                 # Reduce current energy
                 self.energy -= self.getEnergyPerShot() - self.getRecoilCharge()
             elif using_energy:
@@ -401,7 +433,7 @@ class Character(Entity):
                 Log.addToBuffer("%s killed %s" %(self.name, opponent.name))
                 break
          
-
+    # todo remove meleeAttack and rangedAttack methods
     def meleeAttack(self, opponent):
         """Attacks a specified opponent with a melee attack
 
@@ -545,26 +577,34 @@ class Character(Entity):
     def getDefense(self):
         """Gets the defense based on the base_defense and, if the character has armor, armor defense
 
-        Returns
-            defense : int
-                An integer representing the defense
+        Returns: int
         """
         defense = self.base_defense
-        if self.inventory and self.inventory.equipped['armor']:
-            armor = self.inventory.equipped['armor']
-            defense += armor.defense
+        if self.inventory.equipped['armor']:
+            defense += self.inventory.equipped['armor'].defense
+            
         return defense
 
     def getMeleeDamage(self):
-        """Gets the amount of melee damage that a character can deal per attack including weapon damage"""
+        """Gets the amount of melee damage that a character can deal per attack including weapon damage
+        
+        Melee damage is the character's base damage plus melee damage on the weapon if it is equipped
+        
+        Returns: int or float"""
         damage = self.base_damage
-        if self.inventory and self.inventory.equipped['weapon']:
-            weapon = self.inventory.equipped['weapon']
-            damage += weapon.melee_damage
+        if self.inventory.equipped['weapon']:
+            damage += self.inventory.equipped['weapon'].melee_damage
 
         return damage
 
+    # todo update for innate ranged attacks
     def getRangedDamage(self):
+        """Gets the damage of a ranged attack
+        
+        Ranged attack is the ranged_damage on the weapon if it is equipped
+        
+        Returns: int or float
+        """
         if self.inventory.equipped['weapon'] and self.inventory.equipped['weapon'].is_ranged:
             return self.inventory.equipped['weapon'].ranged_damage
 
@@ -606,26 +646,45 @@ class Character(Entity):
 
     def getEnergyPerShot(self):
         """The energy that every shot uses"""
-        return self.inventory.equipped['weapon'].energy_per_shot
+        if self.inventory.equipped['weapon'] is not None
+            return self.inventory.equipped['weapon'].energy_per_shot
+        else:
+            return 0
 
     def getRecoilCharge(self):
-        """The amount of energy that is recycled back into the generator after every shot"""
+        """The amount of energy that is recycled back into the generator after every shot.
+        
+        This is either the amount of energy per shot on the equipped weapon or the recoil charge on the generator, whichever is lower
+        
+        Returns: float
+        """
         if self.getEnergyPerShot() < self.inventory.equipped['generator'].recoil_charge:
             return self.getEnergyPerShot()
         else:
             return self.inventory.equipped['generator'].recoil_charge
 
     def getWeaponRange(self):
+        #todo rename to innate ranged attacks
         """The range of the currently equipped ranged weapon"""
         return self.inventory.equipped['weapon'].range
     
     def getMeleeVerb(self):
+        """Get the verb used to describe the melee attack (e.g. 'hit')
+        
+        Gets the verb on the weapon if one is equipped, otherwise gets the verb from the character
+        
+        Returns: string
+        """
         if self.inventory.equipped['weapon'] is not None:
             return self.inventory.equipped['weapon'].melee_verb
         else:
             return self.melee_verb
 
     def getRangedVerb(self):
+        """Get the verb used to describe the melee attack (e.g.'shoot')
+        
+        Returns: string
+        """
         #todo create innate ranged attacks
         if self.inventory.equipped['weapon'] is not None:
             return self.inventory.equipped['weapon'].ranged_verb

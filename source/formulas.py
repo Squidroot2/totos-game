@@ -45,7 +45,18 @@ def getRangedHitChance(attacker_enc, defender_enc, range_exceeded):
 
 
 def getDamageDealt(attack, defense):
-    """Determines the damage dealt using the attacker's raw attack damage and the defender's defense"""
+    """Determines the damage dealt using the attacker's raw attack damage and the defender's defense
+    
+    Parameters:
+        attack: float or int
+        defense; float or int
+    
+    Returns:
+        : float : Rounded to the first decimal place
+    
+    Calls:
+        math.log(x, base)
+    """
     # Uses a logarithmic function to find damage reduction.
     # Attack is fed into Log Base so that higher damage means lower reduction
     reduction = math.log(defense/20+1, attack+1)*3
