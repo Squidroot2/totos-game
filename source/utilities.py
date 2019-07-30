@@ -44,23 +44,6 @@ def loadJson(json_path):
         return json.load(json_file)
 
 
-def getItemById(json_path, id, category=None):
-    """Returns a Dictionary containing the particular information from the json file
-    
-    Parameters:
-        json_path : string : location of the file being loaded
-        id : string : id of the item in the file
-        category : None or string : For files that have categories, specifies item
-    
-    Returns:
-        : dict : contains only the data associated with the specified item
-    """
-    json_file = loadJson(json_path)
-    if category is None:
-        return json_file[id]
-    else:
-        return json_file[category][id]
-
 def getDistanceBetweenEntities(coordsA, coordsB):
     """Gets the distance betweeen two points on a map
     
@@ -85,6 +68,7 @@ def terminateGame():
     """Quits the program"""
     pygame.quit()
     sys.exit()
+
 
 def checkForQuit():
     """Terminates the game if the QUIT event is present or the Escape key has been pressed"""

@@ -172,7 +172,7 @@
       }
     },
     "PDW_1": {
-      "name": "Phopion",
+      "name": "Phorpian",
       "melee_damage": 1,
       "melee_speed": 1,
       "quick_draw": false,
@@ -188,6 +188,14 @@
       "name": "Simple Knife",
       "melee_damage": 3,
       "melee_speed": 2,
+      "quick_draw": true,
+      "difficulty": 1,
+      "ranged": null
+    },
+    "CLUB_1": {
+      "name": "Nightstick",
+      "melee_damage": 2,
+      "melee_speed": 3,
       "quick_draw": true,
       "difficulty": 1,
       "ranged": null

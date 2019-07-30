@@ -14,6 +14,7 @@ def loadAssets():
 
 
 class Images:
+    """Loads the png files for use throughout the game"""
     # Image Folders
     main_folder = 'images'
     character_images = os.path.join(main_folder, 'characters')
@@ -81,6 +82,7 @@ class Images:
         except KeyError:
             return cls.missing_image
 
+
 class Data:
     """Contains data pulled from json files"""
     data_folder = 'data'
@@ -91,8 +93,7 @@ class Data:
     data = dict()
     for file in json_files:
         data[file] = None
-        
-        
+
     @classmethod
     def load(cls):
         """Loads the data from the json files"""

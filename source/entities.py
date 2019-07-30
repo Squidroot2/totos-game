@@ -26,8 +26,8 @@ from source import formulas
 from source.components import AI, Inventory, Camera
 from source.constants import CELL_SIZE, BACKGROUNDS
 from source.game import Log
-from source.utilities import getItemById, getDistanceBetweenEntities
-from source.assets import Images
+from source.utilities import getDistanceBetweenEntities
+from source.assets import Images, Data
 
 # Location of the json file which holds the character data
 CHARACTER_JSON = os.path.join('data', 'characters.json')
@@ -283,7 +283,7 @@ class Character(Entity):
         """Extends the entity init function"""
 
         # Gets the data from the JSON File
-        data = getItemById(CHARACTER_JSON, char_id)
+        data = Data.getCharacter(char_id)
 
         # Copies the info from the data
         self.name = data['name']
@@ -621,7 +621,7 @@ class Player(Character):
             weapon = Weapon("PISTOL_1", self.inventory)
             armor = Armor("ARMOR_1", self.inventory)
             generator = Generator("QUICK_1", self.inventory)
-            Weapon("KNIFE_1", self.inventory)
+            Weapon("CLUB_1", self.inventory)
 
         elif self.background == "Marksman":
             weapon = Weapon("RIFLE_1", self.inventory)
@@ -726,7 +726,7 @@ class Weapon(Item):
     def __init__(self, item_id, location, x=None, y=None):
         super().__init__(location, x, y)
 
-        data = getItemById(ITEM_JSON, item_id, "WEAPONS")
+        data = Data.getItem("WEAPONS", item_id)
 
         self.name = data['name']
         self.melee_damage = data['melee_damage']
@@ -754,7 +754,7 @@ class Armor(Item):
     def __init__(self, item_id, location, x=None, y=None):
         super().__init__(location, x, y)
 
-        data = getItemById(ITEM_JSON, item_id, "ARMOR")
+        data = Data.getItem("ARMOR", item_id)
 
         self.name = data['name']
         self.defense = data['defense']
@@ -774,7 +774,7 @@ class Generator(Item):
     def __init__(self, item_id, location, x=None, y=None):
         super().__init__(location, x, y)
 
-        data = getItemById(ITEM_JSON, item_id, "GENERATORS")
+        data = Data.getItem("GENERATORS", item_id)
 
         self.name = data['name']
         self.max_charge = data['max_charge']
@@ -817,7 +817,7 @@ class Battery(Item):
         """Extends the Entity init method"""
         super().__init__(location, x, y)
 
-        data = getItemById(ITEM_JSON, item_id, "BATTERIES")
+        data = Data.getItem("BATTERIES", item_id)
 
         self.name = data['name']
         self.power = data['power']
