@@ -29,6 +29,7 @@ from source.game import Log
 from source.utilities import getDistanceBetweenEntities
 from source.assets import Images, Data
 
+# todo remove the locations of the JSON files from here
 # Location of the json file which holds the character data
 CHARACTER_JSON = os.path.join('data', 'characters.json')
 ITEM_JSON = os.path.join('data','items.json')
@@ -284,12 +285,13 @@ class Character(Entity):
         # Copies the info from the data
         self.name = data['name']
         self.level = data['level']
+        self.melee_verb = data['verb']
         self.xp = data['xp']
         self.life = data['life']
         self.base_damage = data['damage']
         self.base_defense = data['defense']
         self.base_attack_rate = data['attack_rate']
-
+        
         # Gets the image
         self.image_name = data['image']
 
@@ -339,6 +341,53 @@ class Character(Entity):
                 continue
             elif entity.x == destination[0] and entity.y == destination[1]:
                 return entity
+                
+    def attack(self, opponent, is_ranged=False)
+    
+        defense = opponent.getDefense()
+        self_enc = self.getEncumbrance()
+        oppo_enc = opponent.getEncumbrance()
+        
+    
+        if ranged:
+            attack = self.getRangedDamage()
+            hit_chance = self.getRangedHitChance()
+            verb = self.getRangedVerb()
+           
+        else:
+            attack = self.getMeleeDamage()
+            hit_Chance = self.getMeleeHitChance()
+            verb = self.getMeleeVerb()
+            
+        if self.inventory.equipped['weapon'] is not None:
+            with_string = "with their %d" %self.inventory.equipped['weapon'].name
+        else:
+            with_string = ""
+            
+        damage = formulas.getDamageDealt(attack, defense)
+            
+        for strike in range(self.getAttackRate(is_ranged))
+            #todo change conditional to support innate ranged attacks
+            if is_ranged and self.energy > self.getEnergyPerShot():
+                # Reduce current energy
+                self.energy -= self.getEnergyPerShot() - self.getRecoilCharge()
+            elif is_ranged:
+                # is_ranged but doesn't have enough energy
+                Log.addToBuffer("Not enough Energy")
+                break
+                
+            roll = random.random()
+            if roll < hit_chance:
+                Log.addToBuffer("%s %s %s %s" %(self.name, verb, opponent.name, with_string))
+                opponent.takeDamage(damage)
+            else:
+                Log.addToBuffer(self.name + " missed")
+
+            # Send a message if the opponent was killed
+            if opponent.is_dead:
+                Log.addToBuffer("%s killed %s" %(self.name, opponent.name))
+                break
+         
 
     def meleeAttack(self, opponent):
         """Attacks a specified opponent with a melee attack
@@ -346,8 +395,12 @@ class Character(Entity):
         Parameters:
             opponent : Character
         """
+        # Get attack and defense
         attack = self.getMeleeDamage()
         defense = opponent.getDefense()
+        
+        # Get Verb
+        verb = self.getMeleeVerb()
 
         # Determines the damage based on the attack and defense
         damage = formulas.getDamageDealt(attack, defense)
@@ -375,8 +428,20 @@ class Character(Entity):
 
     def rangedAttack(self, opponent):
         """Attacks a specified opponent with a ranged attack"""
+        # Get attack and defense
         attack = self.getRangedDamage()
         defense = opponent.getDefense()
+        
+        # Get string for log out put
+        verb = self.getRangedVerb()
+        if self.inventory.equipped['weapon'] is not None:
+            verb = self.inventory.equipped['weapon'].ranged_verb
+            with_string = " with their %d" self.inventory.equipped['weapon'].name
+        else:
+            # todo support innate ranged attacks
+            #verb = self.ranged_verb
+            with_string = ""
+        
 
         # Determines the damage based on the attack and defense
         damage = formulas.getDamageDealt(attack, defense)
@@ -402,7 +467,7 @@ class Character(Entity):
                 # Roll to determine if attack landed
                 roll = random.random()
                 if roll < hit_chance:
-                    Log.addToBuffer(self.name + " hit " + opponent.name + " for " + str(damage) + " damage")
+                    Log.addToBuffer("%s %s %s %s") %(self.name, verb, opponent.name, with_string)
                     opponent.takeDamage(damage)
                 else:
                     Log.addToBuffer(self.name + " missed")
@@ -490,7 +555,7 @@ class Character(Entity):
         if self.inventory.equipped['weapon'] and self.inventory.equipped['weapon'].is_ranged:
             return self.inventory.equipped['weapon'].ranged_damage
 
-    def getAttackRate(self, ranged=False):
+    def getAttackRate(self, is_ranged=False):
         """Gets the number of attacks that can be performed in a turn
 
         Parameters:
@@ -508,7 +573,7 @@ class Character(Entity):
             return self.base_attack_rate
 
         # If its a melee attack
-        if not ranged:
+        if not is_ranged:
             return weapon.melee_speed
         else:
             return weapon.fire_rate
@@ -540,6 +605,17 @@ class Character(Entity):
     def getWeaponRange(self):
         """The range of the currently equipped ranged weapon"""
         return self.inventory.equipped['weapon'].range
+    
+    def getMeleeVerb(self):
+        if self.inventory.equipped['weapon'] is not None:
+            return self.inventory.equipped['weapon'].melee_verb
+        else:
+            return self.melee_verb
+
+    def getRangedVerb(self):
+        #todo create innate ranged attacks
+        if self.inventory.equipped['weapon'] is not None:
+            return self.inventory.equipped['weapon'].ranged_verb
 
     @property
     def energy(self):
@@ -725,12 +801,14 @@ class Weapon(Item):
 
         self.name = data['name']
         self.image_name = data['image']
+        self.melee_verb = data['melee_verb']
         self.melee_damage = data['melee_damage']
         self.melee_speed = data['melee_speed']
         self.is_quick_draw = data['quick_draw']
         self.difficulty = data['difficulty']
         self.is_ranged = bool(data['ranged'])
         if self.is_ranged:
+            self.ranged_verb = data['ranged']['verb']
             self.ranged_damage = data['ranged']['damage']
             self.energy_per_shot = data['ranged']['energy']
             self.fire_rate = data['ranged']['fire_rate']

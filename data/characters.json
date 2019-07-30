@@ -2,6 +2,7 @@
   "PLAYER" : {
     "name": null,
     "image": "player",
+	"verb": "punched",
     "level": 1,
     "xp": 0,
     "life": 5,
@@ -13,6 +14,7 @@
   "BLOB_1": {
     "name": "Blob",
     "image": "blob",
+	"verb": "depleted life from"
     "level": 1,
     "life": 10,
     "xp": 1,
@@ -24,6 +26,7 @@
   "WEIRDMONK": {
     "name": "Weirdmonk",
     "image": "weirdmonk",
+	"verb": "bit",
     "level": 1,
     "life": 5,
     "xp": 2,
