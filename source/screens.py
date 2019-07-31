@@ -367,6 +367,7 @@ def mainGameScreen(window, fps_clock, game):
         drawStatPane(window, player, panes['side'])
         drawLogPane(window, game.log, panes['log'])
         drawGamePane(window, game, panes['main'])
+        drawFPS(window, fps_clock)
         pygame.draw.rect(window, COLORS['DARK GRAY'], panes['bottom'], 0)
 
         # Update the screen and wait for clock to tick; repeat the while loop
@@ -721,3 +722,18 @@ def drawGamePane(window, game, pane):
 
     # Blit everything on the game surface to the window
     window.blit(game.surface, game_area, player.camera.getRect())
+
+
+def drawFPS(window, fps_clock):
+    window_rect = window.get_rect()
+
+    fps = int(fps_clock.get_fps())
+
+    x_margin = 19
+    y_margin = 10
+
+    fps_surf = FONTS['SUBMAIN'].render(str(fps), True, COLORS['GRAY'])
+    fps_rect = fps_surf.get_rect()
+    fps_rect.topleft = (window_rect.left + x_margin, window_rect.top + y_margin)
+
+    window.blit(fps_surf, fps_rect)
