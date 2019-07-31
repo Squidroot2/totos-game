@@ -214,7 +214,7 @@ class Corpse(Entity):
 
 
 class Character(Entity):
-    """Used for entities which act on the world
+    """Used for entities which act on the world (ie Enemies and the Player)
 
     Child of Entity
 
@@ -251,9 +251,11 @@ class Character(Entity):
         getAttackRate(self, is_ranged=False) : Gets the number of attacks that can be performed in a turn
         getEncumbrance(self) : The amount that equipment outlevels character
         getEnergyPerShot(self) : The energy that every shot uses
-        getRecoilCharge(self)
+        getRecoilCharge(self) : The amount of energy that is recycled back into the generator after every shot
+        getWeaponRange(self) 
+        getMeleeVerb(self) : Gets the verb to describe a melee attack
+        getRangedVerb(self) : Gets the verb to describe a ranged attack
         
-
     Properties:
         energy : int : RW; Amount of energy in the Character's Generator
         max_energy : int : RO; Amount of energy that a Character's Generator could hold
@@ -574,7 +576,7 @@ class Character(Entity):
             return self.melee_verb
 
     def getRangedVerb(self):
-        """Get the verb used to describe the melee attack (e.g.'shoot')
+        """Get the verb used to describe the ranged attack (e.g.'shoot')
         
         Returns: string
         """
@@ -588,7 +590,7 @@ class Character(Entity):
 
         Returns: int
         """
-        if self.inventory is None or self.inventory.equipped['generator'] is None:
+        if self.inventory.equipped['generator'] is None:
             return 0
         else:
             return self.inventory.equipped['generator'].current_charge
