@@ -18,7 +18,7 @@ Classes:
 # Standard Library
 import os
 import random
-#Third Party
+# Third Party
 import numpy
 import pygame
 # My Modules
@@ -68,7 +68,8 @@ class Entity:
         Character(Entity)
             Player(Character)
     """
-    
+
+    # todo get rid of seemingly useless class attribute CELL SIZE
     # Default image_path value for all entities
     CELL_SIZE = CELL_SIZE
     image_dir = None
@@ -383,7 +384,6 @@ class Character(Entity):
             attack = self.getMeleeDamage()
             hit_chance = formulas.getMeleeHitChance(self_enc, oppo_enc)
             verb = self.getMeleeVerb()
-        
 
         # Calculate the damage
         damage = formulas.getDamageDealt(attack, defense)
