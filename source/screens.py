@@ -23,6 +23,7 @@ from source.utilities import checkForQuit
 from source.entities import Target
 from source.floors import Floor
 
+
 # todo have titleScreen use a background
 def titleScreen(window, fps_clock):
     """Displays the Title Screen. Runs its own while loop until the player hits enter to continue
@@ -596,10 +597,6 @@ def drawStatPane(window, player, pane):
     # Draw Energy Fill to Screen
     pygame.draw.rect(window, COLORS['LIGHT BLUE'], energy_fill, 0)
 
-
-
-    # todo figure out printing items to pane
-
     # Get the equipment and creates two dictionaries: one for images, one for names
     equipment = player.inventory.equipped
     item_images = dict()
@@ -621,9 +618,9 @@ def drawStatPane(window, player, pane):
     item_text_surfs = dict()
     item_text_rects = dict()
 
-    # Place the rects for the images
+    # Place the rects for the images, amd render text associated with them
     for i, slot in enumerate(item_image_rects):
-        item_image_rects[slot].midleft = (pane.left+x_margin, pane.centery + (i*image_dist))
+        item_image_rects[slot].midright = (pane.centerx, pane.centery + (i*image_dist))
         line_y = item_image_rects[slot].top - CELL_SIZE*3/2
         line_start = pane.left+x_margin
         line_end = pane.right-x_margin
@@ -635,10 +632,16 @@ def drawStatPane(window, player, pane):
         item_text_rects[slot+'_title'] = item_text_surfs[slot+'_title'].get_rect()
         item_text_rects[slot+'_title'].midtop = (pane.centerx, title_top)
 
-    # Draw picture of images
+        # Name text
+        item_text_surfs[slot+'_name'] = FONTS['LOG'].render(equipment[slot].name, True, font_color, background_color)
+        item_text_rects[slot+'_name'] = item_text_surfs[slot+'_name'].get_rect()
+        item_text_rects[slot+'_name'].midleft = (pane.centerx, item_image_rects[slot].centery)
+
+    # Draw picture of images and the associated text
     for item in item_images:
         window.blit(item_images[item], item_image_rects[item])
         window.blit(item_text_surfs[item+'_title'], item_text_rects[item+'_title'])
+        window.blit(item_text_surfs[item+'_name'], item_text_rects[item+'_name'])
 
     # Print Text
     for text in text_surfs:
