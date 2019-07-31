@@ -171,7 +171,12 @@ class Floor:
         self.entities.remove(entity)
 
     def drawFog(self, surface, camera):
-        """Grays out areas that have been discovered but are no longer in FOV"""
+        """Grays out areas that have been discovered but are no longer in FOV
+
+        Parameters:
+            surface : pygame.Surface : surface to draw to
+            camera : source.components.Camera
+        """
         area = camera.getTileRect()
 
         for x in range(area.left, area.right):
