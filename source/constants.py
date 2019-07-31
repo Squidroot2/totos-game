@@ -25,6 +25,7 @@ CELL_SIZE = 32
 #                         R   G   B
 COLORS = {'BLACK':      (  0,  0,  0),
           'DARK GRAY':  ( 25, 25, 25),
+          'GRAY':       ( 50, 50, 50),
           'WHITE':      (255,255,255),
           'RED':        (255,  0,  0),
           'LIGHT BLUE': (100,255,255),
