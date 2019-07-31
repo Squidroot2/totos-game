@@ -53,7 +53,8 @@ class Images:
                         'white-tile': os.path.join(tile_images, 'white-tile.png')
                     },
                     'Items': {
-                        'pistol1': os.path.join(item_images, 'pistol1.png')
+                        'pistol1': os.path.join(item_images, 'pistol1.png'),
+                        'dagger1': os.path.join(item_images, 'dagger1.png')
                     }
     }
     

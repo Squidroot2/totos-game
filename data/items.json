@@ -198,7 +198,7 @@
     },
     "KNIFE_1": {
       "name": "Simple Knife",
-      "image": null,
+      "image": "dagger1",
 	  "melee_verb" : "stabbed",
       "melee_damage": 3,
       "melee_speed": 2,
