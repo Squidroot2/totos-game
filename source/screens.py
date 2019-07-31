@@ -462,11 +462,12 @@ def targetScreen(window, fps_clock, game, panes):
         drawStatPane(window, player, panes['side'])
         drawLogPane(window, game.log, panes['log'])
         drawGamePane(window, game, panes['main'])
+        drawFPS(window, fps_clock)
         pygame.draw.rect(window, COLORS['DARK GRAY'], panes['bottom'], 0)
 
         # Update the screen and wait for clock to tick; repeat the while loop
         pygame.display.update()
-        fps_clock.tick(FPS)
+        fps_clock.tick()
 
     # Clean up target after no longer used
     target.remove()
@@ -689,7 +690,7 @@ def drawGamePane(window, game, pane):
     floor = player.location
 
     # Run the draw method on floor
-    floor.draw(game.surface)
+    floor.draw(game.surface, player.camera)
 
     # Draw the entities in the map
     for entity in floor.entities:
@@ -711,7 +712,7 @@ def drawGamePane(window, game, pane):
     player.draw(game.surface)
 
     # Draw Fog over the map
-    floor.drawFog(game.surface)
+    floor.drawFog(game.surface, player.camera)
 
     # Update the camera's position
     player.camera.update()

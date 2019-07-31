@@ -138,15 +138,23 @@ class Floor:
             for ytile in range(self.height):
                 self.tile_map[xtile][ytile].update(self.map)
 
-    def draw(self, surface):
+    def draw(self, surface, camera):
         """Draws all of the tiles in the tile map at the appropriate location
 
         Parameters:
-            surface : pygame.Surface
-                surface to draw to
+            surface : pygame.Surface : surface to draw to
+            camera : source.components.Camera :
         """
-        for xtile in range(self.width):
-            for ytile in range(self.height):
+
+        area = camera.getTileRect()
+        for xtile in range(area.left, area.right):
+            # ignore if out of range
+            if xtile >= len(self.tile_map) or xtile < 0:
+                continue
+            for ytile in range(area.top, area.bottom):
+                # ignore if out of range
+                if ytile >= len(self.tile_map[xtile]) or ytile < 0:
+                    continue
                 self.tile_map[xtile][ytile].draw(surface)
 
     def addEntity(self, entity):
@@ -162,11 +170,16 @@ class Floor:
         """Removes an entity from the entities list attribute"""
         self.entities.remove(entity)
 
-    def drawFog(self, surface):
+    def drawFog(self, surface, camera):
         """Grays out areas that have been discovered but are no longer in FOV"""
+        area = camera.getTileRect()
 
-        for x in range(self.width):
-            for y in range(self.height):
+        for x in range(area.left, area.right):
+            if x >= len(self.tile_map) or x < 0:
+                continue
+            for y in range(area.top, area.bottom):
+                if y >= len(self.tile_map[x] or y < 0):
+                    continue
                 if self.tile_map[x][y].discovered and not self.map.fov[y][x]:
                     self.tile_map[x][y].drawFog(surface)
 

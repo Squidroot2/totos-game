@@ -101,6 +101,7 @@ class Camera:
         """
 
         self.owner = owner
+        self.center = (self.owner.x, self.owner.y)
         self.pixel_width = self.width * CELL_SIZE
         self.pixel_height = self.height * CELL_SIZE
         self.pixel_center = None
@@ -109,6 +110,7 @@ class Camera:
     def update(self):
         """Updates the center of the camera based on the location of the owner"""
         self.pixel_center = (self.owner.x*CELL_SIZE+.5*CELL_SIZE, self.owner.y*CELL_SIZE+.5*CELL_SIZE)
+        self.center = (self.owner.x, self.owner.y)
 
     def getRect(self):
         """Returns the rectanlge representing the camera in  pixel dimensions
@@ -118,6 +120,12 @@ class Camera:
         """
         rect = pygame.Rect(0,0,self.pixel_width,self.pixel_height)
         rect.center = self.pixel_center
+        return rect
+
+    def getTileRect(self):
+        """Returns the rectangle representing the camera in tile dimensions"""
+        rect = pygame.Rect(0,0,self.width,self.height)
+        rect.center = self.center
         return rect
 
 
