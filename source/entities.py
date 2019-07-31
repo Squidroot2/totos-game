@@ -615,7 +615,10 @@ class Character(Entity):
 
 
 class Player(Character):
-
+    """Class which defines the Player Character
+    
+    Child of Character
+    """
     def __init__(self, name, background, floor, x, y):
         """Extends the Character init method
 
