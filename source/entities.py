@@ -250,6 +250,8 @@ class Character(Entity):
         getRangedDamage(self) : Gets the ranged damage per shot
         getAttackRate(self, is_ranged=False) : Gets the number of attacks that can be performed in a turn
         getEncumbrance(self) : The amount that equipment outlevels character
+        getEnergyPerShot(self) : The energy that every shot uses
+        getRecoilCharge(self)
         
 
     Properties:
@@ -522,7 +524,9 @@ class Character(Entity):
     def getEncumbrance(self):
         """Encumbrance determines the penalty to hit chance or dodge chance
         
-        It is calculated by determining the amount that the difficulty of  equipment item exceeds the level of the character"""
+        It is calculated by determining the amount that the difficulty of  equipment item exceeds the level of the character
+        
+        Returns : int"""
         encumbrance = 0
         equipment = self.inventory.equipped
             for item in equipment:
@@ -532,8 +536,10 @@ class Character(Entity):
         return encumbrance
 
     def getEnergyPerShot(self):
-        """The energy that every shot uses"""
-        if self.inventory.equipped['weapon'] is not None:
+        """The energy that every shot uses
+        
+        If a the character does not have a ranged weapoon equipped, then return 0"""
+        if self.inventory.equipped['weapon'] is not None and self.inventory.equipped['weapon'].is_ranged:
             return self.inventory.equipped['weapon'].energy_per_shot
         else:
             return 0
