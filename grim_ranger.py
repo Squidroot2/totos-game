@@ -43,8 +43,20 @@ def setupGame(window, fps_clock):
         window : pygame.Surface
         fps_clock : pygame.Clock
     
-    Returns
-        game : Game
+    Returns:
+        game : source.game.Game
+    
+    Calls:
+        source.assets
+            loadAssets() 
+        source.screens
+            titleScreen(window, fps_clock)
+            playerCreateScreen(window, fps_clock)
+            generateDungeonScreen(window, fps_clock)
+        source.entities
+            Player(name, background, location, x, y)
+        source.game
+            Game(dungeon, player)
     """
     loadAssets()
     titleScreen(window, fps_clock)

@@ -1,5 +1,5 @@
 """
-Contains the classes used to construct actors(player,enemies,items)
+Contains the classes used to construct entities (player,enemies,items, etc.)
 
 Classes:
     Entity
@@ -185,10 +185,8 @@ class Corpse(Entity):
     Child of Entity
     
     Attributes:
-        image_dir : string
-            CLASS; Used to identify relative location of the image file
-        CELL_SIZE : int
-            INHERITED, CLASS; The number of pixels in the width and height of each image
+        image_dir : string : CLASS; Used to identify relative location of the image file
+        image_name : string : CLASS;
         x : int or None
             INHERITED; X location on the tile map. Should be None if not on a tile map
         y : int or None
