@@ -34,32 +34,29 @@ class Entity:
     """Represents any object that can act and be drawn into the world
     
     Attributes:
-        image_path : string
-            CLASS; Used to identify relative location of the image file
-        CELL_SIZE : int
-            CLASS; The number of pixels in the width and height of each image
-        x : int or None
-            X location on the tile map. Should be None if not on a tile map
-        y : int or None
-            Y location on the tile map. Should be None if not on a tile map
+        image_dir : string : CLASS; Used to identify relative location of the image file
+        image_name : string : CLASS; identifier of the image file
+        x : int or None : X location on the tile map. Should be None if not on a tile map
+        y : int or None : Y location on the tile map. Should be None if not on a tile map
         location : Floor or Inventory
-            where the entity is found in the game
-        obstruct : bool
-            Whether the entity stops another entity from moving through it.
+        obstruct : bool : Whether the entity stops another entity from moving through it.
             Typically, Characters should have this set to true and everything else should be false
         image : pygame.Surface
-            the entity's image as a Surface object
+        discovered : bool : Whether the player has seen the entity before or not
+        last_known_x : int : Last known x location on the tile map
+        last_known_y : int : Last known y location on the tile map
+        is_player : bool
         ai : AI or None
-            the entity's AI component if it has one
         inventory : Inventory or None
-            the entity's Inventory component if it has one
     
     Methods:
-        loadImage(self) : Loads the image stored at the image_path attribute
         draw(self) : Takes a pygame surface object and blits the object's 'image' to it at the determined x and y coordinates
+        drawAtLastKnown(self) : Similar to draw but at the lastKnown x and y
     
     Children:
         Corpse(Entity)
+        Target(Entity)
+        Portal(Entity)
         Item(Entity)
             Armor(Item)
             Weapon(Item)
@@ -69,9 +66,7 @@ class Entity:
             Player(Character)
     """
 
-    # todo get rid of seemingly useless class attribute CELL SIZE
     # Default image_path value for all entities
-    CELL_SIZE = CELL_SIZE
     image_dir = None
     image_name = None
 
@@ -123,11 +118,11 @@ class Entity:
             surface : pygame.Surface
                 The surface that the image will get written to
         """
-        surface.blit(self.image, (self.x*self.CELL_SIZE, self.y*self.CELL_SIZE))
+        surface.blit(self.image, (self.x*CELL_SIZE, self.y*CELL_SIZE))
 
     def drawAtLastKnown(self, surface):
         """Draws the entity at the last known location rather than necessarily the actual location"""
-        surface.blit(self.image, (self.last_known_x*self.CELL_SIZE, self.last_known_y*self.CELL_SIZE))
+        surface.blit(self.image, (self.last_known_x*CELL_SIZE, self.last_known_y*CELL_SIZE))
 
 
 class Target(Entity):
@@ -190,8 +185,8 @@ class Corpse(Entity):
     Child of Entity
     
     Attributes:
-        image_path : string
-            INHERITED, CLASS; Used to identify relative location of the image file
+        image_dir : string
+            CLASS; Used to identify relative location of the image file
         CELL_SIZE : int
             INHERITED, CLASS; The number of pixels in the width and height of each image
         x : int or None
@@ -866,7 +861,6 @@ class Battery(Item):
         self.power = data['power']
 
         super().__init__(location, x, y)
-
 
     def use(self):
         target = self.location.equipped['generator']
