@@ -186,22 +186,15 @@ class Corpse(Entity):
     
     Attributes:
         image_dir : string : CLASS; Used to identify relative location of the image file
-        image_name : string : CLASS;
-        x : int or None
-            INHERITED; X location on the tile map. Should be None if not on a tile map
-        y : int or None
-            INHERITED; Y location on the tile map. Should be None if not on a tile map
-        location : Floor
-            INHERITED; what floor the corpse is found in the game
-        obstruct : bool
-            INHERITED; Whether the entity stops another entity from moving through it. 
+        image_name : string : CLASS; 
+        x : int : INHERITED; X location on the tile map.
+        y : int : INHERITED; Y location on the tile map. Should be None if not on a tile map
+        location : Floor : INHERITED; what floor the corpse is found in the game
+        obstruct : bool : INHERITED; Whether the entity stops another entity from moving through it. 
             Should be False for Corpses
-        image : pygame.Surface
-            INHERITED; the corpse's image as a Surface object
-        ai : None
-            INHERITED; Specifies that corpse does not have ai
-        inventory : Inventory
-            INHERITED; the corpse's Inventory component
+        image : pygame.Surface : INHERITED; the corpse's image as a Surface object
+        ai : None : INHERITED; Specifies that corpse does not have ai
+        inventory : Inventory : INHERITED; the corpse's Inventory component
     """
 
     image_dir = 'Other'
@@ -226,11 +219,11 @@ class Character(Entity):
     Child of Entity
 
     Attributes:
-        image_path : string : CLASS; INSTANCE OVERRIDE;
-        CELL_SIZE : int : CLASS; INHERITED
-        x : int or None : INHERITED
-        y : int or None : INHERITED
-        location : Floor or Inventory : INHERITED
+        image_dir : string : CLASS; 
+        image_name : string 
+        x : int : INHERITED
+        y : int : INHERITED
+        location : Floor : INHERITED
         obstruct : bool : INHERITED
         image : pygame.Surface : INHERITED
         ai : AI or None : INHERITED
@@ -245,8 +238,19 @@ class Character(Entity):
         is_dead : bool
 
     Methods:
-        loadImage(self) : INHERITED
         draw(self) : INHERITED
+        move(self, delta_x, delta_y, peacefully=False) : Moves the characer by the specified x and y values
+        validateMove(self, destination) : Returns True if the destination is walkable and False if it isn'tagged
+        checkEntityObstruct(self, destination) : Checks if an obstructing entity is in the destination.
+        attack(self, opponent, is_ranged=False) : Attacks a specified opponent
+        takeDamage(self, damage) : Reduces the amount of energy in the characters generator and deals any remaining to flesh
+        kill(self) : Kill the character
+        getDefense(self) : Gets the total defense of the character
+        getMeleeDamage(self) : Gets the total melee damage per strike
+        getRangedDamage(self) : Gets the ranged damage per shot
+        getAttackRate(self, is_ranged=False) : Gets the number of attacks that can be performed in a turn
+        getEncumbrance(self) : The amount that equipment outlevels character
+        
 
     Properties:
         energy : int : RW; Amount of energy in the Character's Generator
@@ -258,7 +262,9 @@ class Character(Entity):
     image_dir = 'Characters'
 
     def __init__(self, char_id, floor, x, y, inventory=[], is_player=False):
-        """Extends the entity init function"""
+        """Extends the entity init function
+        
+        Uses the char_id to pull data, represented as a dict, from the Data class"""
 
         # Gets the data from the JSON File
         data = Data.getCharacter(char_id)
@@ -323,7 +329,6 @@ class Character(Entity):
             elif entity.x == destination[0] and entity.y == destination[1]:
                 return entity
     
-    # todo use this method instead of meleeAttack() and rangedAttack()
     def attack(self, opponent, is_ranged=False):
         """Attack a specified opponent
         
@@ -407,7 +412,6 @@ class Character(Entity):
                 Log.addToBuffer("%s killed %s" %(self.name, opponent.name))
                 break
          
-
     def takeDamage(self, damage):
         """Reduces the amount of energy in the character's generator and deals any remaining to flesh
 
@@ -501,9 +505,7 @@ class Character(Entity):
             ranged : boolean
                 represents whether these are ranged attacks or melee attacks
 
-        Returns:
-            : int
-                Number of attacks that will be performed in a turn
+        Returns: int
         """
         # Find out if carrying weapon; if not, return base_attack_rate
         if self.inventory and self.inventory.equipped['weapon']:
@@ -518,12 +520,11 @@ class Character(Entity):
             return weapon.fire_rate
 
     def getEncumbrance(self):
-        """Encumbrance determines the penalty to hit chance or dodge chance"""
+        """Encumbrance determines the penalty to hit chance or dodge chance
+        
+        It is calculated by determining the amount that the difficulty of  equipment item exceeds the level of the character"""
         encumbrance = 0
-        if self.inventory is None:
-            pass
-        else:
-            equipment = self.inventory.equipped
+        equipment = self.inventory.equipped
             for item in equipment:
                 if equipment[item] is not None and equipment[item].difficulty > self.level:
                     encumbrance += equipment[item].difficulty - self.level
