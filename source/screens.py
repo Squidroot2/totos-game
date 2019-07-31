@@ -18,7 +18,7 @@ import pygame
 from pygame.constants import *
 
 # My Modules
-from source.constants import COLORS, FONTS, FPS, BACKGROUNDS
+from source.constants import COLORS, FONTS, FPS, BACKGROUNDS, CELL_SIZE
 from source.utilities import checkForQuit
 from source.entities import Target
 from source.floors import Floor
@@ -371,7 +371,7 @@ def mainGameScreen(window, fps_clock, game):
 
         # Update the screen and wait for clock to tick; repeat the while loop
         pygame.display.update()
-        fps_clock.tick(FPS)
+        fps_clock.tick()
 
 
 def gameOverScreen(window, fps_clock):
@@ -597,24 +597,46 @@ def drawStatPane(window, player, pane):
 
 
     # todo figure out printing items to pane
-    # Get Images of equipped weapons
-    # item_images = dict()
-    #
-    # for item in player.inventory.equipped:
-    #     if player[item] is not None:
-    #         item_images[item] = player.inventory.equipped[item]
-    #     except AttributeError:
-    #         item_images[item] = pygame.Surface((32, 32))
-    #
-    # # Create Dictionary of Rects for the images
-    # item_image_rects = {item: item_images[item].get_rect() for item in item_images}
-    #
-    # # Define Location of Images of Items
-    # item_image_rects['weapon'].midleft = (pane.left+x_margin, pane.centery)
-    #
-    # # Draw picture of images
-    # for item in item_images:
-    #     window.blit(item_images[item], item_image_rects[item])
+
+    # Get the equipment and creates two dictionaries: one for images, one for names
+    equipment = player.inventory.equipped
+    item_images = dict()
+    item_names = dict()
+    for slot in equipment:
+        if equipment[slot] is not None:
+            item_images[slot] = equipment[slot].image
+            item_names[slot] = equipment[slot].image
+        else:
+            item_images[slot] = pygame.Surface((CELL_SIZE, CELL_SIZE))
+            item_names[slot] = "None"
+
+    # Create dict for rects of the item images
+    item_image_rects = {item: item_images[item].get_rect() for item in item_images}
+
+    # The distance between the images
+    image_dist = CELL_SIZE*3
+
+    item_text_surfs = dict()
+    item_text_rects = dict()
+
+    # Place the rects for the images
+    for i, slot in enumerate(item_image_rects):
+        item_image_rects[slot].midleft = (pane.left+x_margin, pane.centery + (i*image_dist))
+        line_y = item_image_rects[slot].top - CELL_SIZE*3/2
+        line_start = pane.left+x_margin
+        line_end = pane.right-x_margin
+        pygame.draw.line(window, COLORS['BLACK'], (line_start, line_y), (line_end, line_y), 1)
+
+        # Title text
+        title_top = line_y + CELL_SIZE/2
+        item_text_surfs[slot+'_title'] = FONTS['INFO'].render(slot.capitalize(), True, font_color, background_color)
+        item_text_rects[slot+'_title'] = item_text_surfs[slot+'_title'].get_rect()
+        item_text_rects[slot+'_title'].midtop = (pane.centerx, title_top)
+
+    # Draw picture of images
+    for item in item_images:
+        window.blit(item_images[item], item_image_rects[item])
+        window.blit(item_text_surfs[item+'_title'], item_text_rects[item+'_title'])
 
     # Print Text
     for text in text_surfs:
