@@ -615,7 +615,6 @@ class Character(Entity):
 
 
 class Player(Character):
-    image = pygame.image.load(os.path.join('images', 'characters', 'player.png'))
 
     def __init__(self, name, background, floor, x, y):
         """Extends the Character init method
