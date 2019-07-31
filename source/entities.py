@@ -215,10 +215,8 @@ class Corpse(Entity):
             character : Character
                 The character that died this is make this corpse
         """
-        if character.inventory:
-            inventory_contents = character.inventory.contents
-        else:
-            inventory_contents = []
+        inventory_contents = character.inventory.contents
+        
         super().__init__(character.location, character.x, character.y, inventory=inventory_contents)
 
 
