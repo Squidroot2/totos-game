@@ -630,7 +630,6 @@ class Character(Entity):
         
         Returns: string
         """
-        #todo create innate ranged attacks
         if self.inventory.equipped['weapon'] is not None and self.inventory.equipped['weapon'].is_ranged:
             return self.inventory.equipped['weapon'].ranged_verb
         else:
