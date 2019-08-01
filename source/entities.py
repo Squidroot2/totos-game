@@ -531,9 +531,9 @@ class Character(Entity):
         Returns : int"""
         encumbrance = 0
         equipment = self.inventory.equipped
-            for item in equipment:
-                if equipment[item] is not None and equipment[item].difficulty > self.level:
-                    encumbrance += equipment[item].difficulty - self.level
+        for item in equipment:
+            if equipment[item] is not None and equipment[item].difficulty > self.level:
+                encumbrance += equipment[item].difficulty - self.level
 
         return encumbrance
 
