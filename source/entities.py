@@ -148,11 +148,12 @@ class Target(Entity):
         else:
             return False
 
+    # todo remove ability to shoot around corners
     def drawTrail(self, surface, origin):
         trail = self.location.path_finder.get_path(origin.x, origin.y, self.x, self.y)
         for tile in trail:
             surf = pygame.Surface((CELL_SIZE, CELL_SIZE))
-            surf.set_alpha(128)
+            surf.set_alpha(64)
             surf.fill(COLORS['RED'])
             surface.blit(surf, (tile[0]*CELL_SIZE, tile[1]*CELL_SIZE))
 

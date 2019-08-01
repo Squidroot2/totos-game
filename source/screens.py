@@ -461,15 +461,12 @@ def targetScreen(window, fps_clock, game, panes):
         # Fill in the background of the window with black
         window.fill(COLORS['BLACK'])
 
-        # Draw the side and log panes
+        # Draw the side, log and game panes
         drawStatPane(window, player, panes['side'])
         drawLogPane(window, game.log, panes['log'])
-        drawGamePane(window, game, panes['main'])
+        drawGamePane(window, game, panes['main'], target)
         drawFPS(window, fps_clock)
         pygame.draw.rect(window, COLORS['DARK GRAY'], panes['bottom'], 0)
-
-        # Draw the trail
-        # target.drawTrail(game.surface, player)
 
         # Update the screen and wait for clock to tick; repeat the while loop
         pygame.display.update()
@@ -691,7 +688,7 @@ def drawLogPane(window, log, pane):
         window.blit(surf, text_rects[i])
 
 
-def drawGamePane(window, game, pane):
+def drawGamePane(window, game, pane, target=None):
     """Draws on the game surface then blits game surface to the window"""
 
     # Pulls the player and current floor from the game object
@@ -729,6 +726,9 @@ def drawGamePane(window, game, pane):
     # Create a Rect with the same dimensions as the camera; center it in the main pane
     game_area = player.camera.getRect().copy()
     game_area.center = pane.center
+
+    if target:
+        target.drawTrail(game.surface, player)
 
     # Blit everything on the game surface to the window
     window.blit(game.surface, game_area, player.camera.getRect())
