@@ -1,11 +1,10 @@
-"""Contains the objects reprenting the Floor and the Tiles on items
+"""Contains the objects representing the Floor and the Tiles on items
 
 Classes:
     Floor
     Tile
 """
 # Standard Library
-import os
 import random
 import queue
 # Third Party
@@ -15,8 +14,7 @@ import tcod
 from source.entities import Portal
 from source.entities import Character
 from source.constants import CELL_SIZE, FLOOR_HEIGHT, FLOOR_WIDTH, COLORS
-from source.assets import Images
-
+from source.assets import Images, Data
 
 
 class Floor:
@@ -48,11 +46,10 @@ class Floor:
         # Get pathfinder
         self.path_finder = tcod.path.AStar(self.map, diagonal=1)
 
-
     def generateLayout(self):
         """Uses Binary Space Partition to generate the layout of the dungeon"""
-        bsp = tcod.bsp.BSP(0,0,self.width-1,self.height-1)
-        bsp.split_recursive(depth=5,min_width=3,min_height=3,max_horizontal_ratio=2,max_vertical_ratio=2)
+        bsp = tcod.bsp.BSP(0, 0, self.width-1, self.height-1)
+        bsp.split_recursive(depth=5, min_width=3, min_height=3, max_horizontal_ratio=2, max_vertical_ratio=2)
         for node in bsp.pre_order():
             if node.children:
                 self.makeHallway(node)
@@ -60,7 +57,7 @@ class Floor:
             else:
                 self.makeRoom(node)
 
-    def makeHallway(self,node):
+    def makeHallway(self, node):
         """"Uses the properties of the given node to randomly create a hallway
 
         Parameters:
@@ -76,7 +73,7 @@ class Floor:
         self.map.transparent[y][x] = True
         self.map.walkable[y][x] = True
 
-    def makeRoom(self,node):
+    def makeRoom(self, node):
         """Uses the properties of the given node to dig out a room. Appends the room to the instance's list of rooms
 
         Parameters:
@@ -92,7 +89,7 @@ class Floor:
                 self.map.transparent[y+a][x+b] = True
                 self.map.walkable[y+a][x+b] = True
 
-        self.rooms.append({"x":x,"y":y,"w":width,"h":height})
+        self.rooms.append({"x": x, "y": y, "w": width, "h": height})
 
     def generatePortals(self):
         """Creates up and down portals for the floor"""
@@ -111,28 +108,30 @@ class Floor:
             x = random.randrange(room['x'], room['x'] + room['w'])
             y = random.randrange(room['y'], room['y'] + room['h'])
 
+            # noinspection PyTypeChecker
             self.portals[direction] = Portal(self, x, y, direction)
             if direction == "up":
                 self.landing_room = room
 
-
     def generateEnemies(self):
-        """Generates a specified number of enemies for the floor
-
-        Parameters:
-            number_of_enemies: int
-        """
-        # todo allow multiple different types of enemies to be generated
+        """Generates a specified number of enemies for the floor"""
         chance_per_room = .3
+        leveled_list = Data.getLeveledList("ENEMIES", self.number)
 
         for room in self.rooms:
             if room is self.landing_room:
                 continue
             roll = random.random()
             if roll < chance_per_room:
+                # Find location in room
                 x = random.randrange(room['x'], room['x']+room['w'])
                 y = random.randrange(room['y'], room['y']+room['h'])
-                Character("WEIRDMONK", self, x, y)
+
+                # Get random char_id from leveled list
+                char_id = random.choices(list(leveled_list.keys()), list(leveled_list.values()))[0]
+
+                # Create Character
+                Character(char_id, self, x, y)
 
     def updateTiles(self):
         """Runs the update method on every tile in the tile_map"""
@@ -141,7 +140,7 @@ class Floor:
                 self.tile_map[xtile][ytile].update(self.map)
 
     def draw(self, surface, camera):
-        """Draws all of the tiles in the tile map at the appropriate location
+        """Draws all of the tiles in the tile tcod_map at the appropriate location
 
         Parameters:
             surface : pygame.Surface : surface to draw to
@@ -225,10 +224,10 @@ class Tile:
     CELL_SIZE = CELL_SIZE
     image_dir = "Tiles"
 
-    def __init__(self, map, x, y):
+    def __init__(self, tcod_map, x, y):
         # Row Major Order
-        self.walkable = map.walkable[y][x]
-        self.transparent = map.transparent[y][x]
+        self.walkable = tcod_map.walkable[y][x]
+        self.transparent = tcod_map.transparent[y][x]
         self.x = x
         self.y = y
         self.discovered = False
@@ -243,10 +242,10 @@ class Tile:
         if self.discovered:
             surface.blit(self.image, (self.pixel_x, self.pixel_y))
 
-    def update(self, map):
+    def update(self, tcod_map):
         """Loads the image for each image depending on the values in the walkable and transparent array"""
-        self.walkable = map.walkable[self.y][self.x]
-        self.transparent = map.transparent[self.y][self.x]
+        self.walkable = tcod_map.walkable[self.y][self.x]
+        self.transparent = tcod_map.transparent[self.y][self.x]
         if self.walkable and self.transparent:
             self.image_name = 'white-tile'
             
