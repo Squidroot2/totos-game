@@ -33,14 +33,16 @@ class Floor:
 
         # Initialize empty variables
         self.entities = []
+        self.sort_entities = False
         self.rooms = []
         self.portals = {'up': None, 'down': None}
         self.landing_room = None
-
+        
         # Random Generation of Floor
         self.generateLayout()
         self.updateTiles()
         self.generatePortals()
+        self.generateItems()
         self.generateEnemies()
 
         # Get pathfinder
@@ -162,23 +164,56 @@ class Floor:
                 self.tile_map[xtile][ytile].update(self.map)
 
     def draw(self, surface, camera):
-        """Draws all of the tiles in the tile tcod_map at the appropriate location
+        """Draws all of the tiles, entities, and the finally the fog
 
         Parameters:
             surface : pygame.Surface : surface to draw to
-            camera : source.components.Camera :
+            camera : source.components.Camera 
         """
 
         area = camera.getTileRect()
+        
+        # Draw the tile map
         for xtile in range(area.left, area.right):
-            # ignore if out of range
-            if xtile >= len(self.tile_map) or xtile < 0:
-                continue
+            # ignore x out of range
+            if xtile >= len(self.tile_map) or xtile < 0: continue
+            
             for ytile in range(area.top, area.bottom):
-                # ignore if out of range
-                if ytile >= len(self.tile_map[xtile]) or ytile < 0:
-                    continue
+                # ignore y out of range
+                if ytile >= len(self.tile_map[xtile]) or ytile < 0: continue
+                
                 self.tile_map[xtile][ytile].draw(surface)
+        
+        # Sort entities if needed
+        if self.sort_entities:
+            entities.sort(key=lambda entity: entity.draw_order)
+            self.sort_entities = False
+           
+        # Draw the entities in the map
+        for entity in self.entities:
+            if self.map.fov[entity.y][entity.x]:
+                # If the entity is in fov, mark as discovered, update last known coordinates, and draw
+                entity.discovered = True
+                entity.last_known_x = entity.x
+                entity.last_known_y = entity.y
+                entity.draw(surface)
+            elif entity.discovered and not self.map.fov[entity.last_known_y][entity.last_known_x]:
+                # If the entity is not in fov but is discovered, draw at last known coordinates...
+                # unless the last known coordinates are in FOV
+                entity.drawAtLastKnown(surface)
+        
+        # Draw the fog over the area not in the fov
+        for x in range(area.left, area.right):
+            # Ignore x out of range
+            if x >= len(self.tile_map) or x < 0: continue
+            
+            for y in range(area.top, area.bottom):
+                # Ignore y out of range
+                if y >= len(self.tile_map[x] or y < 0): continue
+                
+                # Draw fog if discovered but no longer in fov
+                if self.tile_map[x][y].discovered and not self.map.fov[y][x]:
+                    self.tile_map[x][y].drawFog(surface)
 
     def addEntity(self, entity):
         """Adds an entity to the entities list attribute
@@ -188,28 +223,11 @@ class Floor:
                 entity to add
         """
         self.entities.append(entity)
-
+        self.sort_entities = True
+        
     def removeEntity(self, entity):
         """Removes an entity from the entities list attribute"""
         self.entities.remove(entity)
-
-    def drawFog(self, surface, camera):
-        """Grays out areas that have been discovered but are no longer in FOV
-
-        Parameters:
-            surface : pygame.Surface : surface to draw to
-            camera : source.components.Camera
-        """
-        area = camera.getTileRect()
-
-        for x in range(area.left, area.right):
-            if x >= len(self.tile_map) or x < 0:
-                continue
-            for y in range(area.top, area.bottom):
-                if y >= len(self.tile_map[x] or y < 0):
-                    continue
-                if self.tile_map[x][y].discovered and not self.map.fov[y][x]:
-                    self.tile_map[x][y].drawFog(surface)
 
     @staticmethod
     def generateDungeon(num_of_floors):

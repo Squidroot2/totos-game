@@ -24,7 +24,7 @@ import pygame
 # My Modules
 from source import formulas
 from source.components import AI, Inventory, Camera
-from source.constants import CELL_SIZE, BACKGROUNDS, COLORS
+from source.constants import CELL_SIZE, BACKGROUNDS, COLORS, DRAW_ORDER
 from source.game import Log
 from source.utilities import getDistanceBetweenEntities
 from source.assets import Images, Data
@@ -129,6 +129,7 @@ class Target(Entity):
     """Represents the player's target when aiming or exploring"""
     image_dir = 'Other'
     image_name = 'target'
+    draw_order = DRAW_ORDER['TARGET']
     def move(self, delta_x, delta_y):
         destination = ((self.x+delta_x), (self.y+delta_y))
         if self.validateMove(destination):
@@ -179,6 +180,7 @@ class Target(Entity):
 class Portal(Entity):
     """Entity used to move player between floors"""
     image_dir = 'Other'
+    draw_order = DRAW_ORDER['PORTAL']
 
     def __init__(self, location, x, y, direction):
         assert direction in ("up", "down")
@@ -210,6 +212,7 @@ class Corpse(Entity):
 
     image_dir = 'Other'
     image_name = 'headstone'
+    draw_order = DRAW_ORDER['CORPSE']
     
     def __init__(self, character):
         """Init method for Corpse. Extends the init method of Entity
@@ -275,6 +278,7 @@ class Character(Entity):
         Player(Character)"""
         
     image_dir = 'Characters'
+    draw_order = DRAW_ORDER['ENEMY']
 
     def __init__(self, char_id, floor, x, y, inventory=[], is_player=False):
         """Extends the entity init function
@@ -647,6 +651,7 @@ class Player(Character):
     
     Child of Character
     """
+    draw_order = DRAW_ORDER['PLAYER']
     def __init__(self, name, background, floor, x, y):
         """Extends the Character init method
 
@@ -764,6 +769,7 @@ class Item(Entity):
         pickUp(self) : Item is moved from floor to specified Inventory
     """
     image_dir = "Items"
+    draw_order = DRAW_ORDER['ITEM']
 
     def drop(self):
         """Item is moved from inventory to floor"""

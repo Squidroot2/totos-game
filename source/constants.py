@@ -32,6 +32,13 @@ COLORS = {'BLACK':      (  0,  0,  0),
           'YELLOW':     (255,255,  0),
           'GOLDENROD':  (190,145, 20)}
 
+DRAW_ORDER =    {'CORPSE': 0,
+                 'PORTAL': 1,
+                 'ITEM': 2,
+                 'ENEMY': 3,
+                 'PLAYER': 4,
+                 'TARGET': 5}
+
 
 pygame.font.init()
 FONTS = {'TITLE': pygame.font.Font('freesansbold.ttf', 70),

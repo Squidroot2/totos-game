@@ -698,28 +698,6 @@ def drawGamePane(window, game, pane, target=None):
     # Run the draw method on floor
     floor.draw(game.surface, player.camera)
 
-    # Draw the entities in the map
-    for entity in floor.entities:
-        # Skip the player until the end
-        if entity is player:
-            continue
-        if player.getFOV()[entity.y][entity.x]:
-            # If the entity is in fov, mark as discovered, update last known coordinates, and draw
-            entity.discovered = True
-            entity.last_known_x = entity.x
-            entity.last_known_y = entity.y
-            entity.draw(game.surface)
-        elif entity.discovered and not player.getFOV()[entity.last_known_y][entity.last_known_x]:
-            # If the entity is not in fov but is discovered, draw at last known coordinates...
-            # unless the last known coordinates are in FOV
-            entity.drawAtLastKnown(game.surface)
-
-    # Draw the player after all other entities
-    player.draw(game.surface)
-
-    # Draw Fog over the map
-    floor.drawFog(game.surface, player.camera)
-
     # Update the camera's position
     player.camera.update()
 
