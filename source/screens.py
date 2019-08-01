@@ -415,8 +415,11 @@ def targetScreen(window, fps_clock, game, panes):
     floor = player.location
 
     # Create target
-    target = Target(floor, player.x, player.y)
+    target = Target(floor, player.x, player.y, player)
+    
+    # Turn taken turns to True if player takes a shot
     turn_taken = False
+    
     target_mode = True
     while target_mode:
 
@@ -706,7 +709,7 @@ def drawGamePane(window, game, pane, target=None):
     game_area.center = pane.center
 
     if target:
-        target.drawTrail(game.surface, player)
+        target.drawPath(game.surface)
 
     # Blit everything on the game surface to the window
     window.blit(game.surface, game_area, player.camera.getRect())

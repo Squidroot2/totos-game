@@ -130,6 +130,12 @@ class Target(Entity):
     image_dir = 'Other'
     image_name = 'target'
     draw_order = DRAW_ORDER['TARGET']
+    
+    def __init__(self, floor, x, y, origin):
+        self.origin = origin
+        super().__init__(floor, x, y)
+    
+    
     def move(self, delta_x, delta_y):
         destination = ((self.x+delta_x), (self.y+delta_y))
         if self.validateMove(destination):
@@ -150,14 +156,28 @@ class Target(Entity):
             return False
 
     # todo remove ability to shoot around corners
-    def drawTrail(self, surface, origin):
-        trail = self.location.path_finder.get_path(origin.x, origin.y, self.x, self.y)
-        for tile in trail:
+    def drawPath(self, surface):
+        path = self.getPath()
+        for tile in path:
             surf = pygame.Surface((CELL_SIZE, CELL_SIZE))
             surf.set_alpha(64)
             surf.fill(COLORS['RED'])
             surface.blit(surf, (tile[0]*CELL_SIZE, tile[1]*CELL_SIZE))
-
+    
+    def getPath(self):
+        return self.location.path_finder.get_path(self.origin.x, self.origin.y, self.x, self.y)
+    
+    # todo use getFirstInPath method
+    def getFirstInPath(self, origin):
+        """Returns the first entity in the path or none if there are no entities in the path"""
+        path = self.getPath()
+        for tile in path:
+            for entity in self.location.entities:
+                if not entity.obstruct:
+                    continue
+                elif tile[0] == entity.x and tile[1] == entity.y
+                    return entity
+        
 
     @property
     def on_top_of(self):
