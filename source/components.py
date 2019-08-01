@@ -11,6 +11,7 @@ import random
 import pygame
 # My Modules
 from source.constants import CELL_SIZE
+from source.utilities import getDistanceBetweenEntities
 
 class AI:
     """Component Class for Characters
@@ -56,8 +57,12 @@ class AI:
 
             # Basic AI decisions
             if self.type == "basic":
+                # If the ai owner and the player are on the same floor
                 if self.owner.location is self.opponent.location:
-                    self.moveNextToEntity(self.opponent)
+                    if getDistanceBetweenEntities((self.owner.x, self.owner.y), (self.opponent.x, self.opponent.y)) > 1:
+                        self.moveNextToEntity(self.opponent)
+                    else:
+                        self.meleeAttackEntity(self.opponent)
 
                 # If the ai owner is on a different floor
                 else:
@@ -65,7 +70,18 @@ class AI:
 
     # todo write method for moving the ai's entity towards the player or other entity
     def moveNextToEntity(self, target):
-        pass
+        path = self.owner.location.path_finder.get_path(self.owner.x, self.owner.y, target.x, target.y)
+        next_move = path[0]
+        x_move = next_move[0] - self.owner.x
+        y_move = next_move[1] - self.owner.y
+
+        self.owner.move(x_move, y_move, peacefully=True)
+
+    def meleeAttackEntity(self, target):
+        x_move = target.x - self.owner.x
+        y_move = target.y - self.owner.y
+
+        self.owner.move(x_move, y_move, peacefully=False)
 
 
     def randomMove(self, peacefully=False):

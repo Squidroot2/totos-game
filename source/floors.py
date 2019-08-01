@@ -31,7 +31,6 @@ class Floor:
         """
         self.map = tcod.map.Map(self.width, self.height)
         self.tile_map = [[Tile(self.map, x, y) for y in range(self.height)] for x in range(self.width)]
-        self.path_finder = tcod.path.AStar(self.map, diagonal=1)
         self.number = floor_number
 
         # Initialize empty variables
@@ -45,6 +44,9 @@ class Floor:
         self.updateTiles()
         self.generatePortals()
         self.generateEnemies()
+
+        # Get pathfinder
+        self.path_finder = tcod.path.AStar(self.map, diagonal=1)
 
 
     def generateLayout(self):
@@ -130,7 +132,7 @@ class Floor:
             if roll < chance_per_room:
                 x = random.randrange(room['x'], room['x']+room['w'])
                 y = random.randrange(room['y'], room['y']+room['h'])
-                Character("BLOB_1", self, x, y)
+                Character("WEIRDMONK", self, x, y)
 
     def updateTiles(self):
         """Runs the update method on every tile in the tile_map"""
