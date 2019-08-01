@@ -16,10 +16,10 @@ import pygame
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
 
-FLOOR_WIDTH = 40
-FLOOR_HEIGHT = 40
+FLOOR_WIDTH = 35
+FLOOR_HEIGHT = 35
 
-CELL_SIZE = 32
+CELL_SIZE = 324
 
 
 #                         R   G   B
