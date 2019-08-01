@@ -24,7 +24,7 @@ import pygame
 # My Modules
 from source import formulas
 from source.components import AI, Inventory, Camera
-from source.constants import CELL_SIZE, BACKGROUNDS
+from source.constants import CELL_SIZE, BACKGROUNDS, COLORS
 from source.game import Log
 from source.utilities import getDistanceBetweenEntities
 from source.assets import Images, Data
@@ -148,6 +148,15 @@ class Target(Entity):
         else:
             return False
 
+    def drawTrail(self, surface, origin):
+        trail = self.location.path_finder.get_path(origin.x, origin.y, self.x, self.y)
+        for tile in trail:
+            surf = pygame.Surface((CELL_SIZE, CELL_SIZE))
+            surf.set_alpha(128)
+            surf.fill(COLORS['RED'])
+            surface.blit(surf, (tile[0]*CELL_SIZE, tile[1]*CELL_SIZE))
+
+
     @property
     def on_top_of(self):
         floor = self.location
@@ -178,6 +187,7 @@ class Portal(Entity):
             self.image_name = 'up_portal'
         self.direction = direction
         super().__init__(location, x, y)
+
 
 class Corpse(Entity):
     """This is created when a character object has been killed

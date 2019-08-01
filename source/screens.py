@@ -406,7 +406,9 @@ def gameOverScreen(window, fps_clock):
 
 
 def targetScreen(window, fps_clock, game, panes):
-    """Used for targeting ranged attack"""
+    """Used for targeting ranged attack
+
+    Returns : bool : Whether ot not a turn was taken"""
 
     # Create aliases for player and floor
     player = game.player
@@ -466,6 +468,9 @@ def targetScreen(window, fps_clock, game, panes):
         drawFPS(window, fps_clock)
         pygame.draw.rect(window, COLORS['DARK GRAY'], panes['bottom'], 0)
 
+        # Draw the trail
+        # target.drawTrail(game.surface, player)
+
         # Update the screen and wait for clock to tick; repeat the while loop
         pygame.display.update()
         fps_clock.tick()
@@ -473,6 +478,7 @@ def targetScreen(window, fps_clock, game, panes):
     # Clean up target after no longer used
     target.remove()
 
+    # Return bool determining if turn was taken
     return turn_taken
 
 
