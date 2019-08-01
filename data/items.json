@@ -261,6 +261,26 @@
     "BATTERY_1": {
       "name": "Tiny Battery",
       "power": 5
-    }
+    },
+	"BATTERY_2": {
+	  "name": "Small Battery",
+	  "power": 8
+	},
+	"BATTERY_3": {
+	  "name": "Medium Battery",
+	  "power": 12
+	},
+	"BATTERY_4": {
+	  "name": "Big Battery",
+	  "power": 15
+	},
+	"BATTERY_5": {
+	  "name": "Huge Battery",
+	  "power":20
+	},
+	"BATTERY_6": {
+	  "name": "Epic Battery",
+	  "power":25
+	}
   }
 }
