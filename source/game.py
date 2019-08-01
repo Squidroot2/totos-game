@@ -25,8 +25,6 @@ class Game:
         surface : pygame.Surface
             Objects in the game are drawn to here, then this is blitted to the main window
     """
-    items_path = os.path.join('data', 'items.json')
-
     def __init__(self, dungeon, player):
         """Init method for Game
 
