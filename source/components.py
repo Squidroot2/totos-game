@@ -13,6 +13,7 @@ import pygame
 from source.constants import CELL_SIZE
 from source.utilities import getDistanceBetweenEntities
 
+
 class AI:
     """Component Class for Characters
 
@@ -62,19 +63,25 @@ class AI:
                     if getDistanceBetweenEntities((self.owner.x, self.owner.y), (self.opponent.x, self.opponent.y)) > 1:
                         self.moveNextToEntity(self.opponent)
                     else:
-                        self.owner.attack(self.opponent, is_rasnge=False)
+                        self.owner.attack(self.opponent, is_ranged=False)
 
                 # If the ai owner is on a different floor
                 else:
                     self.randomMove(peacefully=True)
 
             elif self.type == "ranger":
-                # If the ai owner and the player are on the same floor
-                if self.owner.location is self.oppoent.location:
-                    if getDistanceBetweenEntities((self.owner.x, self.owner.y), (self.opponent.x, self.opponent.y)) > self.owner.getRange():
+                # If the ai owner and the player are on the same floor...
+                if self.owner.location is self.opponent.location:
+
+                    # Move closer if out of range
+                    if getDistanceBetweenEntities((self.owner.x, self.owner.y), (self.opponent.x, self.opponent.y)) \
+                            > self.owner.getRange():
                         self.moveNextToEntity(self.opponent)
+
+                    # If within range, attack
+                    # todo make it so character must have LOS
                     else:
-                        self.owner.attack(self.opponent, is_range=True)
+                        self.owner.attack(self.opponent, is_ranged=True)
 
     def moveNextToEntity(self, target):
         """Moves peacefully toward the specified entity"""
@@ -135,20 +142,20 @@ class Camera:
         Returns:
             rect : pygame.Rect
         """
-        rect = pygame.Rect(0,0,self.pixel_width,self.pixel_height)
+        rect = pygame.Rect(0, 0, self.pixel_width, self.pixel_height)
         rect.center = self.pixel_center
         return rect
 
     def getTileRect(self):
         """Returns the rectangle representing the camera in tile dimensions"""
-        rect = pygame.Rect(0,0,self.width,self.height)
+        rect = pygame.Rect(0, 0, self.width, self.height)
         rect.center = self.center
         return rect
 
 
 class Inventory:
     ''' Component Class'''
-    def __init__(self, owner, contents = []):
+    def __init__(self, owner, contents=[]):
         self.owner = owner
         self.contents = contents
         self.equipped = {"weapon": None, "armor": None, "generator": None}
