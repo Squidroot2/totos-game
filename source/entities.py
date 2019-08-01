@@ -785,6 +785,23 @@ class Item(Entity):
         self.y = None
         self.location = inventory
         inventory.addEntity(self)
+    
+    @staticmethod
+    def createItem(item_id, location, x=None, y=None):
+        """Creates an item based on the type of ID"""
+        item_class = item_id[:-2]
+        
+        if item_class == "BATTERY":
+            Battery(item_id, location, x, y)
+        elif item_class == "ARMOR":
+            Armor(item_id, location, x ,y)
+        elif item_class in ("SWORD", "CLUB", "KNIFE", "PDW", "CANNON", "RIFLE", "PISTOL"):
+            Weapon(item_id, location, x, y)
+        elif item_class in ("QUICK", "BRAWLER", "FEEDER", "RANGER"):
+            Generator(item_id, location, x, y)
+        else:
+            raise ValueError("%s not recognized as a valid item class" %item_class)
+            
 
 
 class Weapon(Item):

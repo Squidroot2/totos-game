@@ -114,8 +114,8 @@ class Floor:
                 self.landing_room = room
 
     def generateEnemies(self):
-        """Generates a specified number of enemies for the floor"""
-        chance_per_room = .3
+        """Goes trhough each room and rolls to determine if an enemy is going to be in that room. Then it decides which enemy based on the leveled list """
+        chance_per_room = .5
         leveled_list = Data.getLeveledList("ENEMIES", self.number)
 
         for room in self.rooms:
@@ -132,7 +132,29 @@ class Floor:
 
                 # Create Character
                 Character(char_id, self, x, y)
-
+    
+    def generateItems(self):
+        """Based on the level list, determines items that show up"""
+        # Uses a random function to determine if the number of items on the floor
+        num_of_items = round(random.triangular(low=1,high=6,mode=5))
+        
+        # Get leveled list
+        leveled_list = Data.getLeveledList("ITEMS", self.number)
+        
+        # For each item in the number of items...
+        for i in range(num_of_items):
+        
+            # Get the location for the item
+            room = random.choice(self.rooms)
+            x = random.randrange(room['x'], room['x']+room['w'])
+            y = random.randrange(room['y'], room['y']+room['h'])
+            
+            # Gets the item from the leveled_list
+            item_id = random.choices(list(leveled_list.keys()), list(leveled_list.values()))[0]
+            
+            # Create the item
+            Item.createItem(item_id, self, x, y)
+        
     def updateTiles(self):
         """Runs the update method on every tile in the tile_map"""
         for xtile in range(self.width):

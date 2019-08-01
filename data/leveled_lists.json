@@ -11,5 +11,10 @@
       "LEVEL_3": {
         "WEIRDMONK": 100
       }
-    }
+    },
+	"ITEMS": {
+	  "LEVEL_1": {
+	    "BATTERY_1": 100
+	  }
+	}
 }
