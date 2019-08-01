@@ -41,7 +41,7 @@ class AI:
         return None
 
     def takeTurn(self):
-        """Runs through conitional statements to determine how the AI will act this turn"""
+        """Runs through conditional statements to determine how the AI will act this turn"""
         if self.opponent is None:
             self.opponent = self.findPlayer()
 
@@ -62,7 +62,7 @@ class AI:
                     if getDistanceBetweenEntities((self.owner.x, self.owner.y), (self.opponent.x, self.opponent.y)) > 1:
                         self.moveNextToEntity(self.opponent)
                     else:
-                        self.meleeAttackEntity(self.opponent)
+                        self.owner.attack(self.opponent, is_rasnge=False)
 
                 # If the ai owner is on a different floor
                 else:
@@ -76,23 +76,14 @@ class AI:
                     else:
                         self.owner.attack(self.opponent, is_range=True)
 
-
-
-    # todo write method for moving the ai's entity towards the player or other entity
     def moveNextToEntity(self, target):
+        """Moves peacefully toward the specified entity"""
         path = self.owner.location.path_finder.get_path(self.owner.x, self.owner.y, target.x, target.y)
         next_move = path[0]
         x_move = next_move[0] - self.owner.x
         y_move = next_move[1] - self.owner.y
 
         self.owner.move(x_move, y_move, peacefully=True)
-
-    def meleeAttackEntity(self, target):
-        x_move = target.x - self.owner.x
-        y_move = target.y - self.owner.y
-
-        self.owner.move(x_move, y_move, peacefully=False)
-
 
     def randomMove(self, peacefully=False):
         """Choose a random x and y movement. Could be (0,0)
