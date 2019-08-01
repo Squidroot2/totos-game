@@ -1,0 +1,15 @@
+{
+    "ENEMIES": {
+      "LEVEL_1": {
+        "BLOB_1": 80,
+        "WEIRDMONK": 20
+      },
+      "LEVEL_2": {
+        "BLOB_1": 20,
+        "WEIRDMONK": 80
+      },
+      "LEVEL_3": {
+        "WEIRDMONK": 100
+      }
+    }
+}""

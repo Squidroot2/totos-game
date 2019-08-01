@@ -101,7 +101,8 @@ class Data:
     data_folder = 'data'
     
     json_files = {'Characters': os.path.join(data_folder, 'characters.json'),
-                  'Items': os.path.join(data_folder, 'items.json')}
+                  'Items': os.path.join(data_folder, 'items.json'),
+                  'Leveled_Lists': os.path.join(data_folder, 'leveled_lists.json')}
     
     data = dict()
     for file in json_files:
@@ -123,3 +124,14 @@ class Data:
         """Returns the data for an item for given category and id"""
         return cls.data['Items'][category][identifier]
 
+    @classmethod
+    def getLeveledList(cls, category, level):
+        """Category is characters or items, level is an int. Returns a dict"""
+        levels = cls.data['Leveled_Lists'][category]
+
+        # Try to return the specified level but if not found, return the level present closest without going over
+        while True:
+            try:
+                return levels['LEVEL_'+str(level)]
+            except KeyError:
+                level -= 1
