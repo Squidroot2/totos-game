@@ -282,6 +282,12 @@ class Character(Entity):
         self.base_damage = data['damage']
         self.base_defense = data['defense']
         self.base_attack_rate = data['attack_rate']
+        self.innate_ranged = bool(data['innate_ranged'])
+        if self.innate_ranged:
+            self.ranged_verb = data['innate_ranged']['verb']
+            self.ranged_damage = data['innate_ranged']['damage']
+            self.range = data['innate_ranged']['range']
+            self.ranged_attack_rate = data['innate_ranged']['rate']
         
         # Gets the image
         self.image_name = data['image']
@@ -373,7 +379,7 @@ class Character(Entity):
             attack = self.getRangedDamage()
             
             # Gets the difference between the distance and the maximum range and sets it to at least 0
-            range_exceeded = getDistanceBetweenEntities((self.x, self.y), (opponent.x, opponent.y)) - self.getWeaponRange()
+            range_exceeded = getDistanceBetweenEntities((self.x, self.y), (opponent.x, opponent.y)) - self.getRange()
             if range_exceeded < 0: 
                 range_exceeded = 0
             
@@ -491,7 +497,6 @@ class Character(Entity):
 
         return damage
 
-    # todo update for innate ranged attacks
     def getRangedDamage(self):
         """Gets the damage of a ranged attack
         
@@ -501,6 +506,8 @@ class Character(Entity):
         """
         if self.inventory.equipped['weapon'] and self.inventory.equipped['weapon'].is_ranged:
             return self.inventory.equipped['weapon'].ranged_damage
+        else:
+            return self.ranged_damage
 
     def getAttackRate(self, is_ranged=False):
         """Gets the number of attacks that can be performed in a turn
@@ -511,17 +518,23 @@ class Character(Entity):
 
         Returns: int
         """
-        # Find out if carrying weapon; if not, return base_attack_rate
-        if self.inventory and self.inventory.equipped['weapon']:
-            weapon = self.inventory.equipped['weapon']
-        else:
-            return self.base_attack_rate
 
-        # If its a melee attack
-        if not is_ranged:
-            return weapon.melee_speed
+        # Get Weapon
+        weapon = self.inventory.equipped['weapon']
+
+        # If its a ranged attack
+        if is_ranged:
+            if weapon.is_ranged:
+                return weapon.fire_rate
+            else:
+                return self.ranged_attack_rate
+
+        # If is a melee attack
         else:
-            return weapon.fire_rate
+            if weapon:
+                return weapon.melee_speed
+            else:
+                return self.base_attack_rate
 
     def getEncumbrance(self):
         """Encumbrance determines the penalty to hit chance or dodge chance
@@ -558,10 +571,12 @@ class Character(Entity):
         else:
             return self.inventory.equipped['generator'].recoil_charge
 
-    def getWeaponRange(self):
-        #todo rename to innate ranged attacks
-        """The range of the currently equipped ranged weapon"""
-        return self.inventory.equipped['weapon'].range
+    def getRange(self):
+        """The range of the currently equipped ranged weapon or if no ranged weapon equipped, the innate range"""
+        if self.inventory.equipped['weapon'] is not None and self.inventory.equipped['weapon'].is_ranged:
+            return self.inventory.equipped['weapon'].range
+        else:
+            return self.range
     
     def getMeleeVerb(self):
         """Get the verb used to describe the melee attack (e.g. 'hit')
@@ -581,8 +596,10 @@ class Character(Entity):
         Returns: string
         """
         #todo create innate ranged attacks
-        if self.inventory.equipped['weapon'] is not None:
+        if self.inventory.equipped['weapon'] is not None and self.inventory.equipped['weapon'].is_ranged:
             return self.inventory.equipped['weapon'].ranged_verb
+        else:
+            return self.ranged_verb
 
     @property
     def energy(self):

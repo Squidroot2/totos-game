@@ -56,7 +56,7 @@ class AI:
                 self.randomMove()
 
             # Basic AI decisions
-            if self.type == "basic":
+            elif self.type == "basic":
                 # If the ai owner and the player are on the same floor
                 if self.owner.location is self.opponent.location:
                     if getDistanceBetweenEntities((self.owner.x, self.owner.y), (self.opponent.x, self.opponent.y)) > 1:
@@ -67,6 +67,16 @@ class AI:
                 # If the ai owner is on a different floor
                 else:
                     self.randomMove(peacefully=True)
+
+            elif self.type == "ranger":
+                # If the ai owner and the player are on the same floor
+                if self.owner.location is self.oppoent.location:
+                    if getDistanceBetweenEntities((self.owner.x, self.owner.y), (self.opponent.x, self.opponent.y)) > self.owner.getRange():
+                        self.moveNextToEntity(self.opponent)
+                    else:
+                        self.owner.attack(self.opponent, is_range=True)
+
+
 
     # todo write method for moving the ai's entity towards the player or other entity
     def moveNextToEntity(self, target):

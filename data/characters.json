@@ -9,6 +9,12 @@
     "damage": 1,
     "defense": 0,
     "attack_rate": 1,
+    "innate_ranged": {
+      "verb": "spit at",
+      "damage": 0.1,
+      "range": 1,
+      "rate": 1
+    },
     "ai": null
   },
   "BLOB_1": {
@@ -21,6 +27,7 @@
     "damage": 3,
     "defense": 2,
     "attack_rate": 1,
+    "innate_ranged": null,
     "ai": "brainless"
   },
   "WEIRDMONK": {
@@ -33,6 +40,7 @@
     "damage": 5,
     "defense": 0,
     "attack_rate": 1,
+    "innate_ranged": null,
     "ai": "basic"
   }
 }
