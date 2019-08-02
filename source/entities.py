@@ -175,7 +175,7 @@ class Target(Entity):
             for entity in self.location.entities:
                 if not entity.obstruct:
                     continue
-                elif tile[0] == entity.x and tile[1] == entity.y
+                elif tile[0] == entity.x and tile[1] == entity.y:
                     return entity
         
 

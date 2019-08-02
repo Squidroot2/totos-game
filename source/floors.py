@@ -12,7 +12,7 @@ import pygame
 import tcod
 # My Modules
 from source.entities import Portal
-from source.entities import Character
+from source.entities import Character, Item
 from source.constants import CELL_SIZE, FLOOR_HEIGHT, FLOOR_WIDTH, COLORS
 from source.assets import Images, Data
 
@@ -186,7 +186,7 @@ class Floor:
         
         # Sort entities if needed
         if self.sort_entities:
-            entities.sort(key=lambda entity: entity.draw_order)
+            self.entities.sort(key=lambda entity: entity.draw_order)
             self.sort_entities = False
            
         # Draw the entities in the map
