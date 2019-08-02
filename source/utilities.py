@@ -62,7 +62,27 @@ def getDistanceBetweenEntities(coordsA, coordsB):
         return x_dis
     else:
         return y_dis
-        
+
+
+def getLineBetweenEntities(coordsA, coordsB):
+    """Gets a path that represents a straight line between entities
+
+    Parameters:
+        coordsA : Tuple(int,int)
+        coordsB : Tuple(int,int)
+
+    Returns: List[Tuple(int,int)]"""
+
+    dist = getDistanceBetweenEntities(coordsA, coordsB)
+
+    path = list()
+
+    for i in range(dist):
+        x = int(coordsA[0] + (coordsB[0]-coordsA[0])/dist*(i+1))
+        y = int(coordsA[1] + (coordsB[1]-coordsA[1])/dist*(i+1))
+        path.append((x, y))
+
+    return path
 
 def terminateGame():
     """Quits the program"""

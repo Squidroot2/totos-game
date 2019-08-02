@@ -26,7 +26,7 @@ from source import formulas
 from source.components import AI, Inventory, Camera
 from source.constants import CELL_SIZE, BACKGROUNDS, COLORS, DRAW_ORDER
 from source.game import Log
-from source.utilities import getDistanceBetweenEntities
+from source.utilities import getDistanceBetweenEntities, getLineBetweenEntities
 from source.assets import Images, Data
 
 
@@ -157,20 +157,23 @@ class Target(Entity):
 
     # todo remove ability to shoot around corners
     def drawPath(self, surface):
-        path = self.getPath()
+        path = getLineBetweenEntities((self.origin.x, self.origin.y), (self.x, self.y))
         for tile in path:
+            # Stop drawing if path blocked or not in FOV
+            if not self.location.map.walkable[tile[1]][tile[0]] or not self.location.map.fov[tile[1]][tile[0]]:
+                break
             surf = pygame.Surface((CELL_SIZE, CELL_SIZE))
             surf.set_alpha(64)
             surf.fill(COLORS['RED'])
             surface.blit(surf, (tile[0]*CELL_SIZE, tile[1]*CELL_SIZE))
     
-    def getPath(self):
-        return self.location.path_finder.get_path(self.origin.x, self.origin.y, self.x, self.y)
+    # def getPath(self):
+    #     return self.location.path_finder.get_path(self.origin.x, self.origin.y, self.x, self.y)
     
     # todo use getFirstInPath method
-    def getFirstInPath(self, origin):
+    def getFirstInPath(self):
         """Returns the first entity in the path or none if there are no entities in the path"""
-        path = self.getPath()
+        path = getLineBetweenEntities((self.origin.x, self.origin.y), (self.x, self.y))
         for tile in path:
             for entity in self.location.entities:
                 if not entity.obstruct:
