@@ -155,9 +155,8 @@ class Target(Entity):
         else:
             return False
 
-    # todo remove ability to shoot around corners
     def drawPath(self, surface):
-        path = getLineBetweenEntities((self.origin.x, self.origin.y), (self.x, self.y))
+        path = self.getPath()
         for tile in path:
             # Stop drawing if path blocked or not in FOV
             if not self.location.map.walkable[tile[1]][tile[0]] or not self.location.map.fov[tile[1]][tile[0]]:
@@ -167,13 +166,16 @@ class Target(Entity):
             surf.fill(COLORS['RED'])
             surface.blit(surf, (tile[0]*CELL_SIZE, tile[1]*CELL_SIZE))
     
-    # def getPath(self):
-    #     return self.location.path_finder.get_path(self.origin.x, self.origin.y, self.x, self.y)
-    
+    def getPath(self):
+        if self.location.map.fov[self.y][self.x] and self.location.map.walkable[self.y][self.x]:
+            return self.location.path_finder.get_path(self.origin.x, self.origin.y, self.x, self.y)
+        else:
+            return getLineBetweenEntities((self.origin.x, self.origin.y,), (self.x, self.y))
+
     # todo use getFirstInPath method
     def getFirstInPath(self):
         """Returns the first entity in the path or none if there are no entities in the path"""
-        path = getLineBetweenEntities((self.origin.x, self.origin.y), (self.x, self.y))
+        path = self.getPath()
         for tile in path:
             for entity in self.location.entities:
                 if not entity.obstruct:

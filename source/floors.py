@@ -45,8 +45,8 @@ class Floor:
         self.generateItems()
         self.generateEnemies()
 
-        # Get pathfinder
-        self.path_finder = tcod.path.AStar(self.map, diagonal=1)
+        # Get pathfinder, diagonal is just slightly higher than 1 to make paths a little straighter
+        self.path_finder = tcod.path.AStar(self.map, diagonal=1.01)
 
     def generateLayout(self):
         """Uses Binary Space Partition to generate the layout of the dungeon"""
