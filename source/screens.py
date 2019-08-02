@@ -354,7 +354,7 @@ def mainGameScreen(window, fps_clock, game):
             player.calculateFOV()
             player.discoverTiles()
 
-            # Also do stuff to the log
+            # Write whats in the log's buffer and add an underscore
             game.log.write()
             game.log.addEOTUnderscore()
 
@@ -454,8 +454,8 @@ def targetScreen(window, fps_clock, game, panes):
 
                 # Shoot
                 elif event.key in (K_f, K_RETURN):
-                    if target.on_top_of is not None:
-                        player.attack(target.on_top_of, is_ranged=True)
+                    if target.getFirstInPath() is not None:
+                        player.attack(target.getFirstInPath(), is_ranged=True)
                         target_mode = False
                         turn_taken = True
                     else:

@@ -172,7 +172,6 @@ class Target(Entity):
         else:
             return getLineBetweenEntities((self.origin.x, self.origin.y,), (self.x, self.y))
 
-    # todo use getFirstInPath method
     def getFirstInPath(self):
         """Returns the first entity in the path or none if there are no entities in the path"""
         path = self.getPath()
@@ -182,7 +181,7 @@ class Target(Entity):
                     continue
                 elif tile[0] == entity.x and tile[1] == entity.y:
                     return entity
-        
+
 
     @property
     def on_top_of(self):
