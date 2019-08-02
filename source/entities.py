@@ -794,6 +794,13 @@ class Item(Entity):
     image_dir = "Items"
     draw_order = DRAW_ORDER['ITEM']
 
+    def __init__(self, data, location, x, y):
+
+        self.name = data['name']
+        self.image_name = data['image']
+
+        super().__init__(location, x, y)
+
     def drop(self):
         """Item is moved from inventory to floor"""
         self.location.removeEntity(self)
@@ -842,8 +849,6 @@ class Weapon(Item):
     def __init__(self, item_id, location, x=None, y=None):
         data = Data.getItem("WEAPONS", item_id)
 
-        self.name = data['name']
-        self.image_name = data['image']
         self.melee_verb = data['melee_verb']
         self.melee_damage = data['melee_damage']
         self.melee_speed = data['melee_speed']
@@ -857,7 +862,7 @@ class Weapon(Item):
             self.fire_rate = data['ranged']['fire_rate']
             self.range = data['ranged']['range']
 
-        super().__init__(location, x, y)
+        super().__init__(data, location, x, y)
 
     def equip(self):
         self.location.equipped['weapon'] = self
@@ -874,11 +879,10 @@ class Armor(Item):
 
         data = Data.getItem("ARMOR", item_id)
 
-        self.name = data['name']
         self.defense = data['defense']
         self.difficulty = data['difficulty']
 
-        super().__init__(location, x, y)
+        super().__init__(data, location, x, y)
 
     def equip(self):
         self.location.equipped['armor'] = self
@@ -895,7 +899,6 @@ class Generator(Item):
 
         data = Data.getItem("GENERATORS", item_id)
 
-        self.name = data['name']
         self.max_charge = data['max_charge']
         self.recharge_rate = data['recharge_rate']
         self.recoil_charge = data['recoil_charge']
@@ -906,7 +909,7 @@ class Generator(Item):
         # Current Charge Starts at 0
         self.current_charge = 0.0
 
-        super().__init__(location, x, y)
+        super().__init__(data, location, x, y)
 
     def equip(self):
         self.location.equipped['generator'] = self
@@ -938,10 +941,9 @@ class Battery(Item):
 
         data = Data.getItem("BATTERIES", item_id)
 
-        self.name = data['name']
         self.power = data['power']
 
-        super().__init__(location, x, y)
+        super().__init__(data, location, x, y)
 
     def use(self):
         target = self.location.equipped['generator']

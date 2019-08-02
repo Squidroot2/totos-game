@@ -2,131 +2,157 @@
   "ARMOR": {
     "ARMOR_1": {
       "name": "Space Silk",
+      "image": null,
       "defense": 1,
       "difficulty": 1
     },
     "ARMOR_2": {
       "name": "Cosmic Cloth",
+      "image": null,
       "defense": 2,
       "difficulty": 2
     },
     "ARMOR_3": {
       "name": "Heavenly Hide",
+      "image": null,
       "defense": 3,
       "difficulty": 2
     },
     "ARMOR_4": {
       "name": "Lunar Leather",
+      "image:": null,
       "defense": 4,
       "difficulty": 3
     },
     "ARMOR_5": {
       "name": "Galactic Glass",
+      "image": null,
       "defense": 5,
       "difficulty": 3
     },
     "ARMOR_6": {
       "name": "Irradient Iron",
+      "image": null,
       "defense": 6,
       "difficulty": 4
     },
     "ARMOR_7": {
       "name": "Celestrial Steel",
+      "image": null,
       "defense": 7,
       "difficulty": 4
     },
     "ARMOR_8": {
       "name": "Transcendent Titanium",
+      "image": null,
       "defense": 8,
       "difficulty": 5
     },
     "ARMOR_9": {
       "name": "Dimensional Diamond",
+      "image": null,
       "defense": 9,
       "difficulty": 5
     },
     "ARMOR_10": {
       "name": "Grandoise Graphene",
+      "image": null,
       "defense": 10,
       "difficulty": 6
     },
     "ARMOR_11": {
       "name": "Etherium Armor",
+      "image": null,
       "defense": 11,
       "difficulty": 7
     },
     "ARMOR_12": {
       "name": "Gelorium Armor",
+      "image": null,
       "defense": 12,
       "difficulty": 8
     },
     "ARMOR_13": {
       "name": "Adamantium Armor",
+      "image": null,
       "defense": 13,
       "difficulty": 9
     },
     "ARMOR_14": {
       "name": "Plasmium Armor",
+      "image": null,
       "defense": 14,
       "difficulty": 10
     },
     "ARMOR_15": {
       "name": "Lunarium Armor",
+      "image": null,
       "defense": 15,
       "difficulty": 11
     },
     "ARMOR_16": {
       "name": "Solarium Armor",
+      "image": null,
       "defense": 16,
       "difficulty": 12
     },
     "ARMOR_17": {
       "name": "Galaxium Armor",
+      "image": null,
       "defense": 17,
       "difficulty": 13
     },
     "ARMOR_18": {
       "name": "Lamdium Armor",
+      "image": null,
       "defense": 18,
       "difficulty": 14
     },
     "ARMOR_19": {
-      "name": "Phantomium",
+      "name": "Phantomium Armor",
+      "image": null,
       "defense": 19,
       "difficulty": 15
     },
     "ARMOR_20": {
-      "name": "Quantonium",
+      "name": "Quantonium Armor",
+      "image": null,
       "defense": 20,
       "difficulty": 15
     },
     "ARMOR_21": {
       "name": "Dark Armor",
+      "image": null,
       "defense": 25,
       "difficulty": 20
     },
     "ARMOR_22": {
       "name": "Void Armor",
+      "image": null,
       "defense": 26,
       "difficulty": 20
     },
     "ARMOR_23": {
       "name": "Heavenly Armor",
+      "image": null,
       "defense": 27,
       "difficulty": 20
     },
     "ARMOR_24": {
       "name": "Angelic Armor",
+      "image": null,
       "defense": 28,
       "difficulty": 20
     },
     "ARMOR_25": {
       "name": "Rapture Armor",
+      "image": null,
       "defense": 29,
       "difficulty": 20
     },
     "ARMOR_26": {
       "name": "Flesh of the Gods",
+      "image": null,
       "defense": 30,
       "difficulty": 20
     }
@@ -230,6 +256,7 @@
   "GENERATORS": {
     "QUICK_1": {
       "name": "Squire MK1",
+      "image": null,
       "max_charge": 5,
       "recharge_rate": 0.5,
       "recoil_charge": 1,
@@ -237,6 +264,7 @@
     },
     "BRAWLER_1": {
       "name": "Knight MK1",
+      "image": null,
       "max_charge": 10,
       "recharge_rate": 0.3,
       "recoil_charge": 0,
@@ -244,6 +272,7 @@
     },
     "FEEDER_1": {
       "name": "Archer MK1",
+      "image": null,
       "max_charge": 5,
       "recharge_rate": 0.1,
       "recoil_charge": 3,
@@ -251,6 +280,7 @@
     },
     "RANGER_1": {
       "name": "Lancer MK1",
+      "image": null,
       "max_charge": 8,
       "recharge_rate": 0.2,
       "recoil_charge": 2,
@@ -260,26 +290,32 @@
   "BATTERIES": {
     "BATTERY_1": {
       "name": "Tiny Battery",
+      "image": "battery_tiny",
       "power": 5
     },
 	"BATTERY_2": {
 	  "name": "Small Battery",
+      "image": null,
 	  "power": 8
 	},
 	"BATTERY_3": {
 	  "name": "Medium Battery",
+      "image": null,
 	  "power": 12
 	},
 	"BATTERY_4": {
 	  "name": "Big Battery",
+      "image": null,
 	  "power": 15
 	},
 	"BATTERY_5": {
 	  "name": "Huge Battery",
+      "image": null,
 	  "power":20
 	},
 	"BATTERY_6": {
 	  "name": "Epic Battery",
+      "image": null,
 	  "power":25
 	}
   }
