@@ -1,1 +1,1 @@
-# grim-ranger
+# Trial of the Outer Spiral
