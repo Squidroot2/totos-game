@@ -25,7 +25,6 @@ from source.floors import Floor
 from source.assets import Images
 
 
-# todo have titleScreen use a background
 def titleScreen(window, fps_clock):
     """Displays the Title Screen. Runs its own while loop until the player hits enter to continue
 
@@ -110,15 +109,57 @@ def playerCreateScreen(window, fps_clock):
             Chosen name of the player character
     """
 
+    bg_image = Images.getImage('Backgrounds', 'starry')
+
     window_rect = window.get_rect()
 
     # Shows the name prompt
-    name_prompt = FONTS['MAIN'].render("Name: ", True, COLORS['BLACK'])
+    name_prompt = FONTS['MAIN'].render("Name: ", True, COLORS['WHITE'])
     name_prompt_rect = name_prompt.get_rect()
-    name_prompt_rect.midright = (window_rect.centerx, window_rect.height/6)
+    name_prompt_rect.center = (window_rect.centerx, window_rect.height/7)
 
+    # Flashing prompt shown near bottom of screen
+    continue_prompt = FONTS['MAIN'].render("Press Enter to Continue", True, COLORS['YELLOW'])
+    continue_prompt_rect = continue_prompt.get_rect()
+    continue_prompt_rect.center = (window_rect.centerx, window_rect.height*(6/7))
+
+    # Cover used to give the illusion of transparency to the Font surface
+    continue_cover = pygame.Surface((continue_prompt_rect.width, continue_prompt_rect.height))
+    continue_cover.fill(COLORS['BLACK'])
+
+    # Sets variables for the alpha of the cover
+    alpha_max = 245
+    alpha_min = 25
+    alpha_change_rate = 3
+    decrease_alpha = True
+
+    continue_cover.set_alpha(alpha_max)
+    cover_alpha = continue_cover.get_alpha()
+
+
+    # Identify the input font
+    # Since W seems to be the biggest character, we want to calculate the char_width based on that
+    input_font = FONTS['MAIN']
+    char_width = input_font.size("W")[0]
+
+    # Initialize the name as an empty string
     name = ''
+    max_name_length = 10
 
+    # Input Area; The White Space Where Text is typed
+    input_area = pygame.rect.Rect(0,
+                                  name_prompt_rect.bottom + input_font.get_linesize() / 2,
+                                  max_name_length * char_width,
+                                  input_font.get_linesize())
+
+    input_area.centerx = window_rect.centerx
+
+    input_border = pygame.rect.Rect(input_area.left - 1,
+                                    input_area.top - 1,
+                                    input_area.width + 1,
+                                    input_area.height + 1)
+
+    # The index of the chosen background
     bg_chosen_index = 0
 
     # Clear the events to ensure no keys previously pressed show up in the name
@@ -126,35 +167,72 @@ def playerCreateScreen(window, fps_clock):
 
     name_chosen = False
     while not name_chosen:
-        window.fill(COLORS['WHITE'])
-        window.blit(name_prompt, name_prompt_rect)
+
+        # Blit background image
+        window.blit(bg_image, window_rect)
 
         checkForQuit()
         for event in pygame.event.get():
             if event.type == KEYDOWN:
                 if event.key == K_RETURN and name != '':
                     name_chosen = True
+                    break
 
                 # If Backspace, remove character
                 elif event.key == K_BACKSPACE:
                     name = name[:-1]
+                    continue
 
                 # If left or right, change chosen background index
-                elif event.key in (K_KP4, K_LEFT) and bg_chosen_index > 0:
-                    bg_chosen_index -= 1
-                elif event.key in (K_KP6, K_RIGHT) and bg_chosen_index < len(BACKGROUNDS)-1:
-                    bg_chosen_index += 1
-                else:
+                elif event.key in (K_KP4, K_LEFT):
+                    if bg_chosen_index > 0:
+                        bg_chosen_index -= 1
+                    continue
+
+                elif event.key in (K_KP6, K_RIGHT):
+                    if bg_chosen_index < len(BACKGROUNDS)-1:
+                        bg_chosen_index += 1
+                    continue
+
+                elif len(name) < max_name_length:
                     name += event.unicode
 
-        name_text = FONTS['MAIN'].render(name, True, COLORS['BLACK'])
-        input_rect = name_text.get_rect()
-        input_rect.midleft = (name_prompt_rect.right, name_prompt_rect.centery)
+        # Decreases or increases alpha of cover
+        if decrease_alpha:
+            continue_cover.set_alpha(cover_alpha - alpha_change_rate)
+        else:
+            continue_cover.set_alpha(cover_alpha + alpha_change_rate)
 
-        window.blit(name_text, input_rect)
+        # Checks if alpha has reached minimum or maximum
+        cover_alpha = continue_cover.get_alpha()
+        if cover_alpha <= alpha_min:
+            decrease_alpha = False
+        elif cover_alpha >= alpha_max:
+            decrease_alpha = True
+
+        # If there is at least 1 character in the name, show Continue Prompt
+        if len(name) > 0:
+            window.blit(continue_prompt, continue_prompt_rect)
+            window.blit(continue_cover, continue_prompt_rect)
+
+        # Render the name that the player has typed and place it in the center of the Input Area
+        input_text = input_font.render(name, True, COLORS['BLACK'])
+        input_rect = input_text.get_rect()
+        input_rect.center = input_area.center
+
+        # Draw input area and border
+        pygame.draw.rect(window, COLORS['WHITE'], input_area)
+        pygame.draw.rect(window, COLORS['RED'], input_border, 1)
+
+        # Blit name prompt and typed name
+        window.blit(name_prompt, name_prompt_rect)
+        window.blit(input_text, input_rect)
+
+        # Draw Class Selections
         drawClassSelect(window, BACKGROUNDS[bg_chosen_index])
 
         fps_clock.tick(FPS)
+        drawFPS(window, fps_clock)
         pygame.display.flip()
 
     return name, BACKGROUNDS[bg_chosen_index]
@@ -166,10 +244,10 @@ def drawClassSelect(window, selected_class):
 
     window_rect = window.get_rect()
 
-    x_margin = window_rect.width / 25
+    left_margin = window_rect.width / 25
 
     # Button Dimensions
-    button_width = (window_rect.width-x_margin*2) / len(BACKGROUNDS)
+    button_width = (window_rect.width-left_margin*2) / len(BACKGROUNDS)
     button_height = window_rect.height / 3
     button_top = window_rect.height / 3
     border_thickness = 1
@@ -178,24 +256,25 @@ def drawClassSelect(window, selected_class):
 
         # Identify colors for buttons and text
         if background == selected_class:
-            button_color = COLORS['BLACK']
-            text_color = COLORS['WHITE']
-        else:
             button_color = COLORS['WHITE']
             text_color = COLORS['BLACK']
+        else:
+            button_color = COLORS['BLACK']
+            text_color = COLORS['WHITE']
 
         # Render text for background and get associated rect
         background_text = FONTS['MAIN'].render(background, True, text_color, button_color)
         background_text_rect = background_text.get_rect()
 
         # Determine horizontal location for rect and create inner and outer
-        left = x_margin + button_width*i
+        left = left_margin + button_width*i
         border_rect = pygame.Rect(left, button_top, button_width, button_height)
         inner_rect = pygame.Rect(left+border_thickness, button_top+border_thickness, button_width-border_thickness, button_height-border_thickness)
 
         # Inner and outer Rect
-        pygame.draw.rect(window, button_color, inner_rect, 0)
-        pygame.draw.rect(window, COLORS['BLACK'], border_rect, border_thickness)
+        if background == selected_class:
+            pygame.draw.rect(window, button_color, inner_rect, 0)
+        pygame.draw.rect(window, COLORS['RED'], border_rect, border_thickness)
 
         # Draw text in center of button
         background_text_rect.center = border_rect.center
@@ -204,7 +283,7 @@ def drawClassSelect(window, selected_class):
     # The vertical margin for the text
     text_margin = FONTS['SUBMAIN'].get_linesize()
     
-    choose_prompt = FONTS['SUBMAIN'].render('Choose Background with arrow keys', True, COLORS['BLACK'], COLORS['WHITE'])
+    choose_prompt = FONTS['SUBMAIN'].render('Choose Background with arrow keys', True, COLORS['WHITE'], COLORS['BLACK'])
     choose_rect = choose_prompt.get_rect()
     choose_rect.midtop = (window_rect.centerx, border_rect.bottom + text_margin)
 

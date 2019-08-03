@@ -59,7 +59,8 @@ class Images:
                         'battery_tiny': os.path.join(item_images, 'battery_tiny.png')
                     },
                     'Backgrounds': {
-                        'title': os.path.join(bg_images, 'title_screen.png')
+                        'title': os.path.join(bg_images, 'title_screen.png'),
+                        'starry': os.path.join(bg_images, 'starry_bg.png')
                     }
     }
     
