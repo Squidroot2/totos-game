@@ -2,7 +2,7 @@
   "ARMOR": {
     "ARMOR_1": {
       "name": "Space Silk",
-      "image": null,
+      "image": "armor1",
       "defense": 1,
       "difficulty": 1
     },

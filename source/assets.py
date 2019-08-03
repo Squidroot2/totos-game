@@ -56,7 +56,8 @@ class Images:
                     'Items': {
                         'pistol1': os.path.join(item_images, 'pistol1.png'),
                         'dagger1': os.path.join(item_images, 'dagger1.png'),
-                        'battery_tiny': os.path.join(item_images, 'battery_tiny.png')
+                        'battery_tiny': os.path.join(item_images, 'battery_tiny.png'),
+                        'armor1': os.path.join(item_images, 'armor_1.png')
                     },
                     'Backgrounds': {
                         'title': os.path.join(bg_images, 'title_screen.png'),

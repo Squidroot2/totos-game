@@ -778,6 +778,13 @@ class Player(Character):
         for i in range(len(fov[0])):
             self.location.tile_map[(fov[1][i])][(fov[0][i])].discovered = True
 
+    def draw(self, surface):
+        """Draws player then draws armor on top of him"""
+        super().draw(surface)
+
+        if self.inventory.equipped['armor'].image is not Images.missing_image:
+            self.inventory.equipped['armor'].drawOnOwner(surface)
+
     def getItemsAtFeet(self):
         """Returns a list of items which match the player's x and y coordinates"""
         items = list()
@@ -898,6 +905,9 @@ class Armor(Item):
     def equip(self):
         self.location.equipped['armor'] = self
 
+    def drawOnOwner(self, surface):
+        """Used to draw the armor onto the player in the tile_map"""
+        surface.blit(self.image, (self.location.owner.x * CELL_SIZE, self.location.owner.y * CELL_SIZE))
 
 class Generator(Item):
     """"Item which provides energy when equipped
