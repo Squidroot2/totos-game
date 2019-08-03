@@ -778,6 +778,17 @@ class Player(Character):
         for i in range(len(fov[0])):
             self.location.tile_map[(fov[1][i])][(fov[0][i])].discovered = True
 
+    def getItemsAtFeet(self):
+        """Returns a list of items which match the player's x and y coordinates"""
+        items = list()
+        for entity in self.location.entities:
+            if not isinstance(entity, Item):
+                continue
+            if entity.x == self.x and entity.y == self.y:
+                items.append(entity)
+
+        return items
+
 
 class Item(Entity):
     """Represents entities which can be inside of an Inventory

@@ -264,6 +264,7 @@ def mainGameScreen(window, fps_clock, game):
 
             # Determine what to do with Key Presses
             if event.type == KEYDOWN:
+                # A Key press assumes turn taken until decided otherwise
                 turn_taken = True
 
                 # Movement Keys
@@ -288,7 +289,7 @@ def mainGameScreen(window, fps_clock, game):
                 elif event.key == K_KP5:
                     pass
 
-                # Used for moving downwards
+                # Down Portal Key
                 elif event.unicode == ">":
                     # Check if player is on down portal
                     if player.x == player.location.portals['down'].x and player.y == player.location.portals['down'].y:
@@ -306,7 +307,7 @@ def mainGameScreen(window, fps_clock, game):
                     else:
                         turn_taken = False
 
-                # Used for moving upwards
+                # Up Portal Key
                 elif event.unicode == "<":
                     # Check if player is on up portal
                     if player.x == player.location.portals['up'].x and player.y == player.location.portals['up'].y:
@@ -326,11 +327,30 @@ def mainGameScreen(window, fps_clock, game):
                     else:
                         turn_taken = False
 
+                # Inventory Key
                 elif event.key == K_i:
                     # todo write open inventory screen
                     turn_taken = False
+
+                # Fire Key
                 elif event.key == K_f:
-                    turn_taken = targetScreen(window, fps_clock, game, panes)
+                    if not player.getEnergyPerShot() > player.energy:
+                        turn_taken = targetScreen(window, fps_clock, game, panes)
+                    else:
+                        game.log.addMessage("Not enough energy")
+                        turn_taken = False
+
+                # Pick Up Key
+                # todo be able to choose from a list of items to pick up
+                elif event.key == K_g:
+                    items = player.getItemsAtFeet()
+                    if len(items) > 0:
+                        items[0].pickUp(player.inventory)
+                        game.log.addMessage("%s picked up a %s" % (player.name, items[0].name))
+                    else:
+                        game.log.addMessage("Nothing to pick up here")
+
+                # Explore Key
                 elif event.key == K_x:
                     # todo write explore screen
                     turn_taken = False
