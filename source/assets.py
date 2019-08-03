@@ -29,6 +29,7 @@ class Images:
     other_images = os.path.join(main_folder, 'other')
     tile_images = os.path.join(main_folder, 'tiles')
     item_images = os.path.join(main_folder, 'items')
+    bg_images = os.path.join(main_folder, 'backgrounds')
     
     # Missing Image
     missing_image_path = os.path.join(main_folder, 'unknown.png')
@@ -56,6 +57,9 @@ class Images:
                         'pistol1': os.path.join(item_images, 'pistol1.png'),
                         'dagger1': os.path.join(item_images, 'dagger1.png'),
                         'battery_tiny': os.path.join(item_images, 'battery_tiny.png')
+                    },
+                    'Backgrounds': {
+                        'title': os.path.join(bg_images, 'title_screen.png')
                     }
     }
     
