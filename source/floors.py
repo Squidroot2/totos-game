@@ -243,7 +243,6 @@ class Floor:
 
         for index in range(num_of_floors):
             floor_list.append(Floor(index+1))
-            print(index)
 
         return floor_list
 
