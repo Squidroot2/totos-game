@@ -10,7 +10,11 @@
       },
       "LEVEL_3": {
         "WIERDMUNK": 80,
-        "GEOMEFOX": 20
+        "AVIBOY": 20
+      },
+      "LEVEL_4": {
+        "AVIBOY": 50,
+        "GEOMEFOX": 50
       }
     },
 	"ITEMS": {

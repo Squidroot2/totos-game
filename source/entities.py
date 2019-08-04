@@ -16,7 +16,6 @@ Classes:
     
 """
 # Standard Library
-import os
 import random
 # Third Party
 import numpy
@@ -134,8 +133,7 @@ class Target(Entity):
     def __init__(self, floor, x, y, origin):
         self.origin = origin
         super().__init__(floor, x, y)
-    
-    
+
     def move(self, delta_x, delta_y):
         destination = ((self.x+delta_x), (self.y+delta_y))
         if self.validateMove(destination):
@@ -343,7 +341,9 @@ class Character(Entity):
         self.is_dead = False
 
     def move(self, delta_x, delta_y, peacefully=False):
-        """Moves the character by specified x and y values"""
+        """Moves the character by specified x and y values
+
+        Returns: bool : Indicates whether a movement or other action was taken"""
         destination = ((self.x+delta_x), (self.y+delta_y))
         if self.validateMove(destination):
             entity_at_dest = self.checkEntityObstruct(destination)
@@ -372,7 +372,6 @@ class Character(Entity):
 
         Parameters:
             destination : 2-tuple of ints : (x,y) format
-            peacefully : boolean : If true, does not attack
 
         Returns:
             None or Entity : Entity that is obstructing the move
@@ -558,7 +557,7 @@ class Character(Entity):
         """Gets the number of attacks that can be performed in a turn
 
         Parameters:
-            ranged : boolean
+            is_ranged : boolean
                 represents whether these are ranged attacks or melee attacks
 
         Returns: int
@@ -584,7 +583,8 @@ class Character(Entity):
     def getEncumbrance(self):
         """Encumbrance determines the penalty to hit chance or dodge chance
         
-        It is calculated by determining the amount that the difficulty of  equipment item exceeds the level of the character
+        It is calculated by determining the amount that the difficulty of  equipment item exceeds the level of the
+        character
         
         Returns : int"""
         encumbrance = 0
@@ -607,7 +607,8 @@ class Character(Entity):
     def getRecoilCharge(self):
         """The amount of energy that is recycled back into the generator after every shot.
         
-        This is either the amount of energy per shot on the equipped weapon or the recoil charge on the generator, whichever is lower
+        This is either the amount of energy per shot on the equipped weapon or the recoil charge on the generator,
+        whichever is lower
         
         Returns: float
         """
@@ -661,7 +662,7 @@ class Character(Entity):
         """Setter method for energy"""
         try:
             self.inventory.equipped['generator'].current_charge = value
-        except:
+        except AttributeError:
             print("No Generator to hold energy")
 
     @property
@@ -681,6 +682,7 @@ class Player(Character):
     Child of Character
     """
     draw_order = DRAW_ORDER['PLAYER']
+
     def __init__(self, name, background, floor, x, y):
         """Extends the Character init method
 

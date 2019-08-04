@@ -92,8 +92,14 @@ class AI:
                             self.moveNextToEntity(self.opponent)
                         else:
                             self.owner.attack(self.opponent, is_ranged=False)
+
+                    # If fencer is out of energy, tries to run, If it can't, it attacks
                     else:
-                        self.moveAwayFromEntity(self.opponent)
+                        can_run = self.moveAwayFromEntity(self.opponent)
+                        if not can_run and getDistanceBetweenEntities((self.owner.x, self.owner.y), \
+                                                                      (self.opponent.x, self.opponent.y)) == 1:
+                            self.owner.attack(self.opponent, is_ranged=False)
+
 
 
     def moveNextToEntity(self, target):
@@ -106,11 +112,90 @@ class AI:
         self.owner.move(x_move, y_move, peacefully=True)
 
     def moveAwayFromEntity(self, target):
-        """Moves to the nearest point outside of the targets view"""
-        outside_fov = numpy.where(self.owner.location.map.fov, False)
+        """Attempts to move away from the target"""
 
+        attemptMove = self.owner.move
 
+        # Simply try to move directly away from the target
+        delta_move_x = self.owner.x - target.x
+        delta_move_y = self.owner.y - target.y
 
+        distance = getDistanceBetweenEntities((self.owner.x, self.owner.y), (target.x, target.y))
+
+        if distance > 1:
+            # Ensures the target does not try to move more than 1 space
+            if delta_move_x > 0:
+                delta_move_x = 1
+            elif delta_move_x < 0:
+                delta_move_x = -1
+
+            if delta_move_y > 0:
+                delta_move_y = 1
+            elif delta_move_y < 0:
+                delta_move_y = -1
+
+        assert(delta_move_y) in (-1,0,1)
+        assert(delta_move_x) in (-1,0,1)
+
+        did_move = attemptMove(delta_move_x, delta_move_y, peacefully=True)
+
+        if did_move:
+            return True
+        else:
+            # If attempting vertical movement, attempt diagonals in same y direction
+            if delta_move_x == 0:
+                for x in (-1, 1):
+                    did_move = attemptMove(x, delta_move_y, peacefully=True)
+                    if did_move:
+                        return True
+                # Try to make lateral movements as long as the target is not in melee range
+                if distance != 1:
+                    for x in (-1, 1):
+                        did_move = attemptMove(x, 0, peacefully=True)
+                        if did_move:
+                            return True
+
+                # All Attempts Failed, Return False
+                return False
+
+            # If attempting horizontal movement, attempt diagonals in same x direction
+            elif delta_move_y == 0:
+                for y in (-1, 1):
+                    did_move = attemptMove(delta_move_x, y, peacefully=True)
+                    if did_move:
+                        return True
+
+                # Try to make lateral movements as long as the target is not in melee range
+                if distance != 0:
+                    for y in (-1, 1):
+                        did_move = attemptMove(0, y, peacefully=True)
+                        if did_move:
+                            return True
+
+                # All Attempts Failed; Return False
+                return False
+
+            # If Attempting diagonals, attempt all movements that maintain either x direction or y direction
+            else:
+                # Moves that maintain y direction
+                for x in (-1, 0, 1):
+                    # No need to retry what has been tried
+                    if x == delta_move_x:
+                        continue
+                    did_move = attemptMove(x, delta_move_y, peacefully=True)
+                    if did_move:
+                        return True
+                # Moves that maintain x direction
+                for y in (-1, 0, 1):
+                    # No need to retry what has been tried
+                    if y == delta_move_y:
+                        continue
+                    did_move = attemptMove(delta_move_x, y, peacefully=True)
+                    if did_move:
+                        return True
+
+                # All Attempts Failed; Return False
+                return False
 
     def randomMove(self, peacefully=False):
         """Choose a random x and y movement. Could be (0,0)

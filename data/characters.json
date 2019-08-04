@@ -69,6 +69,7 @@
     "life": 3,
     "xp": 4,
     "damage": 3,
+    "defense": 1,
     "attack_rate": 2,
     "innate_ranged": null,
     "ai": "fencer"
