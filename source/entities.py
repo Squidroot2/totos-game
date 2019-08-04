@@ -350,8 +350,14 @@ class Character(Entity):
             if entity_at_dest is None:
                 self.x += delta_x
                 self.y += delta_y
+                return True
             elif not peacefully:
                 self.attack(entity_at_dest)
+                return True
+            else:
+                return False
+        else:
+            return False
 
     def validateMove(self, destination):
         """Returns True if the destination is walkable and False if it isn't"""

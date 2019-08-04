@@ -9,6 +9,7 @@ Classes:
 import random
 # Third Party
 import pygame
+import numpy
 # My Modules
 from source.constants import CELL_SIZE
 from source.utilities import getDistanceBetweenEntities
@@ -30,7 +31,7 @@ class AI:
     """
     def __init__(self, owner, ai_type):
         self.owner = owner
-        assert ai_type in ("basic", "brainless", "ranger")
+        assert ai_type in ("basic", "brainless", "ranger", "fencer")
         self.type = ai_type
         self.opponent = None
 
@@ -83,6 +84,18 @@ class AI:
                     else:
                         self.owner.attack(self.opponent, is_ranged=True)
 
+            elif self.type == "fencer":
+                if self.owner.location is self.opponent.location:
+
+                    if self.owner.energy > 0:
+                        if getDistanceBetweenEntities((self.owner.x, self.owner.y), (self.opponent.x, self.opponent.y)) > 1:
+                            self.moveNextToEntity(self.opponent)
+                        else:
+                            self.owner.attack(self.opponent, is_ranged=False)
+                    else:
+                        self.moveAwayFromEntity(self.opponent)
+
+
     def moveNextToEntity(self, target):
         """Moves peacefully toward the specified entity"""
         path = self.owner.location.path_finder.get_path(self.owner.x, self.owner.y, target.x, target.y)
@@ -91,6 +104,13 @@ class AI:
         y_move = next_move[1] - self.owner.y
 
         self.owner.move(x_move, y_move, peacefully=True)
+
+    def moveAwayFromEntity(self, target):
+        """Moves to the nearest point outside of the targets view"""
+        outside_fov = numpy.where(self.owner.location.map.fov, False)
+
+
+
 
     def randomMove(self, peacefully=False):
         """Choose a random x and y movement. Could be (0,0)

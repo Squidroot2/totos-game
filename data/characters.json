@@ -60,5 +60,17 @@
       "rate": 1
     },
     "ai": "ranger"
+  },
+  "AVIBOY": {
+    "name": "Aviboy",
+    "image": "aviboy",
+    "verb": "pecked",
+    "level": 2,
+    "life": 3,
+    "xp": 4,
+    "damage": 3,
+    "attack_rate": 2,
+    "innate_ranged": null,
+    "ai": "fencer"
   }
 }
