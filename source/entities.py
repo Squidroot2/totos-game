@@ -563,7 +563,7 @@ class Character(Entity):
 
         # If its a ranged attack
         if is_ranged:
-            if weapon.is_ranged:
+            if weapon is not None and weapon.is_ranged:
                 return weapon.fire_rate
             else:
                 return self.ranged_attack_rate
@@ -779,11 +779,17 @@ class Player(Character):
             self.location.tile_map[(fov[1][i])][(fov[0][i])].discovered = True
 
     def draw(self, surface):
-        """Draws player then draws armor on top of him"""
+        """Draws player then draws armor on top of him
+
+        Extends the Entity draw method
+        """
         super().draw(surface)
 
         if self.inventory.equipped['armor'].image is not Images.missing_image:
             self.inventory.equipped['armor'].drawOnOwner(surface)
+
+        # if self.inventory.equipped['generator']:
+        #     self.inventory.equipped['generator'].drawForceField(surface)
 
     def getItemsAtFeet(self):
         """Returns a list of items which match the player's x and y coordinates"""
@@ -947,6 +953,19 @@ class Generator(Item):
 
     def rechargeToFull(self):
         self.current_charge = self.max_charge
+
+    def drawForceField(self, surface):
+        """Draws a blue force field around the character to indeicate the energy in the generator"""
+
+        surf = pygame.Surface((CELL_SIZE, CELL_SIZE))
+        radius = int(CELL_SIZE/2)
+        center_of_tile = (int(CELL_SIZE/2), int(CELL_SIZE/2))
+
+        pygame.draw.circle(surf, COLORS['LIGHT BLUE'], center_of_tile, radius)
+
+        surf.set_alpha(128)
+
+        surface.blit(surf, (self.location.owner.x * CELL_SIZE, self.location.owner.y * CELL_SIZE))
 
 
 class Battery(Item):

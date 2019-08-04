@@ -40,7 +40,8 @@ class Images:
                         'blob': os.path.join(character_images,'blob.png'),
                         'blue_slinger': os.path.join(character_images,'blue_slinger.png'),
                         'player': os.path.join(character_images,'player.png'),
-                        'weirdmonk': os.path.join(character_images,'weirdmonk.png')
+                        'weirdmunk': os.path.join(character_images,'weirdmunk.png'),
+                        'geomefox': os.path.join(character_images, 'geomefox.png')
                     },
                     'Other': {
 

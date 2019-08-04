@@ -30,7 +30,7 @@ class AI:
     """
     def __init__(self, owner, ai_type):
         self.owner = owner
-        assert ai_type in ("basic", "brainless")
+        assert ai_type in ("basic", "brainless", "ranger")
         self.type = ai_type
         self.opponent = None
 
