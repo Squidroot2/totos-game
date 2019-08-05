@@ -661,6 +661,8 @@ def drawStatPane(window, player, pane):
     header_size = FONTS['INFO_HEADER'].get_linesize()
     line_size = FONTS['INFO'].get_linesize()
 
+    half_line_size = line_size/2
+
     x_margin = pane.width/10
     y_margin = pane.height/25
     
@@ -682,12 +684,12 @@ def drawStatPane(window, player, pane):
     str_eps = "EPS: %.1f (%.1f)" % (eps, eps - player.getRecoilCharge())
     r_dmg = "DMG: %.1f" % player.getRangedDamage()
     r_ar = "AR:  %d" % player.getAttackRate(is_ranged=True)
-    r_acc = "ACC: %d%" % (100 * getRangedHitChance(enc, 0, 0)
+    r_acc = "ACC: %d%%" % (100 * getRangedHitChance(enc, 0, 0))
     rng = "RNG: %d" % player.getRange()
     # Melee Stats
     m_dmg = "DMG: %.1f" % player.getMeleeDamage()
     m_ar = "AR:  %d" % player.getAttackRate(is_ranged=False)
-    m_acc = "ACC: %d%" % (100 * getMeleeHitChance(enc, 0, 0)
+    m_acc = "ACC: %d%%" % (100 * getMeleeHitChance(enc, 0))
 
     # Dictionary of text surfaces that will be blitted to the screen
     text_surfs = dict()
@@ -734,9 +736,9 @@ def drawStatPane(window, player, pane):
     
     # Place Ranged Stats
     text_rects['ranged'].topleft = (indent_left, line_y + header_size)
-    text_rects['r_dmg'].topleft = (indent_left, text_rect['ranged'].bottom + line_size)
+    text_rects['r_dmg'].topleft = (indent_left, text_rects['ranged'].bottom + line_size)
     text_rects['r_ar'].topleft = (indent_left, text_rects['r_dmg'].bottom + line_size)
-    text_rects['r_acc'].topleft = (indent_left, text_rect['r_ar'].bottom + line_size)
+    text_rects['r_acc'].topleft = (indent_left, text_rects['r_ar'].bottom + line_size)
     text_rects['r_rng'].topleft = (indent_left, text_rects['r_acc'].bottom + line_size)
     text_rects['r_eps'].topleft = (indent_left, text_rects['r_rng'].bottom + line_size)
     

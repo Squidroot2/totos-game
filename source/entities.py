@@ -781,7 +781,7 @@ class Player(Character):
         enemy_count = 0
         enemy = None
         
-        items_in_fov = 0
+        items_in_view = 0
         items_at_feet = 0
         item_at_feet = None
         item_in_view = None
@@ -798,7 +798,7 @@ class Player(Character):
         fov_map = self.getFOV()
         
         # Reversed because characters have higher draw order
-        for entities in reversed(self.location.entities)
+        for entity in reversed(self.location.entities):
             if entity is self:
                 continue
              
@@ -817,8 +817,8 @@ class Player(Character):
                         item_at_feet = entity
                     
                     else:
-                        items_in_fov += 1
-                        item_in_view += 1
+                        items_in_view += 1
+                        item_in_view = entity
                 
                 # Break if items at feet since it takes priority over Portals
                 elif items_at_feet:
@@ -845,7 +845,7 @@ class Player(Character):
                         corpses_at_feet += 1
                         corpse = entity
                         
-        # After seraching, return proper string
+        # After searching, return proper string
         if enemy_count > 1:
             return "I better be careful. There are %d enemies around" % enemy_count
         if enemy_count == 1:
@@ -854,7 +854,7 @@ class Player(Character):
         if items_at_feet > 1:
             return "There's a bunch of stuff right here"
         
-        if items_at_feet = 1:
+        if items_at_feet == 1:
             return "There's a %s right here. It could be useful" % item_at_feet.name
             
         if on_down_portal:
@@ -879,8 +879,8 @@ class Player(Character):
             return "I see some items over there. Surely one of them will be useful"
         
         if items_in_view == 1:
-            return "I see a  %s over there. I wonder if I could put that to use" % item.name
-        
+            return "I see a  %s over there. I wonder if I could put that to use" % item_in_view.name
+
         if see_down_portal:
             return "Coast looks clear to move to the next floor. Just got to make sure I am ready"
         
