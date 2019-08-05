@@ -453,6 +453,8 @@ def mainGameScreen(window, fps_clock, game):
 
         if player.is_dead:
             run_game = False
+            game.log.addMessage("You Died!")
+            game.log.addMessage("Press Enter to Continue...")
 
         # Fill in the background of the window with black
         window.fill(COLORS['BLACK'])
@@ -467,6 +469,15 @@ def mainGameScreen(window, fps_clock, game):
         # Update the screen and wait for clock to tick; repeat the while loop
         pygame.display.update()
         fps_clock.tick()
+
+    # Stop until player hit enter key
+    show_screen = True
+    while show_screen:
+        checkForQuit()
+        for event in pygame.event.get(KEYDOWN):
+            if event.key == K_RETURN:
+                show_screen = False
+
 
 
 def gameOverScreen(window, fps_clock):
