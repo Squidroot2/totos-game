@@ -13,7 +13,7 @@ import random
 
 
 def getMeleeHitChance(attacker_enc, defender_enc):
-    """ Takes the attackers encumbrance and the defender's encumbrance and returns a floating number between representing the chance to hit the defender
+    """ Takes the attackers encumbrance and the defender's encumbrance and returns a floating number between 0 and 1 representing the chance to hit the defender
 
     Values 0 and lower represent 0 chance while 1 and above is guaranteed chance"""
     # Base chance to hit

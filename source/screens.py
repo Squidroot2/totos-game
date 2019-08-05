@@ -23,6 +23,7 @@ from source.utilities import checkForQuit
 from source.entities import Target
 from source.floors import Floor
 from source.assets import Images
+from source.formulas import getRangedHitChance, getMeleeHitChance
 
 
 def titleScreen(window, fps_clock):
@@ -648,9 +649,21 @@ def drawStatPane(window, player, pane):
 
     # Fills in the pane in black
     pygame.draw.rect(window, background_color, pane, 0)
+    
+    #todo use linesizes throughout function
+    # Get linesizes
+    header_size = FONTS['INFO_HEADER'].get_linesize()
+    line_size = FONTS['INFO'].get_linesize()
 
     x_margin = pane.width/10
     y_margin = pane.height/25
+    
+    # todo use indent_left to reduce repeated arithmetic
+    indent_left = pane.left + x_margin
+
+    # Stats used multiple times
+    eps = player.getEnergyPerShot()
+    enc = player.getEncumbrance()
 
     # Strings used
     full_name = player.name + " the " + player.background
@@ -659,6 +672,16 @@ def drawStatPane(window, player, pane):
     defense = "Defense: %d" % player.getDefense()
     life = "Life: %d" % player.life
     energy_value = "%.1f / %d" % (player.energy, player.max_energy)
+    # Ranged Stats
+    str_eps = "EPS: %.1f (%.1f)" % (eps, eps - player.getRecoilCharge())
+    r_dmg = "DMG: %.1f" % player.getRangedDamage()
+    r_ar = "AR:  %d" % player.getAttackRate(is_ranged=True)
+    r_acc = "ACC: %d%" % (100 * getRangedHitChance(enc, 0, 0)
+    rng = "RNG: %d" % player.getRange()
+    # Melee Stats
+    m_dmg = "DMG: %.1f" % player.getMeleeDamage()
+    m_ar = "AR:  %d" % player.getAttackRate(is_ranged=False)
+    m_acc = "ACC: %d%" % (100 * getMeleeHitChance(enc, 0, 0)
 
     # Dictionary of text surfaces that will be blitted to the screen
     text_surfs = dict()
@@ -669,7 +692,20 @@ def drawStatPane(window, player, pane):
     text_surfs['defense'] = FONTS['INFO'].render(defense, True, font_color, background_color)
     text_surfs['life'] = FONTS['INFO'].render(life, True, font_color, background_color)
     text_surfs['energy_key'] = FONTS['INFO'].render("Energy:", True, font_color, background_color)
+    
     text_surfs['energy_value'] = FONTS['INFO'].render(energy_value, True, energy_value_font_color)
+    
+    text_surfs['ranged'] = FONTS['INFO_HEADER'].render("Ranged", True, font_color, background_color)
+    text_surfs['r_dmg'] = FONTS['INFO'].render(r_dmg, True, font_color, background_color)
+    text_surfs['r_ar'] = FONTS['INFO'].render(r_ar, True, font_color, background_color)
+    text_surfs['r_acc'] = FONTS['INFO'].render(r_acc, True, font_color, background_color)
+    text_surfs['r_rng'] = FONTS['INFO'].render(rng, True, font_color, background_color)
+    text_surfs['r_eps'] = FONTS['INFO'].render(str_eps, True, font_color, background_color)
+    
+    text_surfs['melee'] = FONTS['INFO_HEADER'].render("Melee", True, font_color, background_color)
+    text_surfs['m_dmg'] = FONTS['INFO'].render(m_dmg, True, font_color, background_color)
+    text_surfs['m_ar'] = FONTS['INFO'].render(m_ar, True, font_color, background_color)
+    text_surfs['m_acc'] = FONTS['INFO'].render(m_acc, True, font_color, background_color)   
 
     # Create Dictionary of Rectangle objects for each rect
     text_rects = {surf: text_surfs[surf].get_rect() for surf in text_surfs}
@@ -682,6 +718,27 @@ def drawStatPane(window, player, pane):
     text_rects['life'].topleft = (pane.left + x_margin, text_rects['defense'].bottom)
     text_rects['energy_key'].topleft = (pane.left + x_margin, text_rects['life'].bottom)
     # Energy Value is placed after energy bar
+    
+    # Draw Line Seperating top stats from damage stats
+    line_y = text_rects['energy_key'].bottom + header_size
+    line_start = indent_left
+    line_end = pane.right-x_margin
+    line_width = 1
+    pygame.draw.line(window, COLORS['BLACK'], (line_start, line_y), (line_end, line_y), line_width)
+    
+    # Place Ranged Stats
+    text_rects['ranged'].topleft = (indent_left, line_y + header_size)
+    text_rects['r_dmg'].topleft = (indent_left, text_rect['ranged'].bottom + line_size)
+    text_rects['r_ar'].topleft = (indent_left, text_rects['r_dmg'].bottom + line_size)
+    text_rects['r_acc'].topleft = (indent_left, text_rect['r_ar'].bottom + line_size)
+    text_rects['r_rng'].topleft = (indent_left, text_rects['r_acc'].bottom + line_size)
+    text_rects['r_eps'].topleft = (indent_left, text_rects['r_rng'].bottom + line_size)
+    
+    # Place Melee Stats
+    text_rects['melee'].topleft = (pane.centerx, text_rects['ranged'].top)
+    text_rects['m_dmg'].topleft = (pane.centerx, text_rects['r_dmg'].top)
+    text_rects['m_ar'].topleft = (pane.centerx, text_rects['r_ar'].top)
+    text_rects['m_acc'].topleft = (pane.centerx, text_rects['r_acc'].top)
 
     # Define Energy Bar Dimensions
     energy_bar_width = pane.width/4
@@ -697,7 +754,7 @@ def drawStatPane(window, player, pane):
     # Draw to Screen
     pygame.draw.rect(window, COLORS['WHITE'], energy_bar, 1)
 
-    # Define Energy Fill
+    # Define Energy Fill, A bar that is proportionate to the amount of energy remaining
     energy_fill = energy_bar.copy()
     energy_fill.y += 1
     energy_fill.x += 1
