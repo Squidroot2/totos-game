@@ -244,6 +244,7 @@ class Corpse(Entity):
             character : Character
                 The character that died this is make this corpse
         """
+        self.name = character.name
         super().__init__(character.location, character.x, character.y)
 
 
@@ -758,23 +759,139 @@ class Player(Character):
         fov = numpy.where(self.getFOV())
         for i in range(len(fov[0])):
             self.location.tile_map[(fov[1][i])][(fov[0][i])].discovered = True
-
-    # def draw(self, surface):
-    #     """Draws player then draws armor on top of him
-    #
-    #     Extends the Entity draw method
-    #     """
-    #     super().draw(surface)
-    #
-    #     try:
-    #         if self.inventory.equipped['armor'].image is not Images.missing_image:
-    #             self.inventory.equipped['armor'].drawOnOwner(surface)
-    #     except AttributeError:
-    #         # Player does not have armor equipped
-    #         pass
-    #
-    #     # if self.inventory.equipped['generator']:
-    #     #     self.inventory.equipped['generator'].drawForceField(surface)
+    
+    def lookAround(self):
+        """Returns a string indicating observations about the entities around the player
+        
+        Utilizes the draw order of the items to look through them in reverse order
+        
+        Message Priority
+            Enemy(s) in FOV
+            Item(s) at Feet
+            Portal at Feet
+            Corpse(s) at Feet
+            Item(s) in FOV
+            Down Portal in FOV
+            Up Portal in FOV
+        
+        Returns : string
+        """
+    
+        # Number of enemies seen in the player's fov
+        enemy_count = 0
+        enemy = None
+        
+        items_in_fov = 0
+        items_at_feet = 0
+        item_at_feet = None
+        item_in_view = None
+        
+        on_down_portal = False
+        on_up_portal = False
+        
+        see_down_portal = False
+        see_up_portal = False
+        
+        corpses_at_feet = 0
+        corpse = None
+            
+        fov_map = self.getFOV()
+        
+        # Reversed because characters have higher draw order
+        for entities in reversed(self.location.entities)
+            if entity is self:
+                continue
+             
+            if fov_map[entity.y][entity.x]:
+                if isinstance(entity, Character):
+                    enemy_count += 1
+                    enemy = entity
+                
+                # After characters are counted, break if there was at least one
+                elif enemy_count > 0:
+                    break
+                
+                elif isinstance(entity, Item):
+                    if entity.x == self.x and entity.y == self.y:
+                        items_at_feet += 1
+                        item_at_feet = entity
+                    
+                    else:
+                        items_in_fov += 1
+                        item_in_view += 1
+                
+                # Break if items at feet since it takes priority over Portals
+                elif items_at_feet:
+                    break
+                
+                # Is only broken if directly on Portal, otherwise tracks and keep going to corpses
+                elif isinstance(entity, Portal):
+                    if entity.x == self.x and entity.y == self.y:
+                        if entity.direction == "down":
+                            on_down_portal = True
+                            break
+                        else:
+                            on_up_portal = True
+                            break
+                    else:
+                        if entity.direction == "down":
+                            see_down_portal = True
+                        else:
+                            see_up_portal = True
+                
+                
+                elif isinstance(entity, Corpse):
+                    if entity.x == self.x and entity.y == self.y:
+                        corpses_at_feet += 1
+                        corpse = entity
+                        
+        # After seraching, return proper string
+        if enemy_count > 1:
+            return "I better be careful. There are %d enemies around" % enemy_count
+        if enemy_count == 1:
+            return "I see an enemy %s here" % enemy.name
+        
+        if items_at_feet > 1:
+            return "There's a bunch of stuff right here"
+        
+        if items_at_feet = 1:
+            return "There's a %s right here. It could be useful" % item_at_feet.name
+            
+        if on_down_portal:
+            return "Here's the portal to the next floor. I wonder what dangers await me"
+        
+        if on_up_portal:
+            if self.location.number == 1:
+                return "Here's the entrance. I don't want to chicken out now"
+            else:
+                return "Here's the way back to the last floor. Did I forget anything back there?"
+        
+        if corpses_at_feet > 2:
+            return "There's a pile of bodies here. I'm glad that I'm not one of them"
+            
+        if corpses_at_feet == 2:
+            return "There's a couple of bodies here. Better them than me"
+        
+        if corpses_at_feet == 1:
+            return "'Here lies %s' One less obstacle on the path to victory" % corpse.name
+        
+        if items_in_view > 1:
+            return "I see some items over there. Surely one of them will be useful"
+        
+        if items_in_view == 1:
+            return "I see a  %s over there. I wonder if I could put that to use" % item.name
+        
+        if see_down_portal:
+            return "Coast looks clear to move to the next floor. Just got to make sure I am ready"
+        
+        if see_up_portal:
+            if self.location.number == 1:
+                return "There's the entrance to the trial. No looking back now"
+            else:
+                return "I should run back to that portal if I think I'm in danger"
+        
+        # If nothing else was returned
+        return "I don't see anything interesting around here. Better keep exploring"
 
     def getItemsAtFeet(self):
         """Returns a list of items which match the player's x and y coordinates"""
@@ -802,10 +919,6 @@ class Player(Character):
     def image(self, image):
         """Setting the players image actually sets a base image attribute"""
         self.base_image = image
-
-
-
-
 
 
 class Item(Entity):
@@ -974,8 +1087,12 @@ class Generator(Item):
     def rechargeToFull(self):
         self.current_charge = self.max_charge
 
+    #todo remove unused code
     def drawForceField(self, surface):
-        """Draws a blue force field around the character to indeicate the energy in the generator"""
+        """Draws a blue force field around the character to indeicate the energy in the generator
+        
+        Currently Unused
+        """
 
         surf = pygame.Surface((CELL_SIZE, CELL_SIZE))
         radius = int(CELL_SIZE/2)
@@ -1008,3 +1125,4 @@ class Battery(Item):
     def use(self):
         target = self.location.equipped['generator']
         target.current_charge += self.power
+        

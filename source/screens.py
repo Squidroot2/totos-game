@@ -428,6 +428,12 @@ def mainGameScreen(window, fps_clock, game):
                 elif event.key == K_x:
                     # todo write explore screen
                     turn_taken = False
+                
+                # Look Key
+                elif event.key == K_l:
+                    # todo write look functionality
+                    message = player.lookAround()
+                    turn_taken = False
 
                 else:
                     turn_taken = False
