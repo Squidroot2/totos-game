@@ -11,8 +11,7 @@ import queue
 import pygame
 import tcod
 # My Modules
-from source.entities import Portal
-from source.entities import Character, Item
+from source.entities import Portal, Item, Character
 from source.constants import CELL_SIZE, FLOOR_HEIGHT, FLOOR_WIDTH, COLORS
 from source.assets import Images, Data
 
