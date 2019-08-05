@@ -172,7 +172,6 @@ class Floor:
 
         area = camera.getTileRect()
 
-        blit_list = list()
         # Draw the tile map
         for xtile in range(area.left, area.right):
             # ignore x out of range
@@ -181,10 +180,8 @@ class Floor:
             for ytile in range(area.top, area.bottom):
                 # ignore y out of range
                 if ytile >= len(self.tile_map[xtile]) or ytile < 0: continue
-                if self.tile_map[xtile][ytile].discovered:
-                   blit_list.append(self.tile_map[xtile][ytile].getDraw())
-                #self.tile_map[xtile][ytile].draw(surface)
-        surface.blits(blit_list)
+                self.tile_map[xtile][ytile].draw(surface)
+
         # Sort entities if needed
         if self.sort_entities:
             self.entities.sort(key=lambda entity: entity.draw_order)
