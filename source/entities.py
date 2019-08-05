@@ -617,10 +617,13 @@ class Character(Entity):
         
         Returns: float
         """
-        if self.getEnergyPerShot() < self.inventory.equipped['generator'].recoil_charge:
-            return self.getEnergyPerShot()
-        else:
-            return self.inventory.equipped['generator'].recoil_charge
+        try:
+            if self.getEnergyPerShot() < self.inventory.equipped['generator'].recoil_charge:
+                return self.getEnergyPerShot()
+            else:
+                return self.inventory.equipped['generator'].recoil_charge
+        except AttributeError:
+            return 0
 
     def getRange(self):
         """The range of the currently equipped ranged weapon or if no ranged weapon equipped, the innate range"""
