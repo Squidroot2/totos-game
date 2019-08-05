@@ -259,6 +259,7 @@
       "image": null,
       "max_charge": 5,
       "recharge_rate": 0.5,
+      "recovery": 3,
       "recoil_charge": 1,
       "difficulty": 1
     },
@@ -267,6 +268,7 @@
       "image": null,
       "max_charge": 10,
       "recharge_rate": 0.3,
+      "recovery": 3,
       "recoil_charge": 0,
       "difficulty": 2
     },
@@ -275,6 +277,7 @@
       "image": null,
       "max_charge": 5,
       "recharge_rate": 0.1,
+      "recovery": 3,
       "recoil_charge": 3,
       "difficulty": 1
     },
@@ -283,6 +286,7 @@
       "image": null,
       "max_charge": 8,
       "recharge_rate": 0.2,
+      "recovery": 3,
       "recoil_charge": 2,
       "difficulty": 1
     }

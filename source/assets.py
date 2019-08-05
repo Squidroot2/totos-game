@@ -45,11 +45,11 @@ class Images:
                         'aviboy': os.path.join(character_images, 'aviboy.png')
                     },
                     'Other': {
-
                         'down_portal': os.path.join(other_images, 'down_portal.png'),
                         'up_portal': os.path.join(other_images, 'up_portal.png'),
                         'headstone': os.path.join(other_images, 'headstone.png'),
                         'target': os.path.join(other_images, 'target.png'),
+                        'force_field': os.path.join(other_images, 'forcefield.png')
                     },
                     'Tiles': {
                         'wall': os.path.join(tile_images, 'wall.png'),

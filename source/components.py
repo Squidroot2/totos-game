@@ -74,14 +74,18 @@ class AI:
             elif self.type == "ranger":
                 # If the ai owner and the player are on the same floor...
                 if self.owner.location is self.opponent.location:
+                    distance = getDistanceBetweenEntities((self.owner.x, self.owner.y), (self.opponent.x, self.opponent.y))
 
-                    # Move closer if out of range
-                    if getDistanceBetweenEntities((self.owner.x, self.owner.y), (self.opponent.x, self.opponent.y)) \
-                            > self.owner.getRange():
+                    # If Outside Range or not within fov or not enough energy to take shot
+                    if distance > self.owner.getRange()  or not self.owner.location.map.fov[self.owner.y][self.owner.x] \
+                            or self.owner.getEnergyPerShot() > self.owner.energy:
                         self.moveNextToEntity(self.opponent)
 
-                    # If within range, attack
-                    # todo make it so character must have LOS
+                    # If within 1 tile, melee attack
+                    elif distance == 1:
+                        self.owner.attack(self.opponent, is_ranged=False)
+
+                    # Otherwise perform ranged attack
                     else:
                         self.owner.attack(self.opponent, is_ranged=True)
 
@@ -135,8 +139,8 @@ class AI:
             elif delta_move_y < 0:
                 delta_move_y = -1
 
-        assert(delta_move_y) in (-1,0,1)
-        assert(delta_move_x) in (-1,0,1)
+        assert(delta_move_y) in (-1, 0, 1)
+        assert(delta_move_x) in (-1, 0, 1)
 
         did_move = attemptMove(delta_move_x, delta_move_y, peacefully=True)
 

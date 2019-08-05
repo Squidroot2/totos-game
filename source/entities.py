@@ -482,14 +482,14 @@ class Character(Entity):
 
             # If energy exceeds damage, it is completely absorbed by the shields
             if self.energy > damage:
-                damage_to_flesh = 0
                 self.energy -= damage
+                return
 
             # Otherwise, energy is reduced to zero and difference is dealt to flesh
             else:
-                damage_to_flesh = damage - self.energy
                 self.energy = 0
-                Log.addToBuffer(self.name + " energy depleted")
+                Log.addToBuffer(self.name + "'s shield shattered!")
+                return
         else:
             damage_to_flesh = damage
 
@@ -603,9 +603,9 @@ class Character(Entity):
         """The energy that every shot uses
         
         If a the character does not have a ranged weapoon equipped, then return 0"""
-        if self.inventory.equipped['weapon'] is not None and self.inventory.equipped['weapon'].is_ranged:
+        try:
             return self.inventory.equipped['weapon'].energy_per_shot
-        else:
+        except AttributeError:
             return 0
 
     def getRecoilCharge(self):
@@ -650,6 +650,15 @@ class Character(Entity):
         else:
             return self.ranged_verb
 
+    def draw(self, surface):
+        """Extends the entity draw function to draw a forcefield if the character has energy"""
+        super().draw(surface)
+
+        if self.energy > 0:
+            force_field = Images.getImage('Other', 'force_field')
+            surface.blit(force_field, (self.x*CELL_SIZE, self.y*CELL_SIZE))
+
+
     @property
     def energy(self):
         """Amount of energy currently in the character's generator
@@ -686,6 +695,7 @@ class Player(Character):
     Child of Character
     """
     draw_order = DRAW_ORDER['PLAYER']
+    base_image = None
 
     def __init__(self, name, background, floor, x, y):
         """Extends the Character init method
@@ -749,22 +759,22 @@ class Player(Character):
         for i in range(len(fov[0])):
             self.location.tile_map[(fov[1][i])][(fov[0][i])].discovered = True
 
-    def draw(self, surface):
-        """Draws player then draws armor on top of him
-
-        Extends the Entity draw method
-        """
-        super().draw(surface)
-
-        try:
-            if self.inventory.equipped['armor'].image is not Images.missing_image:
-                self.inventory.equipped['armor'].drawOnOwner(surface)
-        except AttributeError:
-            # Player does not have armor equipped
-            pass
-
-        # if self.inventory.equipped['generator']:
-        #     self.inventory.equipped['generator'].drawForceField(surface)
+    # def draw(self, surface):
+    #     """Draws player then draws armor on top of him
+    #
+    #     Extends the Entity draw method
+    #     """
+    #     super().draw(surface)
+    #
+    #     try:
+    #         if self.inventory.equipped['armor'].image is not Images.missing_image:
+    #             self.inventory.equipped['armor'].drawOnOwner(surface)
+    #     except AttributeError:
+    #         # Player does not have armor equipped
+    #         pass
+    #
+    #     # if self.inventory.equipped['generator']:
+    #     #     self.inventory.equipped['generator'].drawForceField(surface)
 
     def getItemsAtFeet(self):
         """Returns a list of items which match the player's x and y coordinates"""
@@ -776,6 +786,26 @@ class Player(Character):
                 items.append(entity)
 
         return items
+
+    @property
+    def image(self):
+        try:
+            if self.inventory.equipped['armor'].image is not Images.missing_image:
+                self.base_image.blit(self.inventory.equipped['armor'].image, (0,0))
+        except AttributeError:
+            # Player does not have armor equipped
+            pass
+
+        return self.base_image
+
+    @image.setter
+    def image(self, image):
+        """Setting the players image actually sets a base image attribute"""
+        self.base_image = image
+
+
+
+
 
 
 class Item(Entity):
@@ -888,7 +918,9 @@ class Armor(Item):
         self.location.equipped['armor'] = self
 
     def drawOnOwner(self, surface):
-        """Used to draw the armor onto the player in the tile_map"""
+        """Used to draw the armor onto the player in the tile_map
+
+        Currently Unused"""
         surface.blit(self.image, (self.location.owner.x * CELL_SIZE, self.location.owner.y * CELL_SIZE))
 
 
@@ -905,10 +937,12 @@ class Generator(Item):
 
         self.max_charge = data['max_charge']
         self.recharge_rate = data['recharge_rate']
+        self.recovery_time = data['recovery']
         self.recoil_charge = data['recoil_charge']
         self.difficulty = data['difficulty']
 
         self.hit_this_turn = False
+        self.recovered = 0
 
         # Current Charge Starts at 0
         self.current_charge = 0.0
@@ -922,6 +956,15 @@ class Generator(Item):
     def recharge(self):
         # Happens once per turn while equipped if not hit this turn
         if not self.hit_this_turn:
+            if self.current_charge == 0:
+                if self.recovered < self.recovery_time:
+                    # If the shield has not recovered yet, return
+                    self.recovered += 1
+                    return
+                else:
+                    # Reset the recovery clock and let recharge
+                    self.recovered = 0
+
             new_charge_level = self.current_charge + self.recharge_rate
             if new_charge_level > self.max_charge:
                 self.current_charge = self.max_charge
