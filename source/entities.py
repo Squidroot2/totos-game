@@ -1030,6 +1030,7 @@ class Armor(Item):
     def equip(self):
         self.location.equipped['armor'] = self
 
+    #todo remove unused code
     def drawOnOwner(self, surface):
         """Used to draw the armor onto the player in the tile_map
 
@@ -1038,10 +1039,22 @@ class Armor(Item):
 
 
 class Generator(Item):
-    """"Item which provides energy when equipped
+    """Item which provides energy when equipped
 
     Child of Item, Entity
-
+    
+    Attributes:
+        max_charge : int
+        recharge_rate : float
+        recovery_time : int
+        recoil_charge : float
+        difficulty : int
+        hit_this_turn : bool
+        recovered : int : This will normally be at zero unless the charge is 0. 
+            If the charge is at zero and hit_this_turn is False, increments by 1 until it reaches recovery time
+            If hit while recovering, recovered resets to 0
+            Generator will not recharge until recovered
+        current_charge : float
     """
 
     def __init__(self, item_id, location, x=None, y=None):
@@ -1063,15 +1076,26 @@ class Generator(Item):
         super().__init__(data, location, x, y)
 
     def equip(self):
+        """Puts the generator in the equipped generator slot and reduces the current charge to 0"""
         self.location.equipped['generator'] = self
         self.current_charge = 0.0
 
     def recharge(self):
+        """Recovers or recharges the the Generator. Should be called once per turn
+        
+        If the generator was not hit this turn and has not been completely depleted, recharges by the recharge rate amount
+        After recharging, it ensures that current_charge does not exceed max_charge
+        
+        If the generator was not hit this turn and is depleted, increases the recovered counter.
+        If the recovered counter reached the recovery time, recharge by the recharge rate amount
+        
+        If was hit this turn, reset recovered counter
+        """
         # Happens once per turn while equipped if not hit this turn
         if not self.hit_this_turn:
             if self.current_charge == 0:
                 if self.recovered < self.recovery_time:
-                    # If the shield has not recovered yet, return
+                    # If the generator has not recovered yet, return
                     self.recovered += 1
                     return
                 else:
@@ -1083,8 +1107,12 @@ class Generator(Item):
                 self.current_charge = self.max_charge
             else:
                 self.current_charge = new_charge_level
+        
+        else:
+            self.recovered = 0
 
     def rechargeToFull(self):
+        """Sets the current charge to be equal to the max charge"""
         self.current_charge = self.max_charge
 
     #todo remove unused code
@@ -1123,6 +1151,7 @@ class Battery(Item):
         super().__init__(data, location, x, y)
 
     def use(self):
+        """Uses the battery, which increases the amount of charge in the generator"""
         target = self.location.equipped['generator']
         target.current_charge += self.power
         self.location.removeEntity(self)
