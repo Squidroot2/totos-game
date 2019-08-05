@@ -15,7 +15,8 @@
       "range": 1,
       "rate": 1
     },
-    "ai": null
+    "ai": null,
+    "inventory": null
   },
   "BLOB_1": {
     "name": "Blob",
@@ -28,7 +29,8 @@
     "defense": 2,
     "attack_rate": 1,
     "innate_ranged": null,
-    "ai": "brainless"
+    "ai": "brainless",
+    "inventory": null
   },
   "WIERDMUNK": {
     "name": "Weirdmunk",
@@ -41,7 +43,8 @@
     "defense": 0,
     "attack_rate": 1,
     "innate_ranged": null,
-    "ai": "basic"
+    "ai": "basic",
+    "inventory": null
   },
   "GEOMEFOX": {
     "name": "Geomefox",
@@ -59,7 +62,8 @@
       "range": 4,
       "rate": 1
     },
-    "ai": "ranger"
+    "ai": "ranger",
+    "inventory": null
   },
   "AVIBOY": {
     "name": "Aviboy",
@@ -72,6 +76,7 @@
     "defense": 1,
     "attack_rate": 2,
     "innate_ranged": null,
-    "ai": "fencer"
+    "ai": "fencer",
+    "inventory": "BOXER"
   }
 }

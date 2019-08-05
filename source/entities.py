@@ -244,9 +244,7 @@ class Corpse(Entity):
             character : Character
                 The character that died this is make this corpse
         """
-        inventory_contents = character.inventory.contents
-        
-        super().__init__(character.location, character.x, character.y, inventory=inventory_contents)
+        super().__init__(character.location, character.x, character.y)
 
 
 class Character(Entity):
@@ -302,7 +300,7 @@ class Character(Entity):
     image_dir = 'Characters'
     draw_order = DRAW_ORDER['ENEMY']
 
-    def __init__(self, char_id, floor, x, y, inventory=[], is_player=False):
+    def __init__(self, char_id, floor, x, y, is_player=False):
         """Extends the entity init function
         
         Uses the char_id to pull data, represented as a dict, from the Data class"""
@@ -332,7 +330,12 @@ class Character(Entity):
         # Gets the ai type
         ai = data['ai']
 
-        # todo use the inventory type
+        # Gets the inventory type
+        inventory = data['inventory']
+
+        # Ensure that every character gets an empty inventory instead of no inventory
+        if inventory is None:
+            inventory = "empty"
 
         # Runs the Entity init method
         super().__init__(floor, x, y, ai=ai, inventory=inventory, obstruct=True, is_player=is_player)
@@ -515,6 +518,7 @@ class Character(Entity):
         self.is_dead = True
         self.ai = None
         self.location.removeEntity(self)
+        self.inventory.dropAll()
         # Create a corpse
         Corpse(self)
 
@@ -700,7 +704,7 @@ class Player(Character):
                 starting y position on the floor
         """
 
-        super().__init__("PLAYER", floor, x, y, inventory=[], is_player=True)
+        super().__init__("PLAYER", floor, x, y, is_player=True)
 
         # Overrides the name set by the Character init method
         self.name = name
@@ -709,56 +713,15 @@ class Player(Character):
         assert background in BACKGROUNDS
         self.background = background
 
-        self.setStartingInventory()
-
         # Player-Specific Component
         self.camera = Camera(self)
+
+        # Overrides what is defined in parent init functions
+        self.inventory = Inventory(self, self.background)
 
         # Start with a calculated FOV
         self.calculateFOV()
         self.discoverTiles()
-
-    # todo move inventory stuff to inventory class with ids
-    def setStartingInventory(self):
-
-        # Create Initial Items in Inventory
-        if self.background == "Officer":
-            weapon = Weapon("PISTOL_1", self.inventory)
-            armor = Armor("ARMOR_1", self.inventory)
-            generator = Generator("QUICK_1", self.inventory)
-            Weapon("CLUB_1", self.inventory)
-
-        elif self.background == "Marksman":
-            weapon = Weapon("RIFLE_1", self.inventory)
-            armor = Armor("ARMOR_1", self.inventory)
-            generator = Generator("RANGER_1", self.inventory)
-
-        elif self.background == "Agent":
-            weapon = Weapon("PDW_1", self.inventory)
-            armor = Armor("ARMOR_1", self.inventory)
-            generator = Generator("FEEDER_1", self.inventory)
-
-        elif self.background == "Pointman":
-            weapon = Weapon("CANNON_1", self.inventory)
-            armor = Armor("ARMOR_1", self.inventory)
-            generator = Generator("RANGER_1", self.inventory)
-
-        elif self.background == "Gladiator":
-            weapon = Weapon("SWORD_1", self.inventory)
-            armor = Armor("ARMOR_2", self.inventory)
-            generator = Generator("BRAWLER_1", self.inventory)
-
-        # Player starts with 2 batteries
-        for i in range(2):
-            Battery("BATTERY_1", self.inventory)
-
-        # Equip Items
-        weapon.equip()
-        armor.equip()
-        generator.equip()
-
-        # Shield Starts charged
-        generator.rechargeToFull()
 
     def changeFloors(self, new_floor, direction):
         """Change player's location to a specified floor"""
@@ -793,8 +756,12 @@ class Player(Character):
         """
         super().draw(surface)
 
-        if self.inventory.equipped['armor'].image is not Images.missing_image:
-            self.inventory.equipped['armor'].drawOnOwner(surface)
+        try:
+            if self.inventory.equipped['armor'].image is not Images.missing_image:
+                self.inventory.equipped['armor'].drawOnOwner(surface)
+        except AttributeError:
+            # Player does not have armor equipped
+            pass
 
         # if self.inventory.equipped['generator']:
         #     self.inventory.equipped['generator'].drawForceField(surface)
@@ -803,7 +770,7 @@ class Player(Character):
         """Returns a list of items which match the player's x and y coordinates"""
         items = list()
         for entity in self.location.entities:
-            if not isinstance(entity, Item):
+            if not entity.draw_order == DRAW_ORDER['ITEM']:
                 continue
             if entity.x == self.x and entity.y == self.y:
                 items.append(entity)
@@ -853,23 +820,24 @@ class Item(Entity):
         self.y = None
         self.location = inventory
         inventory.addEntity(self)
-    
+
     @staticmethod
     def createItem(item_id, location, x=None, y=None):
         """Creates an item based on the type of ID"""
         item_class = item_id[:-2]
-        
+
         if item_class == "BATTERY":
-            Battery(item_id, location, x, y)
+            item = Battery(item_id, location, x, y)
         elif item_class == "ARMOR":
-            Armor(item_id, location, x ,y)
+            item = Armor(item_id, location, x ,y)
         elif item_class in ("SWORD", "CLUB", "KNIFE", "PDW", "CANNON", "RIFLE", "PISTOL"):
-            Weapon(item_id, location, x, y)
+            item = Weapon(item_id, location, x, y)
         elif item_class in ("QUICK", "BRAWLER", "FEEDER", "RANGER"):
-            Generator(item_id, location, x, y)
+            item = Generator(item_id, location, x, y)
         else:
             raise ValueError("%s not recognized as a valid item class" %item_class)
-            
+
+        return item
 
 
 class Weapon(Item):
@@ -922,6 +890,7 @@ class Armor(Item):
     def drawOnOwner(self, surface):
         """Used to draw the armor onto the player in the tile_map"""
         surface.blit(self.image, (self.location.owner.x * CELL_SIZE, self.location.owner.y * CELL_SIZE))
+
 
 class Generator(Item):
     """"Item which provides energy when equipped
@@ -996,5 +965,3 @@ class Battery(Item):
     def use(self):
         target = self.location.equipped['generator']
         target.current_charge += self.power
-
-

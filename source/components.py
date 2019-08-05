@@ -9,10 +9,11 @@ Classes:
 import random
 # Third Party
 import pygame
-import numpy
 # My Modules
-from source.constants import CELL_SIZE
+from source.constants import CELL_SIZE, BACKGROUNDS
 from source.utilities import getDistanceBetweenEntities
+from source.assets import Data
+
 
 
 class AI:
@@ -260,13 +261,56 @@ class Camera:
 
 class Inventory:
     ''' Component Class'''
-    def __init__(self, owner, contents=[]):
+    def __init__(self, owner, inv_type):
+
+
+        # Type Validation
+        type_is_valid = inv_type in ('empty', 'BOXER') or inv_type in BACKGROUNDS
+        assert type_is_valid
+
         self.owner = owner
-        self.contents = contents
+        self.contents = []
         self.equipped = {"weapon": None, "armor": None, "generator": None}
+
+        # If the inventory type is not empty, get the inventory data and create the items.
+        if inv_type != "empty":
+            self.populate(inv_type)
+
+            # Set the generator to full energy if there is one equipped
+            if self.equipped['generator'] is not None:
+                self.equipped['generator'].rechargeToFull()
+
+    def populate(self, inv_type):
+        """Populates the inventory with the intial items using the inventory type"""
+        # Imports occurs here to avoid dependency loop with the entities module
+        from source.entities import Item
+
+        # Get either a player background inventory or a leveled inventory
+        if inv_type in BACKGROUNDS:
+            data = Data.getPlayerInventory(inv_type)
+        else:
+            data = Data.getInventory(inv_type, self.owner.level)
+
+        # Create Equipped items
+        for slot in self.equipped:
+            if data[slot] is not None:
+                self.equipped[slot] = Item.createItem(data[slot], self)
+
+        # Other is a list of items which are not equipped
+        if data['other'] is not None:
+            for item_id in data['other']:
+                Item.createItem(item_id, self)
 
     def addEntity(self, item):
         self.contents.append(item)
 
     def removeEntity(self, item):
         self.contents.remove(item)
+
+    def dropAll(self):
+        """Drops all items in the inventory. Called when the owner dies"""
+        for slot in self.equipped:
+            self.equipped[slot] = None
+        for item in self.contents:
+            item.drop()
+

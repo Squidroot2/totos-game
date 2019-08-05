@@ -691,7 +691,10 @@ def drawStatPane(window, player, pane):
     energy_fill.y += 1
     energy_fill.x += 1
     energy_fill.height -= 2
-    energy_fill.width = (energy_bar.width - 2) * (player.energy / player.max_energy)
+    try:
+        energy_fill.width = (energy_bar.width - 2) * (player.energy / player.max_energy)
+    except ZeroDivisionError:
+        energy_fill.width = 0
 
     # Draw Energy Fill to Screen
     pygame.draw.rect(window, COLORS['LIGHT BLUE'], energy_fill, 0)
@@ -703,7 +706,7 @@ def drawStatPane(window, player, pane):
     for slot in equipment:
         if equipment[slot] is not None:
             item_images[slot] = equipment[slot].image
-            item_names[slot] = equipment[slot].image
+            item_names[slot] = equipment[slot].name
         else:
             item_images[slot] = pygame.Surface((CELL_SIZE, CELL_SIZE))
             item_names[slot] = "None"
@@ -732,7 +735,7 @@ def drawStatPane(window, player, pane):
         item_text_rects[slot+'_title'].midtop = (pane.centerx, title_top)
 
         # Name text
-        item_text_surfs[slot+'_name'] = FONTS['LOG'].render(equipment[slot].name, True, font_color, background_color)
+        item_text_surfs[slot+'_name'] = FONTS['LOG'].render(item_names[slot], True, font_color, background_color)
         item_text_rects[slot+'_name'] = item_text_surfs[slot+'_name'].get_rect()
         item_text_rects[slot+'_name'].midleft = (pane.centerx, item_image_rects[slot].centery)
 

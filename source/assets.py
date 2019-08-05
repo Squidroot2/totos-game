@@ -66,10 +66,7 @@ class Images:
                         'starry': os.path.join(bg_images, 'starry_bg.png')
                     }
     }
-    
-    # Dictionary comprehension doesn't work inside classes for some silly reason
-    # images = {folder: {image: None for image in image_paths[folder]} for folder in image_paths}
-    
+
     # Creates an 'images' dictionary that is the same as the same structure as image_paths
     images = dict()
     for folder in image_paths:
@@ -111,7 +108,8 @@ class Data:
     
     json_files = {'Characters': os.path.join(data_folder, 'characters.json'),
                   'Items': os.path.join(data_folder, 'items.json'),
-                  'Leveled_Lists': os.path.join(data_folder, 'leveled_lists.json')}
+                  'Leveled_Lists': os.path.join(data_folder, 'leveled_lists.json'),
+                  'Inventories': os.path.join(data_folder, 'inventories.json')}
     
     data = dict()
     for file in json_files:
@@ -144,3 +142,26 @@ class Data:
                 return levels['LEVEL_'+str(level)]
             except KeyError:
                 level -= 1
+
+    @classmethod
+    def getInventory(cls, type, level):
+        """Gets a leveled invenotry from the invenotry json
+
+        Parameters:
+            type : string
+            level : int
+
+        Returns : dict
+        """
+        levels = cls.data['Inventories'][type]
+
+        # Try to return the specified level but if not found, return the level present closest without going over
+        while True:
+            try:
+                return levels['LEVEL_'+str(level)]
+            except KeyError:
+                level -= 1
+
+    @classmethod
+    def getPlayerInventory(cls, background):
+        return cls.data['Inventories']['PLAYER'][background]
