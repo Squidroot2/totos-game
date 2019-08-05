@@ -1125,4 +1125,5 @@ class Battery(Item):
     def use(self):
         target = self.location.equipped['generator']
         target.current_charge += self.power
+        self.location.removeEntity(self)
         
