@@ -467,6 +467,10 @@ class Character(Entity):
 
             # Send a message if the opponent was killed
             if opponent.is_dead:
+                try:
+                    self.collectXP(opponent)
+                except AttributeError:
+                    pass
                 Log.addToBuffer("%s killed %s" %(self.name, opponent.name))
                 break
          
@@ -701,6 +705,15 @@ class Player(Character):
     draw_order = DRAW_ORDER['PLAYER']
     base_image = None
 
+    xp_ceiling = {1:1,
+                  2:2,
+                  3:3,
+                  4:4,
+                  5:5}
+
+    max_level = len(xp_ceiling)
+
+
     def __init__(self, name, background, floor, x, y):
         """Extends the Character init method
 
@@ -906,6 +919,36 @@ class Player(Character):
                 items.append(entity)
 
         return items
+
+    def collectXP(self, enemy):
+        """Collects the XP that the enemy has
+
+        Parameters:
+            enemy: Character"""
+        self.xp += enemy.xp
+
+        while not self.level == self.max_level and self.xp > self.xp_ceiling[self.level]:
+            self.levelUp()
+
+    def levelUp(self):
+        """Levels up the player
+
+        Every three levels, grants 1 life point
+
+        Every 5 levels grants 1 point base_damage and 1 point base_defense
+        """
+
+        Log.addToBuffer("%s leveled up!" % self.name)
+        self.level += 1
+        if self.level % 3 == 0:
+            Log.addToBuffer("%s has become more resilient" % self.name)
+            self.life += 1
+        if self.level % 5 == 0:
+            Log.addToBuffer("%s has become stronger" % self.name)
+            self.base_damage += 1
+            self.base_defense += 1
+        if self.level == self.max_level:
+            Log.addToBuffer("%s has reached max level" % self.name)
 
     @property
     def image(self):
