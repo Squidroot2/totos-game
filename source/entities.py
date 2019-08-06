@@ -681,11 +681,8 @@ class Character(Entity):
     @energy.setter
     def energy(self, value):
         """Setter method for energy"""
-        try:
-            self.inventory.equipped['generator'].current_charge = value
-        # todo remove exception handling
-        except AttributeError:
-            print("No Reactor to hold energy")
+        self.inventory.equipped['generator'].current_charge = value
+
 
     @property
     def max_energy(self):
