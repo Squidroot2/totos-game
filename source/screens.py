@@ -719,16 +719,16 @@ def drawStatPane(window, player, pane):
     text_rects = {surf: text_surfs[surf].get_rect() for surf in text_surfs}
 
     # Place rectangles
-    text_rects['name'].midleft = (pane.left+x_margin, y_margin)
-    text_rects['floor'].topleft = (pane.left + x_margin, text_rects['name'].bottom + FONTS['INFO'].get_linesize())
-    text_rects['xp'].topleft = (pane.left+x_margin, text_rects['floor'].bottom)
-    text_rects['defense'].topleft = (pane.left+x_margin, text_rects['xp'].bottom)
-    text_rects['life'].topleft = (pane.left + x_margin, text_rects['defense'].bottom)
-    text_rects['energy_key'].topleft = (pane.left + x_margin, text_rects['life'].bottom)
+    text_rects['name'].midleft = (indent_left, y_margin)
+    text_rects['floor'].topleft = (indent_left, text_rects['name'].bottom + line_size)
+    text_rects['xp'].topleft = (indent_left, text_rects['floor'].bottom + half_line_size)
+    text_rects['energy_key'].topleft = (indent_left, text_rects['xp'].bottom + half_line_size)
+    text_rects['life'].topleft = (indent_left, text_rects['energy_key'].bottom + half_line_size)
+    text_rects['defense'].topleft = (pane.centerx, text_rects['life'].top)
     # Energy Value is placed after energy bar
     
-    # Draw Line Seperating top stats from damage stats
-    line_y = text_rects['energy_key'].bottom + header_size
+    # Draw Line Separating top stats from damage stats
+    line_y = text_rects['life'].bottom + header_size
     line_start = indent_left
     line_end = pane.right-x_margin
     line_width = 1
@@ -736,11 +736,11 @@ def drawStatPane(window, player, pane):
     
     # Place Ranged Stats
     text_rects['ranged'].topleft = (indent_left, line_y + header_size)
-    text_rects['r_dmg'].topleft = (indent_left, text_rects['ranged'].bottom + line_size)
-    text_rects['r_ar'].topleft = (indent_left, text_rects['r_dmg'].bottom + line_size)
-    text_rects['r_acc'].topleft = (indent_left, text_rects['r_ar'].bottom + line_size)
-    text_rects['r_rng'].topleft = (indent_left, text_rects['r_acc'].bottom + line_size)
-    text_rects['r_eps'].topleft = (indent_left, text_rects['r_rng'].bottom + line_size)
+    text_rects['r_dmg'].topleft = (indent_left, text_rects['ranged'].bottom + half_line_size)
+    text_rects['r_ar'].topleft = (indent_left, text_rects['r_dmg'].bottom + half_line_size)
+    text_rects['r_acc'].topleft = (indent_left, text_rects['r_ar'].bottom + half_line_size)
+    text_rects['r_rng'].topleft = (indent_left, text_rects['r_acc'].bottom + half_line_size)
+    text_rects['r_eps'].topleft = (indent_left, text_rects['r_rng'].bottom + half_line_size)
     
     # Place Melee Stats
     text_rects['melee'].topleft = (pane.centerx, text_rects['ranged'].top)
@@ -750,7 +750,7 @@ def drawStatPane(window, player, pane):
 
     # Define Energy Bar Dimensions
     energy_bar_width = pane.width/4
-    energy_bar_height = FONTS['INFO'].get_linesize()
+    energy_bar_height = line_size
     energy_bar_left = text_rects['energy_key'].right + 20
     energy_bar_top = text_rects['energy_key'].top
 
