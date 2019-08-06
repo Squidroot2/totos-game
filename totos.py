@@ -1,4 +1,6 @@
-"""Trials of the Outer Spiral"""
+"""Trials of the Outer Spiral
+
+Run this file to start the game"""
 import os
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
