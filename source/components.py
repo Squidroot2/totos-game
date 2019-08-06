@@ -274,13 +274,14 @@ class Inventory:
 
         self.owner = owner
         self.contents = []
+        #todo change generator to reactor
         self.equipped = {"weapon": None, "armor": None, "generator": None}
 
         # If the inventory type is not empty, get the inventory data and create the items.
         if inv_type != "empty":
             self.populate(inv_type)
 
-            # Set the generator to full energy if there is one equipped
+            # Set the reactor to full energy if there is one equipped
             if self.equipped['generator'] is not None:
                 self.equipped['generator'].rechargeToFull()
 

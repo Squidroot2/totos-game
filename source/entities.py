@@ -11,7 +11,7 @@ Classes:
     Item(Entity)
     Weapon(Item)
     Armor(Item)
-    Generator(Item)
+    Reactor(Item)
     Battery(Item)
     
 """
@@ -278,7 +278,7 @@ class Character(Entity):
         validateMove(self, destination) : Returns True if the destination is walkable and False if it isn'tagged
         checkEntityObstruct(self, destination) : Checks if an obstructing entity is in the destination.
         attack(self, opponent, is_ranged=False) : Attacks a specified opponent
-        takeDamage(self, damage) : Reduces the amount of energy in the characters generator and deals any remaining to flesh
+        takeDamage(self, damage) : Reduces the amount of energy in the characters reactor and deals any remaining to flesh
         kill(self) : Kill the character
         getDefense(self) : Gets the total defense of the character
         getMeleeDamage(self) : Gets the total melee damage per strike
@@ -286,14 +286,14 @@ class Character(Entity):
         getAttackRate(self, is_ranged=False) : Gets the number of attacks that can be performed in a turn
         getEncumbrance(self) : The amount that equipment outlevels character
         getEnergyPerShot(self) : The energy that every shot uses
-        getRecoilCharge(self) : The amount of energy that is recycled back into the generator after every shot
+        getRecoilCharge(self) : The amount of energy that is recycled back into the reactor after every shot
         getWeaponRange(self) 
         getMeleeVerb(self) : Gets the verb to describe a melee attack
         getRangedVerb(self) : Gets the verb to describe a ranged attack
         
     Properties:
-        energy : int : RW; Amount of energy in the Character's Generator
-        max_energy : int : RO; Amount of energy that a Character's Generator could hold
+        energy : int : RW; Amount of energy in the Character's Reactor
+        max_energy : int : RO; Amount of energy that a Character's Reactor could hold
 
     Children:
         Player(Character)"""
@@ -475,7 +475,7 @@ class Character(Entity):
                 break
          
     def takeDamage(self, damage):
-        """Reduces the amount of energy in the character's generator and deals any remaining to flesh
+        """Reduces the amount of energy in the character's reactor and deals any remaining to flesh
 
         Attacks to flesh do not nessearilly reduce life points but rather affect the chance to kill or chance to injure
 
@@ -498,7 +498,7 @@ class Character(Entity):
         else:
             damage_to_flesh = damage
 
-        # Generator is tagged as being hit this turn
+        # Reactor is tagged as being hit this turn
         if self.inventory.equipped['generator']:
             self.inventory.equipped['generator'].hit_this_turn = True
 
@@ -614,9 +614,9 @@ class Character(Entity):
             return 0
 
     def getRecoilCharge(self):
-        """The amount of energy that is recycled back into the generator after every shot.
+        """The amount of energy that is recycled back into the reactor after every shot.
         
-        This is either the amount of energy per shot on the equipped weapon or the recoil charge on the generator,
+        This is either the amount of energy per shot on the equipped weapon or the recoil charge on the reactor,
         whichever is lower
         
         Returns: float
@@ -669,7 +669,7 @@ class Character(Entity):
 
     @property
     def energy(self):
-        """Amount of energy currently in the character's generator
+        """Amount of energy currently in the character's reactor
 
         Returns: int
         """
@@ -683,8 +683,9 @@ class Character(Entity):
         """Setter method for energy"""
         try:
             self.inventory.equipped['generator'].current_charge = value
+        # todo remove exception handling
         except AttributeError:
-            print("No Generator to hold energy")
+            print("No Reactor to hold energy")
 
     @property
     def max_energy(self):
@@ -1083,7 +1084,7 @@ class Armor(Item):
         Currently Unused"""
         surface.blit(self.image, (self.location.owner.x * CELL_SIZE, self.location.owner.y * CELL_SIZE))
 
-
+#todo rename to Reactor
 class Generator(Item):
     """Item which provides energy when equipped
 
@@ -1099,7 +1100,7 @@ class Generator(Item):
         recovered : int : This will normally be at zero unless the charge is 0. 
             If the charge is at zero and hit_this_turn is False, increments by 1 until it reaches recovery time
             If hit while recovering, recovered resets to 0
-            Generator will not recharge until recovered
+            Reactor will not recharge until recovered
         current_charge : float
     """
 
@@ -1122,17 +1123,17 @@ class Generator(Item):
         super().__init__(data, location, x, y)
 
     def equip(self):
-        """Puts the generator in the equipped generator slot and reduces the current charge to 0"""
+        """Puts the reactor in the equipped reactor slot and reduces the current charge to 0"""
         self.location.equipped['generator'] = self
         self.current_charge = 0.0
 
     def recharge(self):
-        """Recovers or recharges the the Generator. Should be called once per turn
+        """Recovers or recharges the Reactor. Should be called once per turn
         
-        If the generator was not hit this turn and has not been completely depleted, recharges by the recharge rate amount
+        If the reactor was not hit this turn and has not been completely depleted, recharges by the recharge rate amount
         After recharging, it ensures that current_charge does not exceed max_charge
         
-        If the generator was not hit this turn and is depleted, increases the recovered counter.
+        If the reactor was not hit this turn and is depleted, increases the recovered counter.
         If the recovered counter reached the recovery time, recharge by the recharge rate amount
         
         If was hit this turn, reset recovered counter
@@ -1141,7 +1142,7 @@ class Generator(Item):
         if not self.hit_this_turn:
             if self.current_charge == 0:
                 if self.recovered < self.recovery_time:
-                    # If the generator has not recovered yet, return
+                    # If the reactor has not recovered yet, return
                     self.recovered += 1
                     return
                 else:
@@ -1163,7 +1164,7 @@ class Generator(Item):
 
     #todo remove unused code
     def drawForceField(self, surface):
-        """Draws a blue force field around the character to indeicate the energy in the generator
+        """Draws a blue force field around the character to indicate the energy in the reactor
         
         Currently Unused
         """
@@ -1197,7 +1198,7 @@ class Battery(Item):
         super().__init__(data, location, x, y)
 
     def use(self):
-        """Uses the battery, which increases the amount of charge in the generator"""
+        """Uses the battery, which increases the amount of charge in the reactor"""
         target = self.location.equipped['generator']
         target.current_charge += self.power
         self.location.removeEntity(self)
