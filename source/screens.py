@@ -791,29 +791,35 @@ def drawStatPane(window, player, pane):
     item_image_rects = {item: item_images[item].get_rect() for item in item_images}
 
     # The distance between the images
-    image_dist = CELL_SIZE*3
+    image_dist = (pane.width-x_margin*2)/3
 
     item_text_surfs = dict()
     item_text_rects = dict()
 
+    # Draw a line above the items
+    line_y = text_rects['r_eps'].bottom + line_size
+    line_end = pane.right - x_margin
+    pygame.draw.line(window, COLORS['BLACK'], (indent_left, line_y), (line_end, line_y), 1)
+
     # Place the rects for the images, amd render text associated with them
     for i, slot in enumerate(item_image_rects):
-        item_image_rects[slot].midright = (pane.centerx, pane.centery + (i*image_dist))
-        line_y = item_image_rects[slot].top - CELL_SIZE*3/2
-        line_start = pane.left+x_margin
-        line_end = pane.right-x_margin
-        pygame.draw.line(window, COLORS['BLACK'], (line_start, line_y), (line_end, line_y), 1)
 
         # Title text
-        title_top = line_y + CELL_SIZE/2
+        # title_top = line_y + CELL_SIZE/2
         item_text_surfs[slot+'_title'] = FONTS['INFO'].render(slot.capitalize(), True, font_color, background_color)
         item_text_rects[slot+'_title'] = item_text_surfs[slot+'_title'].get_rect()
-        item_text_rects[slot+'_title'].midtop = (pane.centerx, title_top)
+        item_text_rects[slot+'_title'].midtop = (pane.left + ((i+1)*image_dist),
+                                                 line_y + line_size)
+
+        # Item Image
+        item_image_rects[slot].midtop = (item_text_rects[slot+'_title'].centerx,
+                                         item_text_rects[slot+'_title'].bottom + half_line_size)
 
         # Name text
-        item_text_surfs[slot+'_name'] = FONTS['LOG'].render(item_names[slot], True, font_color, background_color)
+        item_text_surfs[slot+'_name'] = FONTS['INFO_S'].render(item_names[slot], True, font_color, background_color)
         item_text_rects[slot+'_name'] = item_text_surfs[slot+'_name'].get_rect()
-        item_text_rects[slot+'_name'].midleft = (pane.centerx, item_image_rects[slot].centery)
+        item_text_rects[slot+'_name'].midtop = (item_image_rects[slot].centerx,
+                                                item_image_rects[slot].bottom + half_line_size)
 
     # Draw picture of images and the associated text
     for item in item_images:

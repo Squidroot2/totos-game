@@ -43,12 +43,14 @@ DRAW_ORDER =    {'CORPSE': 0,
 
 pygame.font.init()
 FONT_FILES = {'UNISPACE' : os.path.join('fonts', 'unispace_rg.ttf')}
-FONTS = {'TITLE': pygame.font.Font('freesansbold.ttf', 70),
-         'MAIN': pygame.font.Font('freesansbold.ttf', 28),
-         'SUBMAIN': pygame.font.Font('freesansbold.ttf', 20),
-         'INFO_HEADER': pygame.font.Font('freesansbold.ttf', 16),
-         'INFO': pygame.font.Font(FONT_FILES['UNISPACE'], 14),
-         'LOG': pygame.font.Font('freesansbold.ttf', 12)}
+
+FONTS = {'TITLE':       pygame.font.Font('freesansbold.ttf', 70),
+         'MAIN':        pygame.font.Font('freesansbold.ttf', 28),
+         'SUBMAIN':     pygame.font.Font('freesansbold.ttf', 20),
+         'INFO_HEADER': pygame.font.Font(FONT_FILES['UNISPACE'], 16),
+         'INFO':        pygame.font.Font(FONT_FILES['UNISPACE'], 14),
+         'INFO_S':      pygame.font.Font(FONT_FILES['UNISPACE'], 12),
+         'LOG':         pygame.font.Font('freesansbold.ttf', 12)}
 
 FONTS['TITLE'].set_underline(True)
 FPS = 144
