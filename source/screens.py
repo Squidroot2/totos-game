@@ -802,6 +802,8 @@ def drawStatPane(window, player, pane):
     pygame.draw.line(window, COLORS['BLACK'], (indent_left, line_y), (line_end, line_y), 1)
 
     # Place the rects for the images, amd render text associated with them
+
+    #todo change generator to reactor
     for i, slot in enumerate(item_image_rects):
 
         # Title text
