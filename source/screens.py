@@ -791,7 +791,7 @@ def drawStatPane(window, player, pane):
     item_image_rects = {item: item_images[item].get_rect() for item in item_images}
 
     # The distance between the images
-    image_dist = pane.width / ((len(equipment)+1)
+    image_dist = pane.width / ((len(equipment)+1))
 
     item_text_surfs = dict()
     item_text_rects = dict()
