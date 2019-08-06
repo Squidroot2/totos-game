@@ -10,4 +10,9 @@
 ## Compatibility
 I have tested running the game on Fedora 29 and Winodws 10. I expect it to run on any operating system
 
+## Credits
+Big thanks to the following
+
+* TypodermicFonts (Unispace)
+
   
