@@ -791,7 +791,7 @@ def drawStatPane(window, player, pane):
     item_image_rects = {item: item_images[item].get_rect() for item in item_images}
 
     # The distance between the images
-    image_dist = (pane.width-x_margin*2)/3
+    image_dist = pane.width / ((len(equipment)+1)
 
     item_text_surfs = dict()
     item_text_rects = dict()
@@ -800,6 +800,11 @@ def drawStatPane(window, player, pane):
     line_y = text_rects['r_eps'].bottom + line_size
     line_end = pane.right - x_margin
     pygame.draw.line(window, COLORS['BLACK'], (indent_left, line_y), (line_end, line_y), 1)
+    
+    # Vertical lines seperating the items
+    vert_line_start = line_y
+    vert_line_end = (line_y + line_size*4 + CELL_SIZE)
+    line_dist = pane.width / len(equipment)
 
     # Place the rects for the images, amd render text associated with them
     for i, slot in enumerate(item_image_rects):
@@ -820,7 +825,13 @@ def drawStatPane(window, player, pane):
         item_text_rects[slot+'_name'] = item_text_surfs[slot+'_name'].get_rect()
         item_text_rects[slot+'_name'].midtop = (item_image_rects[slot].centerx,
                                                 item_image_rects[slot].bottom + half_line_size)
-
+        
+        # Line in between. Not drawn first time around
+        if i > 0:
+            vert_line_x = line_dist*i
+            pygame.draw.line(window, COLORS['BLACK'], (vert_line_x, vert_line_start),
+                            (vert_line_x, vert_line_end), 1)
+        
     # Draw picture of images and the associated text
     for item in item_images:
         window.blit(item_images[item], item_image_rects[item])
