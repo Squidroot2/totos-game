@@ -52,7 +52,8 @@ class Projectile:
         # If delay, decrement delay
         if delay:
             delay -= 1
-        
+            return
+            
         else:
             # Draws the projectile
             surface.blit(self.image, (self.pixelx, self.pixely))

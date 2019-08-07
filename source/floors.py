@@ -324,3 +324,9 @@ class Tile:
         width = self.CELL_SIZE
         height = self.CELL_SIZE
         return pygame.Rect(left, top, width, height)
+    
+    def addSplatter(self):
+        """Copies the images and adds a blood splatter to it"""
+        self.image = self.image.copy()
+        splatter = Images.getRandomSplatter()
+        self.image.blit(splatter, (0,0))

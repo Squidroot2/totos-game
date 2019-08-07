@@ -9,6 +9,7 @@ Classes:
 """
 # Standard Library
 import os
+import random
 # Third Party
 import pygame
 # My Modules
@@ -30,6 +31,8 @@ class Images:
     tile_images = os.path.join(main_folder, 'tiles')
     item_images = os.path.join(main_folder, 'items')
     bg_images = os.path.join(main_folder, 'backgrounds')
+    splatter_images = os.path.join(main_folder, 'splatters')
+    proj_images = os.path.join(main_folder, 'projectiles')
     
     # Missing Image
     missing_image_path = os.path.join(main_folder, 'unknown.png')
@@ -64,7 +67,9 @@ class Images:
                     'Backgrounds': {
                         'title': os.path.join(bg_images, 'title_screen.png'),
                         'starry': os.path.join(bg_images, 'starry_bg.png')
-                    }
+                    },
+                    'Splatters' : {},
+                    'Projectiles' : {}
     }
 
     # Creates an 'images' dictionary that is the same as the same structure as image_paths
@@ -100,6 +105,14 @@ class Images:
             return cls.images[directory][image]
         except KeyError:
             return cls.missing_image
+    
+    @classmethod
+    def getRandomSplatter(cls):
+        """Returns a random image from the splatter directory"""
+        splatter = random.choice(cls.images['Splatters'])
+        return cls.images['Splatters'][splatter]
+        
+        
 
 
 class Data:
