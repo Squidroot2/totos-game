@@ -267,23 +267,21 @@ class Inventory:
     ''' Component Class'''
     def __init__(self, owner, inv_type):
 
-
         # Type Validation
         type_is_valid = inv_type in ('empty', 'BOXER') or inv_type in BACKGROUNDS
         assert type_is_valid
 
         self.owner = owner
         self.contents = []
-        #todo change generator to reactor
-        self.equipped = {"weapon": None, "armor": None, "generator": None}
+        self.equipped = {"weapon": None, "armor": None, "reactor": None}
 
         # If the inventory type is not empty, get the inventory data and create the items.
         if inv_type != "empty":
             self.populate(inv_type)
 
             # Set the reactor to full energy if there is one equipped
-            if self.equipped['generator'] is not None:
-                self.equipped['generator'].rechargeToFull()
+            if self.equipped['reactor'] is not None:
+                self.equipped['reactor'].rechargeToFull()
 
     def populate(self, inv_type):
         """Populates the inventory with the intial items using the inventory type"""

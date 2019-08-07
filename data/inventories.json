@@ -3,31 +3,31 @@
     "Officer": {
       "weapon": "PISTOL_1",
       "armor": "ARMOR_1",
-      "generator": "QUICK_1",
+      "reactor": "QUICK_1",
       "other": ["BATTERY_1", "BATTERY_1"]
     },
     "Marksman": {
       "weapon": "RIFLE_1",
       "armor": "ARMOR_1",
-      "generator": "RANGER_1",
+      "reactor": "RANGER_1",
       "other": ["BATTERY_1", "BATTERY_1"]
     },
     "Agent": {
       "weapon": "PDW_1",
       "armor": "ARMOR_1",
-      "generator": "FEEDER_1",
+      "reactor": "FEEDER_1",
       "other": ["BATTERY_1", "BATTERY_1"]
     },
     "Pointman": {
       "weapon": "CANNON_1",
       "armor": "ARMOR_1",
-      "generator": "RANGER_1",
+      "reactor": "RANGER_1",
       "other": ["BATTERY_1", "BATTERY_1"]
     },
     "Gladiator": {
       "weapon": "SWORD_1",
       "armor": "ARMOR_2",
-      "generator": "BRAWLER_1",
+      "reactor": "BRAWLER_1",
       "other": ["BATTERY_1", "BATTERY_1"]
     }
   },
@@ -37,7 +37,7 @@
     {
       "weapon": null,
       "armor": "ARMOR_1",
-      "generator": "BRAWLER_1",
+      "reactor": "BRAWLER_1",
       "other": null
     }
   }

@@ -253,7 +253,7 @@
       "ranged": null
     }
   },
-  "GENERATORS": {
+  "REACTORS": {
     "QUICK_1": {
       "name": "Squire MK1",
       "image": null,

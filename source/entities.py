@@ -499,8 +499,8 @@ class Character(Entity):
             damage_to_flesh = damage
 
         # Reactor is tagged as being hit this turn
-        if self.inventory.equipped['generator']:
-            self.inventory.equipped['generator'].hit_this_turn = True
+        if self.inventory.equipped['reactor']:
+            self.inventory.equipped['reactor'].hit_this_turn = True
 
         # Determine if the damage to flesh was lethal
         killed = formulas.determineLethal(damage_to_flesh, self.life)
@@ -622,10 +622,10 @@ class Character(Entity):
         Returns: float
         """
         try:
-            if self.getEnergyPerShot() < self.inventory.equipped['generator'].recoil_charge:
+            if self.getEnergyPerShot() < self.inventory.equipped['reactor'].recoil_charge:
                 return self.getEnergyPerShot()
             else:
-                return self.inventory.equipped['generator'].recoil_charge
+                return self.inventory.equipped['reactor'].recoil_charge
         except AttributeError:
             return 0
 
@@ -673,26 +673,26 @@ class Character(Entity):
 
         Returns: int
         """
-        if self.inventory.equipped['generator'] is None:
+        if self.inventory.equipped['reactor'] is None:
             return 0
         else:
-            return self.inventory.equipped['generator'].current_charge
+            return self.inventory.equipped['reactor'].current_charge
 
     @energy.setter
     def energy(self, value):
         """Setter method for energy"""
-        self.inventory.equipped['generator'].current_charge = value
+        self.inventory.equipped['reactor'].current_charge = value
 
 
     @property
     def max_energy(self):
-        """Amount of energy the character's generator could hold
+        """Amount of energy the character's reactor could hold
 
         Returns:: int"""
-        if self.inventory.equipped['generator'] is None:
+        if self.inventory.equipped['reactor'] is None:
             return 0
         else:
-            return self.inventory.equipped['generator'].max_charge
+            return self.inventory.equipped['reactor'].max_charge
 
 
 class Player(Character):
@@ -952,9 +952,9 @@ class Player(Character):
             return (self.xp - ceiling_last_lvl) / (self.xp_ceiling[self.level] - ceiling_last_lvl)
 
     def getChargeThisTurn(self):
-        """Returns the amount that the generator will charge this turn"""
+        """Returns the amount that the reactor will charge this turn"""
         try:
-            return self.inventory.equipped['generator'].getRechargeThisTurn()
+            return self.inventory.equipped['reactor'].getRechargeThisTurn()
 
         except AttributeError:
             return 0
@@ -1031,7 +1031,7 @@ class Item(Entity):
         elif item_class in ("SWORD", "CLUB", "KNIFE", "PDW", "CANNON", "RIFLE", "PISTOL"):
             item = Weapon(item_id, location, x, y)
         elif item_class in ("QUICK", "BRAWLER", "FEEDER", "RANGER"):
-            item = Generator(item_id, location, x, y)
+            item = Reactor(item_id, location, x, y)
         else:
             raise ValueError("%s not recognized as a valid item class" %item_class)
 
@@ -1086,7 +1086,7 @@ class Armor(Item):
         self.location.equipped['armor'] = self
 
 #todo rename to Reactor
-class Generator(Item):
+class Reactor(Item):
     """Item which provides energy when equipped
 
     Child of Item, Entity
@@ -1107,7 +1107,7 @@ class Generator(Item):
 
     def __init__(self, item_id, location, x=None, y=None):
 
-        data = Data.getItem("GENERATORS", item_id)
+        data = Data.getItem("REACTORS", item_id)
 
         self.max_charge = data['max_charge']
         self.recharge_rate = data['recharge_rate']
@@ -1125,7 +1125,7 @@ class Generator(Item):
 
     def equip(self):
         """Puts the reactor in the equipped reactor slot and reduces the current charge to 0"""
-        self.location.equipped['generator'] = self
+        self.location.equipped['reactor'] = self
         self.current_charge = 0.0
 
     def recharge(self):
@@ -1191,7 +1191,7 @@ class Battery(Item):
 
     def use(self):
         """Uses the battery, which increases the amount of charge in the reactor"""
-        target = self.location.equipped['generator']
+        target = self.location.equipped['reactor']
         target.current_charge += self.power
         self.location.removeEntity(self)
         

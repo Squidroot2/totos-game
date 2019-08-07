@@ -394,9 +394,9 @@ def mainGameScreen(window, fps_clock, game):
                 if entity.ai:
                     entity.ai.takeTurn()
                 # Recharge all equipped reactors
-                if entity.inventory and entity.inventory.equipped['generator']:
-                    entity.inventory.equipped['generator'].recharge()
-                    entity.inventory.equipped['generator'].hit_this_turn = False
+                if entity.inventory and entity.inventory.equipped['reactor']:
+                    entity.inventory.equipped['reactor'].recharge()
+                    entity.inventory.equipped['reactor'].hit_this_turn = False
 
             # See what the player can see
             player.calculateFOV()
