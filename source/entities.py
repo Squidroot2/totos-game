@@ -703,14 +703,9 @@ class Player(Character):
     draw_order = DRAW_ORDER['PLAYER']
     base_image = None
 
-    xp_ceiling = {1:1,
-                  2:2,
-                  3:3,
-                  4:4,
-                  5:5}
+    xp_ceiling = [0, 1, 5, 10, 15, 25]
 
     max_level = len(xp_ceiling)
-
 
     def __init__(self, name, background, floor, x, y):
         """Extends the Character init method
@@ -925,7 +920,7 @@ class Player(Character):
             enemy: Character"""
         self.xp += enemy.xp
 
-        while not self.level == self.max_level and self.xp > self.xp_ceiling[self.level]:
+        while not self.level == self.max_level and self.xp >= self.xp_ceiling[self.level]:
             self.levelUp()
 
     def levelUp(self):
@@ -947,6 +942,22 @@ class Player(Character):
             self.base_defense += 1
         if self.level == self.max_level:
             Log.addToBuffer("%s has reached max level" % self.name)
+
+    def getPercentToNextLevel(self):
+        """Returns a floating point number between 0 and 1 that indicates how close the player is to the next level"""
+        if self.level == self.max_level:
+            return 1.0
+        else:
+            ceiling_last_lvl = self.xp_ceiling[self.level - 1]
+            return (self.xp - ceiling_last_lvl) / (self.xp_ceiling[self.level] - ceiling_last_lvl)
+
+    def getChargeThisTurn(self):
+        """Returns the amount that the generator will charge this turn"""
+        try:
+            return self.inventory.equipped['generator'].getRechargeThisTurn()
+
+        except AttributeError:
+            return 0
 
     @property
     def image(self):
@@ -1074,13 +1085,6 @@ class Armor(Item):
     def equip(self):
         self.location.equipped['armor'] = self
 
-    #todo remove unused code
-    def drawOnOwner(self, surface):
-        """Used to draw the armor onto the player in the tile_map
-
-        Currently Unused"""
-        surface.blit(self.image, (self.location.owner.x * CELL_SIZE, self.location.owner.y * CELL_SIZE))
-
 #todo rename to Reactor
 class Generator(Item):
     """Item which provides energy when equipped
@@ -1159,23 +1163,14 @@ class Generator(Item):
         """Sets the current charge to be equal to the max charge"""
         self.current_charge = self.max_charge
 
-    #todo remove unused code
-    def drawForceField(self, surface):
-        """Draws a blue force field around the character to indicate the energy in the reactor
-        
-        Currently Unused
-        """
-
-        surf = pygame.Surface((CELL_SIZE, CELL_SIZE))
-        radius = int(CELL_SIZE/2)
-        center_of_tile = (int(CELL_SIZE/2), int(CELL_SIZE/2))
-
-        pygame.draw.circle(surf, COLORS['LIGHT BLUE'], center_of_tile, radius)
-
-        surf.set_alpha(128)
-
-        surface.blit(surf, (self.location.owner.x * CELL_SIZE, self.location.owner.y * CELL_SIZE))
-
+    def getRechargeThisTurn(self):
+        """Used for printing to the information pane"""
+        if self.hit_this_turn:
+            return 0
+        elif self.current_charge == 0 and self.recovered < self.recovery_time:
+            return 0
+        else:
+            return self.recharge_rate
 
 class Battery(Item):
     """Item which can be used to charge energy

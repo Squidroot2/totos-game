@@ -31,6 +31,7 @@ COLORS = {'BLACK':      (  0,  0,  0),
           'RED':        (255,  0,  0),
           'LIGHT BLUE': (100,255,255),
           'YELLOW':     (255,255,  0),
+          'ORANGE':     (255,165,  0),
           'GOLDENROD':  (190,145, 20)}
 
 DRAW_ORDER =    {'CORPSE': 0,

@@ -84,6 +84,19 @@ def getLineBetweenEntities(coordsA, coordsB):
 
     return path
 
+
+def formatFloat(formatter, val):
+    """Format float to drop off leading zero
+
+    Parameters"""
+    output = formatter % val
+    if output.startswith("0."):
+        return output[1:]
+    if output.startswith("-0."):
+        return "-" + output[2:]
+    return output
+
+
 def terminateGame():
     """Quits the program"""
     pygame.quit()

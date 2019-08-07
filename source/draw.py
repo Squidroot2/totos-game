@@ -2,6 +2,7 @@ import pygame
 
 from source.constants import BACKGROUNDS, COLORS, FONTS, CELL_SIZE
 from source.formulas import getRangedHitChance, getMeleeHitChance
+from source.utilities import formatFloat
 
 
 def drawClassSelect(window, selected_class):
@@ -115,11 +116,11 @@ def drawStatPane(window, player, pane):
     background_color = COLORS['DARK GRAY']
     font_color = COLORS['WHITE']
     energy_value_font_color = COLORS['GOLDENROD']
+    xp_percent_font_color = COLORS['WHITE']
 
     # Fills in the pane in black
     pygame.draw.rect(window, background_color, pane, 0)
 
-    #todo use linesizes throughout function
     # Get linesizes
     header_size = FONTS['INFO_HEADER'].get_linesize()
     line_size = FONTS['INFO'].get_linesize()
@@ -129,20 +130,24 @@ def drawStatPane(window, player, pane):
     x_margin = pane.width/10
     y_margin = pane.height/25
 
-    # todo use indent_left to reduce repeated arithmetic
     indent_left = pane.left + x_margin
 
     # Stats used multiple times
     eps = player.getEnergyPerShot()
     enc = player.getEncumbrance()
+    percent_to_next_level = player.getPercentToNextLevel()
+
+
 
     # Strings used
     full_name = player.name + " the " + player.background
     floor_number = "Floor : %d" % player.location.number
     experience = "XL: %d" % player.level
+    xp_percent = "%.1f%%" % (100*percent_to_next_level)
     defense = "Defense: %d" % player.getDefense()
     life = "Life: %d" % player.life
     energy_value = "%.1f / %d" % (player.energy, player.max_energy)
+    recharge = "Recharge: %s"  % formatFloat("%.2f", player.getChargeThisTurn())
     # Ranged Stats
     str_eps = "EPS: %.1f (%.1f)" % (eps, eps - player.getRecoilCharge())
     r_dmg = "DMG: %.1f" % player.getRangedDamage()
@@ -163,8 +168,10 @@ def drawStatPane(window, player, pane):
     text_surfs['defense'] = FONTS['INFO'].render(defense, True, font_color, background_color)
     text_surfs['life'] = FONTS['INFO'].render(life, True, font_color, background_color)
     text_surfs['energy_key'] = FONTS['INFO'].render("Energy:", True, font_color, background_color)
+    text_surfs['recharge'] = FONTS['INFO'].render(recharge, True, font_color, background_color)
 
-    text_surfs['energy_value'] = FONTS['INFO'].render(energy_value, True, energy_value_font_color)
+    text_surfs['xp_percent'] = FONTS['INFO_S'].render(xp_percent, True, xp_percent_font_color)
+    text_surfs['energy_value'] = FONTS['INFO_S'].render(energy_value, True, energy_value_font_color)
 
     text_surfs['ranged'] = FONTS['INFO_HEADER'].render("Ranged", True, font_color, background_color)
     text_surfs['r_dmg'] = FONTS['INFO'].render(r_dmg, True, font_color, background_color)
@@ -185,10 +192,12 @@ def drawStatPane(window, player, pane):
     text_rects['name'].midleft = (indent_left, y_margin)
     text_rects['floor'].topleft = (indent_left, text_rects['name'].bottom + line_size)
     text_rects['xp'].topleft = (indent_left, text_rects['floor'].bottom + half_line_size)
+    text_rects['xp_percent'].center = (pane.centerx, text_rects['xp'].centery)
     text_rects['energy_key'].topleft = (indent_left, text_rects['xp'].bottom + half_line_size)
-    text_rects['life'].topleft = (indent_left, text_rects['energy_key'].bottom + half_line_size)
+    text_rects['energy_value'].center = (pane.centerx, text_rects['energy_key'].centery)
+    text_rects['recharge'].topleft = (indent_left, text_rects['energy_key'].bottom + half_line_size)
+    text_rects['life'].topleft = (indent_left, text_rects['recharge'].bottom + half_line_size)
     text_rects['defense'].topleft = (pane.centerx, text_rects['life'].top)
-    # Energy Value is placed after energy bar
 
     # Draw Line Separating top stats from damage stats
     line_y = text_rects['life'].bottom + header_size
@@ -211,32 +220,15 @@ def drawStatPane(window, player, pane):
     text_rects['m_ar'].topleft = (pane.centerx, text_rects['r_ar'].top)
     text_rects['m_acc'].topleft = (pane.centerx, text_rects['r_acc'].top)
 
-    # Define Energy Bar Dimensions
-    energy_bar_width = pane.width/4
-    energy_bar_height = line_size
-    energy_bar_left = text_rects['energy_key'].right + 20
-    energy_bar_top = text_rects['energy_key'].top
-
-    energy_bar = pygame.Rect(energy_bar_left, energy_bar_top, energy_bar_width, energy_bar_height)
-
-    # Place Energy Value over the Energy Bar
-    text_rects['energy_value'].center = energy_bar.center
-
-    # Draw to Screen
-    pygame.draw.rect(window, COLORS['WHITE'], energy_bar, 1)
-
-    # Define Energy Fill, A bar that is proportionate to the amount of energy remaining
-    energy_fill = energy_bar.copy()
-    energy_fill.y += 1
-    energy_fill.x += 1
-    energy_fill.height -= 2
     try:
-        energy_fill.width = (energy_bar.width - 2) * (player.energy / player.max_energy)
+        energy_fill_percent = player.energy / player.max_energy
     except ZeroDivisionError:
-        energy_fill.width = 0
+        energy_fill_percent = 0
 
-    # Draw Energy Fill to Screen
-    pygame.draw.rect(window, COLORS['LIGHT BLUE'], energy_fill, 0)
+    drawFillBar(window, pane, y_axis=text_rects['energy_key'].centery, height=line_size,
+                fill_percent=energy_fill_percent, fill_color=COLORS['LIGHT BLUE'])
+    drawFillBar(window, pane, y_axis=text_rects['xp'].centery, height=line_size,
+                fill_percent=percent_to_next_level, fill_color=COLORS['ORANGE'])
 
     # Get the equipment and creates two dictionaries: one for images, one for names
     equipment = player.inventory.equipped
@@ -253,8 +245,8 @@ def drawStatPane(window, player, pane):
     # Create dict for rects of the item images
     item_image_rects = {item: item_images[item].get_rect() for item in item_images}
 
-    # The distance between the images
-    image_dist = pane.width / ((len(equipment)+1))
+    # The interval used to space out item images
+    image_interval = pane.width / 6   # Images are centered at 1/6, 3/6, and 5/6
 
     # Dicts for item text and rects
     item_text_surfs = dict()
@@ -265,8 +257,8 @@ def drawStatPane(window, player, pane):
     line_end = pane.right - x_margin
     pygame.draw.line(window, COLORS['BLACK'], (indent_left, line_y), (line_end, line_y), 1)
 
-    # Vertical lines seperating the items
-    vert_line_start = line_y
+    # Vertical lines separating the items
+    vert_line_start = line_y + half_line_size
     vert_line_end = (line_y + line_size*4 + CELL_SIZE)
     line_dist = pane.width / len(equipment)
 
@@ -277,7 +269,7 @@ def drawStatPane(window, player, pane):
         # title_top = line_y + CELL_SIZE/2
         item_text_surfs[slot+'_title'] = FONTS['INFO'].render(slot.capitalize(), True, font_color, background_color)
         item_text_rects[slot+'_title'] = item_text_surfs[slot+'_title'].get_rect()
-        item_text_rects[slot+'_title'].midtop = (pane.left + ((i+1)*image_dist),
+        item_text_rects[slot+'_title'].midtop = (pane.left + image_interval + (i*2*image_interval),
                                                  line_y + line_size)
 
         # Item Image
@@ -292,9 +284,9 @@ def drawStatPane(window, player, pane):
 
         # Line in between. Not drawn first time around
         if i > 0:
-            vert_line_x = line_dist*i
+            vert_line_x = pane.left + line_dist * i
             pygame.draw.line(window, COLORS['BLACK'], (vert_line_x, vert_line_start),
-                            (vert_line_x, vert_line_end), 1)
+                            (vert_line_x, vert_line_end), 2)
 
     # Draw picture of images and the associated text
     for item in item_images:
@@ -381,3 +373,21 @@ def drawFPS(window, fps_clock):
     fps_rect.topleft = (window_rect.left + x_margin, window_rect.top + y_margin)
 
     window.blit(fps_surf, fps_rect)
+
+
+def drawFillBar(window, pane, y_axis, height, fill_percent, fill_color, outline_color=COLORS['WHITE']):
+    """Draws a bar filled to a specified percentage"""
+    bar_width = pane.width / 4
+
+    bar = pygame.Rect(0, 0, bar_width, height)
+    bar.center = (pane.centerx, y_axis)
+
+    pygame.draw.rect(window, outline_color, bar, 1)
+
+    fill = bar.copy()
+    fill.y += 1
+    fill.x += 1
+    fill.height -= 2
+    fill.width = (bar.width - 2) * fill_percent
+
+    pygame.draw.rect(window, fill_color, fill, 0)
