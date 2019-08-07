@@ -27,6 +27,7 @@ from source.constants import CELL_SIZE, BACKGROUNDS, COLORS, DRAW_ORDER
 from source.game import Log
 from source.utilities import getDistanceBetweenEntities, getLineBetweenEntities
 from source.assets import Images, Data
+from source.projectile import Projectile
 
 
 class Entity:
@@ -464,6 +465,12 @@ class Character(Entity):
                 opponent.takeDamage(damage)
             else:
                 Log.addToBuffer(self.name + " missed")
+            
+            if is_ranged:
+                #todo Create a Projectile
+                # projectile_id = self.getProjectile()
+                # Projectile(projectile_id, self.location, (self.x,self.y),(opponent.x,opponent.y), delay=strike*4)
+                pass
 
             # Send a message if the opponent was killed
             if opponent.is_dead:
@@ -1085,7 +1092,7 @@ class Armor(Item):
     def equip(self):
         self.location.equipped['armor'] = self
 
-#todo rename to Reactor
+
 class Reactor(Item):
     """Item which provides energy when equipped
 

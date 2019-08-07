@@ -33,6 +33,7 @@ class Floor:
         # Initialize empty variables
         self.entities = []
         self.sort_entities = False
+        self.projectiles = []
         self.rooms = []
         self.portals = {'up': None, 'down': None}
         self.landing_room = None
@@ -212,13 +213,18 @@ class Floor:
                 # Draw fog if discovered but no longer in fov
                 if self.tile_map[x][y].discovered and not self.map.fov[y][x]:
                     self.tile_map[x][y].drawFog(surface)
+        
+        for projectile in self.projectiles:
+            projectile.drawNextStep(surface)
+        
+            
+            
 
     def addEntity(self, entity):
         """Adds an entity to the entities list attribute
 
         Parameters:
             entity : Entity
-                entity to add
         """
         self.entities.append(entity)
         self.sort_entities = True
@@ -226,6 +232,14 @@ class Floor:
     def removeEntity(self, entity):
         """Removes an entity from the entities list attribute"""
         self.entities.remove(entity)
+    
+    def addProjectile(self, projectile):
+        """Adds a projectile to the projectiles list"""
+        self.projectiles.append(projectile)
+    
+    def removeProjectile(self, projetile):
+        """Removes the projectile from the projectiles list"""
+        self.projectiles.remove(projectile)
 
     @staticmethod
     def generateDungeon(num_of_floors):

@@ -434,7 +434,15 @@ def mainGameScreen(window, fps_clock, game):
             # END FOR KEYDOWN EVENT LOOP
         # END FOR EVENT LOOP
 
+        #If there are projectiles, draw their animation until there there are no projectiles
+        while player.location.projectiles:
+            pygame.draw.rect(window, COLORS['BLACK'], panes['main'])
+            drawGamePane(window,game,panes['main'])
+            pygame.display.update()
+            fps_clock.tick(FPS)
+       
         # drawFPS(window, fps_clock)
+        
         # Update the screen and wait for clock to tick; repeat the while loop
         pygame.display.update()
         fps_clock.tick()
