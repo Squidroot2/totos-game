@@ -12,6 +12,7 @@ import os
 import random
 # Third Party
 import pygame
+from pygame.font import Font
 # My Modules
 from source.utilities import loadJson
 
@@ -20,6 +21,7 @@ def loadAssets():
     """Runs the load method on all classes"""
     Images.load()
     Data.load()
+    #Fonts.create()
 
 
 class Images:
@@ -178,3 +180,31 @@ class Data:
     @classmethod
     def getPlayerInventory(cls, background):
         return cls.data['Inventories']['PLAYER'][background]
+
+
+#todo use Fonts Class to create Fonts
+class Fonts:
+    main_folder = 'fonts'
+    
+    # Font types
+    unispace_folder = os.path.join(main_folder, 'unispace')
+    
+    files = {'default': 'freesansbold.ttf',
+             'unispace_rg': os.path.join(unispace_folder, 'unispace_rg.ttf')}
+    
+    fonts = dict()
+             
+    @classmethod
+    def create(cls):
+        cls.fonts = {
+                'Title':        Font(cls.files['default'], 70),
+                'Main':         Font(cls.files['default'], 28),
+                'Submain':      Font(cls.files['default'], 20),
+                'Info_Header':  Font(cls.files['unispace_rg'], 16),
+                'Info':         Font(cls.files['unispace_rg'], 14),
+                'Info_S':       Font(cls.files['unispace_rg'],12),
+                'Log':          Font(cls.files['default'],12)}
+
+    
+    
+    
