@@ -70,7 +70,12 @@ class Images:
                         'title': os.path.join(bg_images, 'title_screen.png'),
                         'starry': os.path.join(bg_images, 'starry_bg.png')
                     },
-                    'Splatters' : {},
+                    'Splatters': {
+                        1: os.path.join(splatter_images, 'splatter01.png'),
+                        2: os.path.join(splatter_images, 'splatter02.png'),
+                        3: os.path.join(splatter_images, 'splatter03.png'),
+                        4: os.path.join(splatter_images, 'splatter04.png')
+                    },
                     'Projectiles' : {}
     }
 
@@ -111,8 +116,7 @@ class Images:
     @classmethod
     def getRandomSplatter(cls):
         """Returns a random image from the splatter directory"""
-        splatter = random.choice(cls.images['Splatters'])
-        return cls.images['Splatters'][splatter]
+        return random.choice(list(cls.images['Splatters'].values()))
         
         
 

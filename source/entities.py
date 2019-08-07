@@ -523,7 +523,7 @@ class Character(Entity):
             # If injured, log message and reduce life by 1
             if injured:
                 #todo add blood spatter
-                # self.location.tile_map[self.x][self.y].addSplatter()
+                self.location.tile_map[self.x][self.y].addSplatter()
                 Log.addToBuffer(self.name + " was weakened")
                 self.life -= 1
 
