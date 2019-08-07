@@ -4,7 +4,12 @@ Functions:
     drawClassSelect(window, selected_class) : Draws the class selection buttons
     getPanes(window_rect) : Takes a pygame.Rect object representing the window and returns a dictionary of Rect Objects
     drawStatPane(window, player, pane) : Draws the player's statistic on the right side of the screen
-    drawLogPane(window, log, pane) : Draws the messages in the log pane"""
+    drawLogPane(window, log, pane) : Draws the messages in the log pane
+    drawGamePane(window, game, pane, target=None, message=None) : Draws on the game surface then blits game surface to the window
+    drawFPS(window, fps_clock) : Draws the FPS in the top right of the screen
+    drawFillBar(window, pane, y_axis, height, fill_percent, fill_color, outline_color=COLORS['WHITE']) : Draws a bar filled to a specified percentage
+    drawMessageBox(window, pane, message) : Draw a message box containing a specified message onto the game pane
+ """
 
 import pygame
 
@@ -14,7 +19,12 @@ from source.utilities import formatFloat
 
 
 def drawClassSelect(window, selected_class):
-    """Draw the Class Selection Buttons"""
+    """Draw the Class Selection Buttons
+    
+    Parameters: 
+        window : pygame.Surface
+        selected_class : string
+    """
     assert selected_class in BACKGROUNDS
 
     window_rect = window.get_rect()
@@ -67,7 +77,13 @@ def drawClassSelect(window, selected_class):
 
 def getPanes(window_rect):
     """Takes a pygame.Rect object representing the window and returns a dictionary of Rect Objects for the four panes
-    of the mainGameScreen"""
+    of the mainGameScreen
+    
+    Parameters:
+        window_rect : pygame.Rect
+    
+    Returns : dict{string : pygame.Rect}
+    """
 
     # log pane margin from bottom
     log_y_margin = 10
@@ -345,7 +361,15 @@ def drawLogPane(window, log, pane):
 
 
 def drawGamePane(window, game, pane, target=None, message=None):
-    """Draws on the game surface then blits game surface to the window"""
+    """Draws on the game surface then blits game surface to the window
+    
+    Parameters:
+        window : pygame.Surface
+        game = source.game.Game
+        pane = pygame.Rect
+        target = source.entities.Target or None
+        message = string or None   
+    """
 
     # Pulls the player and current floor from the game object
     player = game.player
@@ -373,7 +397,12 @@ def drawGamePane(window, game, pane, target=None, message=None):
 
 
 def drawFPS(window, fps_clock):
-    """Draws the FPS in the top right of the screen"""
+    """Draws the FPS in the top right of the screen
+    
+    Parameters:
+        window : pygame.Surface
+        fps_clock. pygame.clock.Clock
+    """
     window_rect = window.get_rect()
 
     fps = int(fps_clock.get_fps())
@@ -390,7 +419,16 @@ def drawFPS(window, fps_clock):
 
 
 def drawFillBar(window, pane, y_axis, height, fill_percent, fill_color, outline_color=COLORS['WHITE']):
-    """Draws a bar filled to a specified percentage"""
+    """Draws a bar filled to a specified percentage
+    
+    Parameters:
+        window : pygame.Surface 
+        pane : pygame.Rect 
+        y_axis : int : the centery of the bar
+        height : int
+        fill_percent : float : should be between 0 and 1
+        outline_color : tuple(int,int,int)
+    """
     bar_width = pane.width / 4
 
     bar = pygame.Rect(0, 0, bar_width, height)
@@ -408,7 +446,13 @@ def drawFillBar(window, pane, y_axis, height, fill_percent, fill_color, outline_
 
 
 def drawMessageBox(window, pane, message):
-    """Draws a message box containing a specified message onto the game pane"""
+    """Draws a message box containing a specified message onto the game pane
+    
+    Parameters:
+        window : pygame.Surface
+        pane : pygame.Rect
+        message : string
+    """
     # todo be able to handle longer messages
     y_offset = pane.height / 5
 
