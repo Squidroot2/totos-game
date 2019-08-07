@@ -1,3 +1,11 @@
+"""Contains functions that draw or assist in drawing things to the window
+
+Functions:
+    drawClassSelect(window, selected_class) : Draws the class selection buttons
+    getPanes(window_rect) : Takes a pygame.Rect object representing the window and returns a dictionary of Rect Objects
+    drawStatPane(window, player, pane) : Draws the player's statistic on the right side of the screen
+    drawLogPane(window, log, pane) : Draws the messages in the log pane"""
+
 import pygame
 
 from source.constants import BACKGROUNDS, COLORS, FONTS, CELL_SIZE

@@ -1,14 +1,11 @@
-"""Contains the screen functions and the draw functions that the screen function use
+"""Contains the screen functions which update the display to show different things to the player
 
 Functions:
     titleScreen(window, fps_clock)
     playerCreateScreen(window, fps_clock)
-    drawClassSelect(window)
     mainGameScreen(window, fps_clock, game)
     gameOverScreen(window, fps_clock) 
-    getPanes(window_rect) : Takes a pygame.Rect object representing the window and returns a dictionary of Rect Objects
-    drawStatPane(window, player, pane) : Draws the player's statistic on the right side of the screen
-    drawLogPane(window, log, pane) : Draws the messages in the log pane
+
 
 """
 
@@ -439,7 +436,6 @@ def mainGameScreen(window, fps_clock, game):
         for event in pygame.event.get(KEYDOWN):
             if event.key == K_RETURN:
                 show_screen = False
-
 
 
 def gameOverScreen(window, fps_clock):
