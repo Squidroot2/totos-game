@@ -50,8 +50,8 @@ class Projectile:
     def drawNextStep(self, surface):
         
         # If delay, decrement delay
-        if delay:
-            delay -= 1
+        if self.delay:
+            self.delay -= 1
             return
             
         else:
@@ -62,7 +62,7 @@ class Projectile:
             self.pixely += self.y_step
             self.pixelx += self.x_step
             
-            # Incrmenets steps taken
+            # Increments steps taken
             self.steps_taken += 1
             
             # Determines if projectile has taken enough steps to reach destination
