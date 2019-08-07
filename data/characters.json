@@ -29,7 +29,7 @@
     "defense": 2,
     "attack_rate": 1,
     "innate_ranged": null,
-    "ai": "brainless",
+    "ai": "basic",
     "inventory": null
   },
   "WIERDMUNK": {
