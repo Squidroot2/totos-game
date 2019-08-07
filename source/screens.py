@@ -277,12 +277,12 @@ def mainGameScreen(window, fps_clock, game):
     drawGamePane(window, game, panes['main'])
     pygame.draw.rect(window, COLORS['DARK GRAY'], panes['bottom'], 0)
 
+    wait_for_message = False
+    message = None
+
     # game loop
     run_game = True
     while run_game:
-
-        # Turns true if player does an action that uses up their turn
-        turn_taken = False
 
         # Event Handler
         checkForQuit()
@@ -292,6 +292,9 @@ def mainGameScreen(window, fps_clock, game):
             if event.type == KEYDOWN:
                 # A Key press assumes turn taken until decided otherwise
                 turn_taken = True
+
+                # Clears the message
+                message = None
 
                 # Movement Keys
                 if event.key == K_UP or event.key == K_KP8:
@@ -383,52 +386,60 @@ def mainGameScreen(window, fps_clock, game):
                 
                 # Look Key
                 elif event.key == K_l:
-                    # todo write look functionality
-                    message = player.lookAround()
+                    if message:
+                        message = None
+                    else:
+                        message = player.lookAround()
                     turn_taken = False
 
                 else:
                     turn_taken = False
 
-        # If turn was taken...
-        if turn_taken:
-            # iterate through all entities in the entities list
-            for entity in player.location.entities:
-                #  every entity with an AI takes a turn
-                if entity.ai:
-                    entity.ai.takeTurn()
-                # Recharge all equipped reactors
-                if entity.inventory and entity.inventory.equipped['reactor']:
-                    entity.inventory.equipped['reactor'].recharge()
-                    entity.inventory.equipped['reactor'].hit_this_turn = False
+                # If turn was taken...
+                if turn_taken:
+                    # iterate through all entities in the entities list
+                    for entity in player.location.entities:
+                        #  every entity with an AI takes a turn
+                        if entity.ai:
+                            entity.ai.takeTurn()
+                        # Recharge all equipped reactors
+                        if entity.inventory and entity.inventory.equipped['reactor']:
+                            entity.inventory.equipped['reactor'].recharge()
+                            entity.inventory.equipped['reactor'].hit_this_turn = False
 
-            # See what the player can see
-            player.calculateFOV()
-            player.discoverTiles()
+                    # See what the player can see
+                    player.calculateFOV()
+                    player.discoverTiles()
 
-            # Write whats in the log's buffer and add an underscore
-            game.log.write()
-            game.log.addEOTUnderscore()
+                    # Write whats in the log's buffer and add an underscore
+                    game.log.write()
+                    game.log.addEOTUnderscore()
 
-            if player.is_dead:
-                run_game = False
-                game.log.addMessage("You Died!")
-                game.log.addMessage("Press Enter to Continue...")
+                    if player.is_dead:
+                        run_game = False
+                        message = "You Died!"
+                        game.log.addMessage("Press Enter to Continue...")
 
-            # Fill in the background of the window with black
-            window.fill(COLORS['BLACK'])
+                # END IF TURN TAKEN
 
-            # Draw the side and log panes
-            drawStatPane(window, player, panes['side'])
-            drawLogPane(window, game.log, panes['log'])
-            drawGamePane(window, game, panes['main'])
-            pygame.draw.rect(window, COLORS['DARK GRAY'], panes['bottom'], 0)
+                # Fill in the background of the window with black
+                window.fill(COLORS['BLACK'])
 
-        #drawFPS(window, fps_clock)
+                # Draw the side and log panes
+                drawStatPane(window, player, panes['side'])
+                drawLogPane(window, game.log, panes['log'])
+                drawGamePane(window, game, panes['main'], message=message)
+                pygame.draw.rect(window, COLORS['DARK GRAY'], panes['bottom'], 0)
+
+            # END FOR KEYDOWN EVENT LOOP
+        # END FOR EVENT LOOP
+
+        # drawFPS(window, fps_clock)
         # Update the screen and wait for clock to tick; repeat the while loop
         pygame.display.update()
         fps_clock.tick()
 
+    # END WHILE RUN GAME
     # Stop until player hit enter key
     show_screen = True
     while show_screen:
@@ -436,6 +447,7 @@ def mainGameScreen(window, fps_clock, game):
         for event in pygame.event.get(KEYDOWN):
             if event.key == K_RETURN:
                 show_screen = False
+
 
 
 def gameOverScreen(window, fps_clock):

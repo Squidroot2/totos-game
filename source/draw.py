@@ -344,7 +344,7 @@ def drawLogPane(window, log, pane):
         window.blit(surf, text_rects[i])
 
 
-def drawGamePane(window, game, pane, target=None):
+def drawGamePane(window, game, pane, target=None, message=None):
     """Draws on the game surface then blits game surface to the window"""
 
     # Pulls the player and current floor from the game object
@@ -366,6 +366,10 @@ def drawGamePane(window, game, pane, target=None):
 
     # Blit everything on the game surface to the window
     window.blit(game.surface, game_area, player.camera.getRect())
+
+    # If there's a message, draw it
+    if message:
+        drawMessageBox(window, pane, message)
 
 
 def drawFPS(window, fps_clock):
@@ -404,5 +408,22 @@ def drawFillBar(window, pane, y_axis, height, fill_percent, fill_color, outline_
 
 
 def drawMessageBox(window, pane, message):
-    # todo create draw message box function
-    pass
+    """Draws a message box containing a specified message onto the game pane"""
+    # todo be able to handle longer messages
+    y_offset = pane.height / 5
+
+    message_height = pane.height / 5
+    message_width = pane.width / 2
+
+    message_box = pygame.Rect(0, 0, message_width, message_height)
+
+    message_box.center = (pane.centerx, pane.centery - y_offset)
+
+    pygame.draw.rect(window, COLORS['BLACK'], message_box,  0)
+
+    text = FONTS['SUBMAIN'].render(message, True, COLORS['WHITE'], COLORS['BLACK'])
+    text_rect = text.get_rect()
+    text_rect.center = message_box.center
+
+    window.blit(text, text_rect)
+
