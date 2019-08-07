@@ -273,6 +273,13 @@ def mainGameScreen(window, fps_clock, game):
     # Gets a dict of Rects
     panes = getPanes(window_rect)
 
+    # Initial draw to screen
+    window.fill(COLORS['BLACK'])
+    drawStatPane(window, player, panes['side'])
+    drawLogPane(window, game.log, panes['log'])
+    drawGamePane(window, game, panes['main'])
+    pygame.draw.rect(window, COLORS['DARK GRAY'], panes['bottom'], 0)
+
     # game loop
     run_game = True
     while run_game:
@@ -406,21 +413,21 @@ def mainGameScreen(window, fps_clock, game):
             game.log.write()
             game.log.addEOTUnderscore()
 
-        if player.is_dead:
-            run_game = False
-            game.log.addMessage("You Died!")
-            game.log.addMessage("Press Enter to Continue...")
+            if player.is_dead:
+                run_game = False
+                game.log.addMessage("You Died!")
+                game.log.addMessage("Press Enter to Continue...")
 
-        # Fill in the background of the window with black
-        window.fill(COLORS['BLACK'])
+            # Fill in the background of the window with black
+            window.fill(COLORS['BLACK'])
 
-        # Draw the side and log panes
-        drawStatPane(window, player, panes['side'])
-        drawLogPane(window, game.log, panes['log'])
-        drawGamePane(window, game, panes['main'])
-        drawFPS(window, fps_clock)
-        pygame.draw.rect(window, COLORS['DARK GRAY'], panes['bottom'], 0)
+            # Draw the side and log panes
+            drawStatPane(window, player, panes['side'])
+            drawLogPane(window, game.log, panes['log'])
+            drawGamePane(window, game, panes['main'])
+            pygame.draw.rect(window, COLORS['DARK GRAY'], panes['bottom'], 0)
 
+        #drawFPS(window, fps_clock)
         # Update the screen and wait for clock to tick; repeat the while loop
         pygame.display.update()
         fps_clock.tick()
@@ -520,16 +527,16 @@ def targetScreen(window, fps_clock, game, panes):
                     else:
                         game.log.addMessage("Not A Valid Target")
 
-        # Fill in the background of the window with black
-        window.fill(COLORS['BLACK'])
+            # Fill in the background of the window with black
+            window.fill(COLORS['BLACK'])
 
-        # Draw the side, log and game panes
-        drawStatPane(window, player, panes['side'])
-        drawLogPane(window, game.log, panes['log'])
-        drawGamePane(window, game, panes['main'], target)
+            # Draw the side, log and game panes
+            drawStatPane(window, player, panes['side'])
+            drawLogPane(window, game.log, panes['log'])
+            drawGamePane(window, game, panes['main'], target)
+            pygame.draw.rect(window, COLORS['DARK GRAY'], panes['bottom'], 0)
+
         drawFPS(window, fps_clock)
-        pygame.draw.rect(window, COLORS['DARK GRAY'], panes['bottom'], 0)
-
         # Update the screen and wait for clock to tick; repeat the while loop
         pygame.display.update()
         fps_clock.tick()

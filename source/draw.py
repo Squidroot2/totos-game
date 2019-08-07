@@ -361,6 +361,7 @@ def drawGamePane(window, game, pane, target=None):
 
 
 def drawFPS(window, fps_clock):
+    """Draws the FPS in the top right of the screen"""
     window_rect = window.get_rect()
 
     fps = int(fps_clock.get_fps())
@@ -368,10 +369,11 @@ def drawFPS(window, fps_clock):
     x_margin = 19
     y_margin = 10
 
-    fps_surf = FONTS['SUBMAIN'].render(str(fps), True, COLORS['GRAY'])
+    fps_surf = FONTS['SUBMAIN'].render(str(fps), True, COLORS['GRAY'], COLORS['BLACK'])
     fps_rect = fps_surf.get_rect()
     fps_rect.topleft = (window_rect.left + x_margin, window_rect.top + y_margin)
 
+    pygame.draw.rect(window, COLORS['BLACK'], fps_rect, 0)
     window.blit(fps_surf, fps_rect)
 
 
@@ -391,3 +393,8 @@ def drawFillBar(window, pane, y_axis, height, fill_percent, fill_color, outline_
     fill.width = (bar.width - 2) * fill_percent
 
     pygame.draw.rect(window, fill_color, fill, 0)
+
+
+def drawMessageBox(window, pane, message):
+    # todo create draw message box function
+    pass
