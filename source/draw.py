@@ -375,11 +375,14 @@ def drawGamePane(window, game, pane, target=None, message=None):
     player = game.player
     floor = player.location
 
-    # Run the draw method on floor
-    floor.draw(game.surface, player.camera)
+    # Black out the Game Surface
+    game.surface.fill(COLORS['BLACK'])
 
     # Update the camera's position
     player.camera.update()
+
+    # Run the draw method on floor
+    floor.draw(game.surface, player.camera)
 
     # Create a Rect with the same dimensions as the camera; center it in the main pane
     game_area = player.camera.getRect().copy()

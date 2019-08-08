@@ -216,9 +216,6 @@ class Floor:
         
         for projectile in self.projectiles:
             projectile.drawNextStep(surface)
-        
-            
-            
 
     def addEntity(self, entity):
         """Adds an entity to the entities list attribute

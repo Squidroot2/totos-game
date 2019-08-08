@@ -330,7 +330,6 @@ def mainGameScreen(window, fps_clock, game):
                         else:
                             new_floor = game.dungeon[player.location.number]
                             player.changeFloors(new_floor, "down")
-                            game.surface.fill(COLORS['BLACK'])
                             drawGamePane(window, game, panes['main'], message=message)
 
                     # If the player does not move, turn is not taken
@@ -349,9 +348,7 @@ def mainGameScreen(window, fps_clock, game):
                         # Otherwise, move the player to the previous floor
                         else:
                             new_floor = game.dungeon[player.location.number-2]
-
                             player.changeFloors(new_floor, "up")
-                            game.surface.fill(COLORS['BLACK'])
                             drawGamePane(window, game, panes['main'], message=message)
 
                     # If the player does not move, turn is not taken
