@@ -16,7 +16,7 @@ from pygame.constants import *
 
 # My Modules
 from source.constants import COLORS, FONTS, FPS, BACKGROUNDS
-from source.draw import drawClassSelect, getPanes, drawStatPane, drawLogPane, drawGamePane, drawFPS
+from source.draw import drawClassSelect, getPanes, drawStatPane, drawLogPane, drawGamePane, drawFPS, drawInventory
 from source.utilities import checkForQuit
 from source.entities import Target
 from source.floors import Floor
@@ -355,7 +355,7 @@ def mainGameScreen(window, fps_clock, game):
 
                 # Inventory Key
                 elif event.key == K_i:
-                    # todo write open inventory screen
+                    inventoryScreen(window, fps_clock, game, panes)
                     turn_taken = False
 
                 # Fire Key
@@ -553,7 +553,7 @@ def targetScreen(window, fps_clock, game, panes):
             drawGamePane(window, game, panes['main'], target)
             pygame.draw.rect(window, COLORS['DARK GRAY'], panes['bottom'], 0)
 
-        drawFPS(window, fps_clock)
+        #drawFPS(window, fps_clock)
         # Update the screen and wait for clock to tick; repeat the while loop
         pygame.display.update()
         fps_clock.tick()
@@ -563,3 +563,40 @@ def targetScreen(window, fps_clock, game, panes):
 
     # Return bool determining if turn was taken
     return turn_taken
+
+#todo finish invenotory screen
+def inventoryScreen(window, fps_clock, game, panes):
+    """Used for drawing the inventory"""
+    player = game.player
+
+    drawInventory(window, panes['main'], player.inventory)
+
+    show_inventory = True
+    while show_inventory:
+
+        # Event Handler
+        checkForQuit()
+        for event in pygame.event.get():
+
+            # Determine what to do with Key Presses
+            if event.type == KEYDOWN:
+
+                if event.key == K_ESCAPE:
+                    show_inventory = False
+                # # Fill in the background of the window with black
+                # window.fill(COLORS['BLACK'])
+                # # Draw the side, log and game panes
+                # drawStatPane(window, player, panes['side'])
+                # drawLogPane(window, game.log, panes['log'])
+                #
+                # pygame.draw.rect(window, COLORS['DARK GRAY'], panes['bottom'], 0)
+
+                # Draw Inventory
+
+
+            # END IF KEYDOWN EVENT
+
+        pygame.display.update()
+        fps_clock.tick()
+
+    # END WHILE SHOW INVENTORY

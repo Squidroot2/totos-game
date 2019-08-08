@@ -474,3 +474,22 @@ def drawMessageBox(window, pane, message):
 
     window.blit(text, text_rect)
 
+# todo finish inventory draw
+def drawInventory(surface, pane, inventory):
+
+    # Fill in the entire pane in black
+    pygame.draw.rect(surface, COLORS['BLACK'], pane, 0)
+
+    bg_color = COLORS['BLACK']
+    font_color = COLORS['WHITE']
+
+    FONTS['MAIN'].render("Inventory", True, font_color, bg_color)
+
+
+    x_margin = pane.width/25
+    indent_left = pane.left+x_margin
+
+    line_height = CELL_SIZE*1.25
+
+    for i, item in enumerate(inventory.contents):
+        surface.blit(item.image, (indent_left, line_height*i))
