@@ -331,6 +331,7 @@ def mainGameScreen(window, fps_clock, game):
                             new_floor = game.dungeon[player.location.number]
                             player.changeFloors(new_floor, "down")
                             game.surface.fill(COLORS['BLACK'])
+                            drawGamePane(window, game, panes['main'], message=message)
 
                     # If the player does not move, turn is not taken
                     else:
@@ -351,6 +352,7 @@ def mainGameScreen(window, fps_clock, game):
 
                             player.changeFloors(new_floor, "up")
                             game.surface.fill(COLORS['BLACK'])
+                            drawGamePane(window, game, panes['main'], message=message)
 
                     # If the player does not move, turn is not taken
                     else:
@@ -435,11 +437,15 @@ def mainGameScreen(window, fps_clock, game):
         # END FOR EVENT LOOP
 
         #If there are projectiles, draw their animation until there there are no projectiles
-        while player.location.projectiles:
+        if player.location.projectiles:
+            while player.location.projectiles:
+                pygame.draw.rect(window, COLORS['BLACK'], panes['main'])
+                drawGamePane(window,game,panes['main'])
+                pygame.display.update()
+                fps_clock.tick(FPS)
+            # Draw one more time to clear the projectile
             pygame.draw.rect(window, COLORS['BLACK'], panes['main'])
-            drawGamePane(window,game,panes['main'])
-            pygame.display.update()
-            fps_clock.tick(FPS)
+            drawGamePane(window, game, panes['main'])
        
         # drawFPS(window, fps_clock)
         

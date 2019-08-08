@@ -10,7 +10,7 @@ from source.constants import CELL_SIZE
 
 class Projectile:
     image_dir = 'Projectiles'
-    frames_on_screen = 100
+    frames_on_screen = 8
 
     def __init__(self, proj_id, location, source, destination, delay):
         """Takes in source in destination as tuples that indicate coords on tile_map"""

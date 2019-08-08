@@ -76,7 +76,13 @@ class Images:
                         3: os.path.join(splatter_images, 'splatter03.png'),
                         4: os.path.join(splatter_images, 'splatter04.png')
                     },
-                    'Projectiles' : {}
+                    'Projectiles' : {
+                        'green_beam': os.path.join(proj_images, 'green_beam.png'),
+                        'red_beam': os.path.join(proj_images, 'red_beam.png'),
+                        'red_slug': os.path.join(proj_images, 'red_slug.png'),
+                        'vertex': os.path.join(proj_images, 'vertex.png'),
+                        'speck': os.path.join(proj_images, 'speck.png')
+                    }
     }
 
     # Creates an 'images' dictionary that is the same as the same structure as image_paths

@@ -13,7 +13,8 @@
       "verb": "spit at",
       "damage": 0.1,
       "range": 1,
-      "rate": 1
+      "rate": 1,
+      "projectile": "speck"
     },
     "ai": null,
     "inventory": null
@@ -60,7 +61,8 @@
       "verb": "threw vertex",
       "damage": 2,
       "range": 4,
-      "rate": 1
+      "rate": 1,
+      "projectile": "vertex"
     },
     "ai": "ranger",
     "inventory": null

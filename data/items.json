@@ -171,7 +171,8 @@
         "damage": 5,
         "energy": 2,
         "fire_rate": 1,
-        "range": 3
+        "range": 3,
+        "projectile": "red_beam"
       }
     },
     "RIFLE_1": {
@@ -184,10 +185,11 @@
       "difficulty": 1,
       "ranged": {
 		"verb": "shot",
-        "damage": 10,
+        "damage": 8,
         "energy": 3,
         "fire_rate": 1,
-        "range": 2
+        "range": 5,
+        "projectile": "green_beam"
       }
     },
     "CANNON_1": {
@@ -203,7 +205,8 @@
         "damage": 10,
         "energy": 3,
         "fire_rate": 1,
-        "range": 2
+        "range": 2,
+        "projectile": "red_slug"
       }
     },
     "PDW_1": {
@@ -219,7 +222,8 @@
         "damage": 2,
         "energy": 2,
         "fire_rate": 3,
-        "range": 2
+        "range": 2,
+        "projectile": "red_beam"
       }
     },
     "KNIFE_1": {

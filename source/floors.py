@@ -237,7 +237,7 @@ class Floor:
         """Adds a projectile to the projectiles list"""
         self.projectiles.append(projectile)
     
-    def removeProjectile(self, projetile):
+    def removeProjectile(self, projectile):
         """Removes the projectile from the projectiles list"""
         self.projectiles.remove(projectile)
 

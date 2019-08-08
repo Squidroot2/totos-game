@@ -325,6 +325,7 @@ class Character(Entity):
             self.ranged_damage = data['innate_ranged']['damage']
             self.range = data['innate_ranged']['range']
             self.ranged_attack_rate = data['innate_ranged']['rate']
+            self.projectile = data['innate_ranged']['projectile']
         
         # Gets the image
         self.image_name = data['image']
@@ -467,10 +468,9 @@ class Character(Entity):
                 Log.addToBuffer(self.name + " missed")
             
             if is_ranged:
-                #todo Create a Projectile
-                # projectile_id = self.getProjectile()
-                # Projectile(projectile_id, self.location, (self.x,self.y),(opponent.x,opponent.y), delay=strike*4)
-                pass
+                # Create Projectile
+                projectile_id = self.getProjectile()
+                Projectile(projectile_id, self.location, (self.x,self.y),(opponent.x,opponent.y), delay=strike)
 
             # Send a message if the opponent was killed
             if opponent.is_dead:
@@ -522,7 +522,6 @@ class Character(Entity):
 
             # If injured, log message and reduce life by 1
             if injured:
-                #todo add blood spatter
                 self.location.tile_map[self.x][self.y].addSplatter()
                 Log.addToBuffer(self.name + " was weakened")
                 self.life -= 1
@@ -666,6 +665,13 @@ class Character(Entity):
             return self.inventory.equipped['weapon'].ranged_verb
         else:
             return self.ranged_verb
+
+    def getProjectile(self):
+        """Returns a string representing the projectile id"""
+        try:
+            return self.inventory.equipped['weapon'].projectile
+        except AttributeError:
+            return self.projectile
 
     def draw(self, surface):
         """Extends the entity draw function to draw a forcefield if the character has energy"""
@@ -1068,6 +1074,7 @@ class Weapon(Item):
             self.energy_per_shot = data['ranged']['energy']
             self.fire_rate = data['ranged']['fire_rate']
             self.range = data['ranged']['range']
+            self.projectile = data['ranged']['projectile']
 
         super().__init__(data, location, x, y)
 
