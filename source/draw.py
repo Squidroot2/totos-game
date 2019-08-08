@@ -482,14 +482,37 @@ def drawInventory(surface, pane, inventory):
 
     bg_color = COLORS['BLACK']
     font_color = COLORS['WHITE']
-
-    FONTS['MAIN'].render("Inventory", True, font_color, bg_color)
-
-
+    
+    # Distance from the the top of the pane to the top of the word "Inventory"
+    title_y_margin = pane.height /20
+    
+    title = FONTS['MAIN'].render("Inventory", True, font_color, bg_color)
+    title_rect = title.get_rect()
+    title_rect.midtop = (pane.centerx, pane.top + title_y_margin)
+    
     x_margin = pane.width/25
     indent_left = pane.left+x_margin
+    
+    # Gap between an item's image and its name
+    gap = CELL_SIZE*.5
+    
+    # The left side of where the item names are placed
+    name_left = indent_left + CELL_SIZE + gap
 
     line_height = CELL_SIZE*1.25
+    
+    list_start = title_rect.bottom + line_height
 
     for i, item in enumerate(inventory.contents):
-        surface.blit(item.image, (indent_left, line_height*i))
+        
+        line_top = list_start+line_height*i
+        
+        # Draw the image of the item
+        surface.blit(item.image, (indent_left, line_top))
+        
+        # Draw the name of the item
+        item_name = FONTS['SUBMAIN'].render(item.name, True, font_color, bg_color)
+        item_name_rect = item_name.get_rect()
+        item_name_rect.topleft = (line_start, line_top)
+        surface.blit(item_name, item_name.rect)
+        
