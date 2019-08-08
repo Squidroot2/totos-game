@@ -378,7 +378,7 @@ def drawGamePane(window, game, pane, target=None, message=None):
     # Black out the Game Surface
     game.surface.fill(COLORS['BLACK'])
 
-    # Update the camera's position
+    # Update the camera's position, must be updated before running floor.draw
     player.camera.update()
 
     # Run the draw method on floor

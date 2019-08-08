@@ -431,7 +431,7 @@ def mainGameScreen(window, fps_clock, game):
             # END FOR KEYDOWN EVENT LOOP
         # END FOR EVENT LOOP
 
-        #If there are projectiles, draw their animation until there there are no projectiles
+        # If there are projectiles, draw their animation until there there are no projectiles
         if player.location.projectiles:
             while player.location.projectiles:
                 pygame.draw.rect(window, COLORS['BLACK'], panes['main'])
