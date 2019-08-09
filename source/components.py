@@ -7,10 +7,11 @@ Classes:
 """
 # Standard Library
 import random
+from collections import Counter
 # Third Party
 import pygame
 # My Modules
-from source.constants import CELL_SIZE, BACKGROUNDS
+from source.constants import CELL_SIZE, BACKGROUNDS, REACTORS
 from source.utilities import getDistanceBetweenEntities
 from source.assets import Data
 
@@ -273,7 +274,8 @@ class Inventory:
 
         self.owner = owner
         self.contents = []
-        self.contents_condensed = []
+        # self.contents_condensed = []
+        #self.split_items = False
         self.equipped = {"weapon": None, "armor": None, "reactor": None}
 
         # If the inventory type is not empty, get the inventory data and create the items.
@@ -307,6 +309,7 @@ class Inventory:
 
     def addEntity(self, item):
         self.contents.append(item)
+        #self.split_items = True
 
     def removeEntity(self, item):
         self.contents.remove(item)
@@ -317,13 +320,33 @@ class Inventory:
             self.equipped[slot] = None
         for item in self.contents:
             item.drop()
-    
-    # todo create condenseInventory method
-    def condenseInventory(self):
-        pass
-        
+
+    # # todo create condenseInventory method
+    # def condenseInventory(self):
+    #     self.contents_condensed = Counter([item.name for item in self.contents])
+    #
     # todo create a method that returns a condensed dictionary of items of a specified type
-    def getItemsOfType(self, type):
-        pass
-    
+    def getItemsByType(self):
+        """Returns a dictionary of lists sorted by the item type"""
+        items = {"weapons":[],
+                 "armor":[],
+                 "reactors":[],
+                 "batteries":[]}
+
+        for item in self.contents:
+            (item_class, num) = item.id.rsplit("_")
+            if item_class == "BATTERY":
+                items['batteries'].append(item)
+                continue
+            elif item_class == "ARMOR":
+                items['armor'].append(item)
+                continue
+            elif item_class in REACTORS:
+                items['reactors'].append(item)
+                continue
+            else:
+                items['weapons'].append(item)
+
+        return items
+
 

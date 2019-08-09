@@ -21,7 +21,7 @@ def loadAssets():
     """Runs the load method on all classes"""
     Images.load()
     Data.load()
-    #Fonts.create()
+    Fonts.create()
 
 
 class Images:
@@ -200,20 +200,26 @@ class Fonts:
     unispace_folder = os.path.join(main_folder, 'unispace')
     
     files = {'default': 'freesansbold.ttf',
-             'unispace_rg': os.path.join(unispace_folder, 'unispace_rg.ttf')}
+             'unispace': os.path.join(unispace_folder, 'unispace_rg.ttf'),
+             'unispace_bold': os.path.join(unispace_folder, 'unispace bd.ttf')}
     
-    fonts = dict()
+    presets = dict()
              
     @classmethod
     def create(cls):
-        cls.fonts = {
-                'Title':        Font(cls.files['default'], 70),
-                'Main':         Font(cls.files['default'], 28),
-                'Submain':      Font(cls.files['default'], 20),
-                'Info_Header':  Font(cls.files['unispace_rg'], 16),
-                'Info':         Font(cls.files['unispace_rg'], 14),
-                'Info_S':       Font(cls.files['unispace_rg'],12),
-                'Log':          Font(cls.files['default'],12)}
+        cls.presets = {
+                'title':        Font(cls.files['default'], 70),
+                'main':         Font(cls.files['default'], 28),
+                'sub_main':      Font(cls.files['default'], 20),
+                'info_header':  Font(cls.files['unispace'], 16),
+                'info':         Font(cls.files['unispace'], 14),
+                'info_S':       Font(cls.files['unispace'],12),
+                'log':          Font(cls.files['default'],12),
+                'inv_title':    Font(cls.files['unispace_bold'], 16),
+                'inv_header':   Font(cls.files['unispace_bold'], 14),
+                'inv_listing':  Font(cls.files['unispace'], 12)}
+
+        cls.presets['inv_header'].set_underline(True)
 
     
     

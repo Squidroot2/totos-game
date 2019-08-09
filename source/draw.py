@@ -13,6 +13,7 @@ Functions:
 
 import pygame
 
+from source.assets import Fonts
 from source.constants import BACKGROUNDS, COLORS, FONTS, CELL_SIZE
 from source.formulas import getRangedHitChance, getMeleeHitChance
 from source.utilities import formatFloat
@@ -477,49 +478,93 @@ def drawMessageBox(window, pane, message):
 
 # todo finish inventory draw
 def drawInventory(surface, pane, inventory):
-
+    """Draws all of the items of the inventory"""
+    # Identify colors
     bg_color = COLORS['DARK GRAY']
     font_color = COLORS['WHITE']
+    border_color = COLORS['WHITE']
 
-    inventory_width = pane.width / 2
+    # Identify Fonts
+    header_font = Fonts.presets['inv_header']
+    main_font = Fonts.presets['inv_listing']
+
+    # Inventory Area dimensions
+    inventory_width = pane.width / 4
     inventory_height = pane.height * (2/3)
     inventory_area = pygame.Rect(0, 0, inventory_width, inventory_height)
     inventory_area.center = pane.center
 
+    # Draw Inventory Area
     pygame.draw.rect(surface, bg_color, inventory_area, 0)
+    pygame.draw.rect(surface, border_color, inventory_area, 5)
     
     # Distance from the the top of the pane to the top of the word "Inventory"
     title_y_margin = inventory_area.height / 15
-    
-    title = FONTS['MAIN'].render("Inventory", True, font_color, bg_color)
+
+    # Draw the word "Inventory" at the top of the Inventory area
+    title = header_font.render("Inventory", True, font_color, bg_color)
     title_rect = title.get_rect()
     title_rect.midtop = (pane.centerx, inventory_area.top + title_y_margin)
-
     surface.blit(title, title_rect)
-    
+
+    # Get the margin on the left side
     x_margin = pane.width/25
-    indent_left = inventory_area.left+x_margin
-    
-    # Gap between an item's image and its name
-    gap = CELL_SIZE*.5
-    
-    # The left side of where the item names are placed
-    name_left = indent_left + CELL_SIZE + gap
+    indent_left = inventory_area.left + x_margin
 
-    line_height = CELL_SIZE*1.25
-    
-    list_start = title_rect.bottom + line_height
+    # The amount that the line top is moved for each item printed
+    line_height = main_font.get_linesize()
 
-    for i, item in enumerate(inventory.contents):
-        
-        line_top = list_start+line_height*i
-        
-        # Draw the image of the item
-        surface.blit(item.image, (indent_left, line_top))
-        
-        # Draw the name of the item
-        item_name = FONTS['SUBMAIN'].render(item.name, True, font_color, bg_color)
-        item_name_rect = item_name.get_rect()
-        item_name_rect.topleft = (name_left, line_top)
-        surface.blit(item_name, item_name_rect)
-        
+    # Start the line after the bottom of the Title
+    line_top = title_rect.bottom + line_height
+
+    # Start index
+    index = 1
+
+    item_types = inventory.getItemsByType()
+
+    for type in item_types:
+        # Draw Header
+        header = header_font.render(type.capitalize(), True, font_color, bg_color)
+        header_rect = header.get_rect()
+        header_rect.topleft = (indent_left, line_top)
+        surface.blit(header, header_rect)
+
+        # Recalculate Line Top
+        line_top = header_rect.bottom
+
+        # Draw Items
+        for item in item_types[type]:
+            # Draw Index
+            index_surf = main_font.render(str(index)[-1]+".", True, font_color, bg_color)
+            index_rect = index_surf.get_rect()
+            index_rect.topleft = (indent_left, line_top)
+            surface.blit(index_surf, index_rect)
+
+            # Draw Item
+            drawItemListing(surface, item, main_font, font_color, bg_color, (index_rect.right, line_top))
+
+            # Move Line
+            line_top += line_height
+
+            # Increment Index
+            index += 1
+
+        # Add an extra line after item category
+        line_top += line_height
+
+def drawItemListing(surface, item, font,  font_color, bg_color, top_left):
+    """Draws the specified item as a line in the inventory"""
+    # Space inbetween left side of image and left side of text
+
+    icon_size = int(CELL_SIZE/2)
+
+    gap = icon_size * (3 / 2)
+    item_icon = pygame.transform.scale(item.image, (icon_size, icon_size))
+
+    # Draw the image of the item
+    surface.blit(item_icon, (top_left))
+
+    item_name = font.render(item.name, True, font_color, bg_color)
+    item_name_rect = item_name.get_rect()
+    item_name_rect.topleft = (top_left[0]+gap, top_left[1]+(icon_size/3))
+    surface.blit(item_name, item_name_rect)
