@@ -273,6 +273,7 @@ class Inventory:
 
         self.owner = owner
         self.contents = []
+        self.contents_condensed = []
         self.equipped = {"weapon": None, "armor": None, "reactor": None}
 
         # If the inventory type is not empty, get the inventory data and create the items.
@@ -316,4 +317,13 @@ class Inventory:
             self.equipped[slot] = None
         for item in self.contents:
             item.drop()
+    
+    # todo create condenseInventory method
+    def condenseInventory(self):
+        pass
+        
+    # todo create a method that returns a condensed dictionary of items of a specified type
+    def getItemsOfType(self, type):
+        pass
+    
 

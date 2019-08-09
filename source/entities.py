@@ -460,8 +460,9 @@ class Character(Entity):
             # rolls random float 0-1 to determine if attack landed
             roll = random.random()
             
-            # If attack landed deal damage to buffer and 
+            # If attack landed deal damage to opponent and add message to Buffer
             if roll < hit_chance:
+                # todo add damage amount to buffer
                 Log.addToBuffer("%s %s %s" % (self.name, verb, opponent.name))
                 opponent.takeDamage(damage)
             else:
@@ -1008,8 +1009,9 @@ class Item(Entity):
     image_dir = "Items"
     draw_order = DRAW_ORDER['ITEM']
 
-    def __init__(self, data, location, x, y):
+    def __init__(self, item_id, data, location, x, y):
 
+        self.id = item_id
         self.name = data['name']
         self.image_name = data['image']
 
@@ -1039,6 +1041,7 @@ class Item(Entity):
     @staticmethod
     def createItem(item_id, location, x=None, y=None):
         """Creates an item based on the type of ID"""
+        # todo use string.rsplit() in instead of an index slice
         item_class = item_id[:-2]
 
         if item_class == "BATTERY":
@@ -1078,7 +1081,7 @@ class Weapon(Item):
             self.range = data['ranged']['range']
             self.projectile = data['ranged']['projectile']
 
-        super().__init__(data, location, x, y)
+        super().__init__(item_id, data, location, x, y)
 
     def equip(self):
         self.location.equipped['weapon'] = self
@@ -1098,7 +1101,7 @@ class Armor(Item):
         self.defense = data['defense']
         self.difficulty = data['difficulty']
 
-        super().__init__(data, location, x, y)
+        super().__init__(item_id, data, location, x, y)
 
     def equip(self):
         self.location.equipped['armor'] = self
@@ -1139,7 +1142,7 @@ class Reactor(Item):
         # Current Charge Starts at 0
         self.current_charge = 0.0
 
-        super().__init__(data, location, x, y)
+        super().__init__(item_id, data, location, x, y)
 
     def equip(self):
         """Puts the reactor in the equipped reactor slot and reduces the current charge to 0"""
@@ -1205,7 +1208,7 @@ class Battery(Item):
 
         self.power = data['power']
 
-        super().__init__(data, location, x, y)
+        super().__init__(item_id, data, location, x, y)
 
     def use(self):
         """Uses the battery, which increases the amount of charge in the reactor"""
