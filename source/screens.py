@@ -432,6 +432,7 @@ def mainGameScreen(window, fps_clock, game):
         # END FOR EVENT LOOP
 
         # If there are projectiles, draw their animation until there there are no projectiles
+        # todo figure out why sometimes projectiles are not cleared
         if player.location.projectiles:
             while player.location.projectiles:
                 pygame.draw.rect(window, COLORS['BLACK'], panes['main'])
