@@ -474,24 +474,31 @@ def drawMessageBox(window, pane, message):
 
     window.blit(text, text_rect)
 
+
 # todo finish inventory draw
 def drawInventory(surface, pane, inventory):
 
-    # Fill in the entire pane in black
-    pygame.draw.rect(surface, COLORS['BLACK'], pane, 0)
-
-    bg_color = COLORS['BLACK']
+    bg_color = COLORS['DARK GRAY']
     font_color = COLORS['WHITE']
+
+    inventory_width = pane.width / 2
+    inventory_height = pane.height * (2/3)
+    inventory_area = pygame.Rect(0, 0, inventory_width, inventory_height)
+    inventory_area.center = pane.center
+
+    pygame.draw.rect(surface, bg_color, inventory_area, 0)
     
     # Distance from the the top of the pane to the top of the word "Inventory"
-    title_y_margin = pane.height /20
+    title_y_margin = inventory_area.height / 15
     
     title = FONTS['MAIN'].render("Inventory", True, font_color, bg_color)
     title_rect = title.get_rect()
-    title_rect.midtop = (pane.centerx, pane.top + title_y_margin)
+    title_rect.midtop = (pane.centerx, inventory_area.top + title_y_margin)
+
+    surface.blit(title, title_rect)
     
     x_margin = pane.width/25
-    indent_left = pane.left+x_margin
+    indent_left = inventory_area.left+x_margin
     
     # Gap between an item's image and its name
     gap = CELL_SIZE*.5
@@ -513,6 +520,6 @@ def drawInventory(surface, pane, inventory):
         # Draw the name of the item
         item_name = FONTS['SUBMAIN'].render(item.name, True, font_color, bg_color)
         item_name_rect = item_name.get_rect()
-        item_name_rect.topleft = (line_start, line_top)
-        surface.blit(item_name, item_name.rect)
+        item_name_rect.topleft = (name_left, line_top)
+        surface.blit(item_name, item_name_rect)
         
