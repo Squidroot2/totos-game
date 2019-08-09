@@ -462,8 +462,7 @@ class Character(Entity):
             
             # If attack landed deal damage to opponent and add message to Buffer
             if roll < hit_chance:
-                # todo add damage amount to buffer
-                Log.addToBuffer("%s %s %s" % (self.name, verb, opponent.name))
+                Log.addToBuffer("%s %s %s (%.1f dmg)" % (self.name, verb, opponent.name, damage))
                 opponent.takeDamage(damage)
             else:
                 Log.addToBuffer(self.name + " missed")
@@ -1041,8 +1040,9 @@ class Item(Entity):
     @staticmethod
     def createItem(item_id, location, x=None, y=None):
         """Creates an item based on the type of ID"""
-        # todo use string.rsplit() in instead of an index slice
-        item_class = item_id[:-2]
+        # Everything before the underscore is the item class
+        split_id = item_id.rsplit("_")
+        item_class = split_id[0]
 
         if item_class == "BATTERY":
             item = Battery(item_id, location, x, y)

@@ -74,5 +74,4 @@ class Projectile:
             # Determines if projectile has taken enough steps to reach destination
             if self.steps_taken == self.frames_on_screen:
                 self.location.removeProjectile(self)
-         
-        
+
