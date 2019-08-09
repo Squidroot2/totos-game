@@ -10,18 +10,18 @@ from source.constants import CELL_SIZE
 
 class Projectile:
     image_dir = 'Projectiles'
-    frames_on_screen = 8
+    frames_on_screen = 5
 
     def __init__(self, proj_id, location, source, destination, delay):
         """Takes in source in destination as tuples that indicate coords on tile_map"""
         
         # Determines current position
-        self.pixelx = source[0] * CELL_SIZE + (CELL_SIZE/2)
-        self.pixely = source[1] * CELL_SIZE + (CELL_SIZE/2)
+        self.pixelx = source[0] * CELL_SIZE
+        self.pixely = source[1] * CELL_SIZE
         
         # Determines destination
-        self.dest_pixelx = destination[0] * CELL_SIZE + (CELL_SIZE/2)
-        self.dest_pixely = destination[1] * CELL_SIZE + (CELL_SIZE/2)
+        self.dest_pixelx = destination[0] * CELL_SIZE
+        self.dest_pixely = destination[1] * CELL_SIZE
 
         # Gets the difference between current position and destination
         x_difference = self.dest_pixelx - self.pixelx
@@ -44,8 +44,8 @@ class Projectile:
         # Determines the angle of the projectile image
         angle = math.degrees(math.atan2(y_difference, x_difference))
         
-        # Gets the image and rotates 
-        self.image = pygame.transform.rotate(Images.getImage(self.image_dir, proj_id), angle)
+        # Gets the image and rotates. Use pygame.transform.rotate rotates clockwise unlike math.atan2
+        self.image = pygame.transform.rotate(Images.getImage(self.image_dir, proj_id), -angle)
         
     def drawNextStep(self, surface):
         

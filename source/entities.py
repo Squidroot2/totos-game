@@ -470,7 +470,7 @@ class Character(Entity):
             if is_ranged:
                 # Create Projectile
                 projectile_id = self.getProjectile()
-                Projectile(projectile_id, self.location, (self.x,self.y),(opponent.x,opponent.y), delay=strike)
+                Projectile(projectile_id, self.location, (self.x,self.y),(opponent.x,opponent.y), delay=strike*5)
 
             # Send a message if the opponent was killed
             if opponent.is_dead:
@@ -478,8 +478,10 @@ class Character(Entity):
                     self.collectXP(opponent)
                 except AttributeError:
                     pass
-                Log.addToBuffer("%s killed %s" %(self.name, opponent.name))
+                Log.addToBuffer("%s killed %s" % (self.name, opponent.name))
                 break
+
+        # END FOR STRIKE LOOP
          
     def takeDamage(self, damage):
         """Reduces the amount of energy in the character's reactor and deals any remaining to flesh

@@ -177,7 +177,7 @@ class Floor:
         for xtile in range(area.left, area.right):
             # ignore x out of range
             if xtile >= len(self.tile_map) or xtile < 0: continue
-            
+
             for ytile in range(area.top, area.bottom):
                 # ignore y out of range
                 if ytile >= len(self.tile_map[xtile]) or ytile < 0: continue
@@ -213,9 +213,10 @@ class Floor:
                 # Draw fog if discovered but no longer in fov
                 if self.tile_map[x][y].discovered and not self.map.fov[y][x]:
                     self.tile_map[x][y].drawFog(surface)
-        
+
         for projectile in self.projectiles:
             projectile.drawNextStep(surface)
+
 
     def addEntity(self, entity):
         """Adds an entity to the entities list attribute
