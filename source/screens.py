@@ -576,7 +576,16 @@ def inventoryScreen(window, fps_clock, game, panes):
     """Used for drawing the inventory"""
     player = game.player
 
-    drawInventory(window, panes['main'], player.inventory)
+    # Fill in the background of the window with black
+    window.fill(COLORS['BLACK'])
+    # Draw the side, log and game panes
+    drawGamePane(window, game, panes['main'])
+    drawStatPane(window, player, panes['side'])
+    drawLogPane(window, game.log, panes['log'])
+    pygame.draw.rect(window, COLORS['DARK GRAY'], panes['bottom'], 0)
+
+    # drawInventory and get the item order
+    item_order = drawInventory(window, panes['main'], player.inventory)
 
     show_inventory = True
     while show_inventory:
@@ -590,16 +599,18 @@ def inventoryScreen(window, fps_clock, game, panes):
 
                 if event.key in (K_ESCAPE, K_i):
                     show_inventory = False
-                # # Fill in the background of the window with black
-                # window.fill(COLORS['BLACK'])
-                # # Draw the side, log and game panes
-                # drawStatPane(window, player, panes['side'])
-                # drawLogPane(window, game.log, panes['log'])
-                #
-                # pygame.draw.rect(window, COLORS['DARK GRAY'], panes['bottom'], 0)
 
-                # Draw Inventory
+                # If a Number key was pressed
+                if event.key in range(K_0, K_9+1):
+                    # Converts the key pressed to an index 0-9
+                    if event.key == K_0:
+                        index = 9
+                    else:
+                        index = event.key - K_1
 
+                    # If the number pressed is valid
+                    if index < len(item_order):
+                        show_inventory = itemInfoScreen(window, fps_clock, game, panes, item_order[index])
 
             # END IF KEYDOWN EVENT
 
@@ -607,3 +618,12 @@ def inventoryScreen(window, fps_clock, game, panes):
         fps_clock.tick()
 
     # END WHILE SHOW INVENTORY
+
+
+def itemInfoScreen(window, fps_clock, game, panes, item):
+    """Called from within the inventory screen function
+
+    Actions associated with items will be performed inside of here
+    """
+    #todo finish itemInfoScreen
+    pass

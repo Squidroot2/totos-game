@@ -476,7 +476,6 @@ def drawMessageBox(window, pane, message):
     window.blit(text, text_rect)
 
 
-# todo finish inventory draw
 def drawInventory(surface, pane, inventory):
     """Draws all of the items of the inventory
 
@@ -485,7 +484,7 @@ def drawInventory(surface, pane, inventory):
     # Identify colors
     bg_color = COLORS['DARK GRAY']
     font_color = COLORS['WHITE']
-    border_color = COLORS['WHITE']
+    border_color = COLORS['YELLOW']
 
     # Identify Fonts
     header_font = Fonts.presets['inv_header']
@@ -493,13 +492,13 @@ def drawInventory(surface, pane, inventory):
 
     # Inventory Area dimensions
     inventory_width = pane.width / 4
-    inventory_height = pane.height * (2/3)
+    inventory_height = pane.height * (1/2)
     inventory_area = pygame.Rect(0, 0, inventory_width, inventory_height)
-    inventory_area.center = pane.center
+    inventory_area.center = (pane.centerx /2, pane.centery)
 
     # Draw Inventory Area
     pygame.draw.rect(surface, bg_color, inventory_area, 0)
-    pygame.draw.rect(surface, border_color, inventory_area, 5)
+    pygame.draw.rect(surface, border_color, inventory_area, 3)
     
     # Distance from the the top of the pane to the top of the word "Inventory"
     title_y_margin = inventory_area.height / 15
@@ -507,7 +506,7 @@ def drawInventory(surface, pane, inventory):
     # Draw the word "Inventory" at the top of the Inventory area
     title = header_font.render("Inventory", True, font_color, bg_color)
     title_rect = title.get_rect()
-    title_rect.midtop = (pane.centerx, inventory_area.top + title_y_margin)
+    title_rect.midtop = (inventory_area.centerx, inventory_area.top + title_y_margin)
     surface.blit(title, title_rect)
 
     # Get the margin on the left side
