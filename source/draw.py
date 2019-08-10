@@ -478,7 +478,10 @@ def drawMessageBox(window, pane, message):
 
 # todo finish inventory draw
 def drawInventory(surface, pane, inventory):
-    """Draws all of the items of the inventory"""
+    """Draws all of the items of the inventory
+
+    Returns: List(Item)
+    """
     # Identify colors
     bg_color = COLORS['DARK GRAY']
     font_color = COLORS['WHITE']
@@ -519,6 +522,7 @@ def drawInventory(surface, pane, inventory):
 
     # Start index
     index = 1
+    item_order = []
 
     item_types = inventory.getItemsByType()
 
@@ -546,11 +550,18 @@ def drawInventory(surface, pane, inventory):
             # Move Line
             line_top += line_height
 
-            # Increment Index
+            # Add item to list and increment index
+            item_order.append(item)
             index += 1
+        # END FOR ITEM LOOP
 
         # Add an extra line after item category
         line_top += line_height
+
+    # END FOR TYPE LOOP
+
+    return item_order
+
 
 def drawItemListing(surface, item, font,  font_color, bg_color, top_left):
     """Draws the specified item as a line in the inventory"""

@@ -8,7 +8,7 @@
     },
     "ARMOR_2": {
       "name": "Cosmic Cloth",
-      "image": null,
+      "image": "armor2",
       "defense": 2,
       "difficulty": 2
     },
@@ -269,7 +269,7 @@
     },
     "BRAWLER_1": {
       "name": "Knight MK1",
-      "image": null,
+      "image": "knight1",
       "max_charge": 10,
       "recharge_rate": 0.3,
       "recovery": 3,
@@ -278,7 +278,7 @@
     },
     "FEEDER_1": {
       "name": "Archer MK1",
-      "image": null,
+      "image": "archer1",
       "max_charge": 5,
       "recharge_rate": 0.1,
       "recovery": 3,

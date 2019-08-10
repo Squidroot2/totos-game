@@ -265,7 +265,9 @@ class Camera:
 
 
 class Inventory:
-    ''' Component Class'''
+    ''' Component Class which hold items that a character is carrying'''
+    capacity = 10
+
     def __init__(self, owner, inv_type):
 
         # Type Validation
@@ -274,8 +276,6 @@ class Inventory:
 
         self.owner = owner
         self.contents = []
-        # self.contents_condensed = []
-        #self.split_items = False
         self.equipped = {"weapon": None, "armor": None, "reactor": None}
 
         # If the inventory type is not empty, get the inventory data and create the items.
@@ -309,7 +309,6 @@ class Inventory:
 
     def addEntity(self, item):
         self.contents.append(item)
-        #self.split_items = True
 
     def removeEntity(self, item):
         self.contents.remove(item)
@@ -321,11 +320,6 @@ class Inventory:
         for item in self.contents:
             item.drop()
 
-    # # todo create condenseInventory method
-    # def condenseInventory(self):
-    #     self.contents_condensed = Counter([item.name for item in self.contents])
-    #
-    # todo create a method that returns a condensed dictionary of items of a specified type
     def getItemsByType(self):
         """Returns a dictionary of lists sorted by the item type"""
         items = {"weapons":[],

@@ -4,7 +4,9 @@ Functions:
     titleScreen(window, fps_clock)
     playerCreateScreen(window, fps_clock)
     mainGameScreen(window, fps_clock, game)
-    gameOverScreen(window, fps_clock) 
+    gameOverScreen(window, fps_clock)
+    targetScreen(window, fps_clock, game, panes)
+    inventoryScreen(window, fps_clock, game, panes)
 
 
 """
@@ -369,12 +371,16 @@ def mainGameScreen(window, fps_clock, game):
                 # Pick Up Key
                 # todo be able to choose from a list of items to pick up
                 elif event.key == K_g:
-                    items = player.getItemsAtFeet()
-                    if len(items) > 0:
-                        items[0].pickUp(player.inventory)
-                        game.log.addMessage("%s picked up a %s" % (player.name, items[0].name))
+                    if len(player.inventory.contents) < player.inventory.capacity:
+                        items = player.getItemsAtFeet()
+                        if len(items) > 0:
+                            items[0].pickUp(player.inventory)
+                            game.log.addMessage("%s picked up a %s" % (player.name, items[0].name))
+                        else:
+                            game.log.addMessage("Nothing to pick up here")
                     else:
-                        game.log.addMessage("Nothing to pick up here")
+                        game.log.addMessage("Inventory is Full")
+                        turn_taken = False
 
                 # Explore Key
                 elif event.key == K_x:
@@ -582,7 +588,7 @@ def inventoryScreen(window, fps_clock, game, panes):
             # Determine what to do with Key Presses
             if event.type == KEYDOWN:
 
-                if event.key == K_ESCAPE:
+                if event.key in (K_ESCAPE, K_i):
                     show_inventory = False
                 # # Fill in the background of the window with black
                 # window.fill(COLORS['BLACK'])
