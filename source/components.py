@@ -328,14 +328,14 @@ class Inventory:
                  "batteries":[]}
 
         for item in self.contents:
-            (item_class, num) = item.id.rsplit("_")
-            if item_class == "BATTERY":
+            (item_type, num) = item.id.rsplit("_")
+            if item_type == "BATTERY":
                 items['batteries'].append(item)
                 continue
-            elif item_class == "ARMOR":
+            elif item_type == "ARMOR":
                 items['armor'].append(item)
                 continue
-            elif item_class in REACTORS:
+            elif item_type in REACTORS:
                 items['reactors'].append(item)
                 continue
             else:

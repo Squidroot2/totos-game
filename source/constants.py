@@ -27,6 +27,7 @@ CELL_SIZE = 32
 COLORS = {'BLACK':      (  0,  0,  0),
           'DARK GRAY':  ( 25, 25, 25),
           'GRAY':       ( 50, 50, 50),
+          'LIGHT GRAY': (100,100,100),
           'WHITE':      (255,255,255),
           'RED':        (255,  0,  0),
           'LIGHT BLUE': (100,255,255),

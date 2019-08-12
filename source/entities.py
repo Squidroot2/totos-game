@@ -1065,6 +1065,8 @@ class Weapon(Item):
 
     """
     def __init__(self, item_id, location, x=None, y=None):
+        self.item_class = 'weapon'
+
         data = Data.getItem("WEAPONS", item_id)
 
         self.melee_verb = data['melee_verb']
@@ -1095,7 +1097,7 @@ class Armor(Item):
 
     """
     def __init__(self, item_id, location, x=None, y=None):
-
+        self.item_class = 'armor'
         data = Data.getItem("ARMOR", item_id)
 
         self.defense = data['defense']
@@ -1127,7 +1129,7 @@ class Reactor(Item):
     """
 
     def __init__(self, item_id, location, x=None, y=None):
-
+        self.item_class = 'reactor'
         data = Data.getItem("REACTORS", item_id)
 
         self.max_charge = data['max_charge']
@@ -1203,6 +1205,7 @@ class Battery(Item):
 
     def __init__(self, item_id, location, x=None, y=None):
         """Extends the Entity init method"""
+        self.item_class = "battery"
 
         data = Data.getItem("BATTERIES", item_id)
 

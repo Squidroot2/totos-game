@@ -18,7 +18,8 @@ from pygame.constants import *
 
 # My Modules
 from source.constants import COLORS, FONTS, FPS, BACKGROUNDS
-from source.draw import drawClassSelect, getPanes, drawStatPane, drawLogPane, drawGamePane, drawFPS, drawInventory
+from source.draw import drawClassSelect, getPanes, drawStatPane, drawLogPane, drawGamePane, drawFPS, drawInventory, \
+                        drawAllPanes, drawItemInfo
 from source.utilities import checkForQuit
 from source.entities import Target
 from source.floors import Floor
@@ -576,16 +577,11 @@ def inventoryScreen(window, fps_clock, game, panes):
     """Used for drawing the inventory"""
     player = game.player
 
-    # Fill in the background of the window with black
-    window.fill(COLORS['BLACK'])
-    # Draw the side, log and game panes
-    drawGamePane(window, game, panes['main'])
-    drawStatPane(window, player, panes['side'])
-    drawLogPane(window, game.log, panes['log'])
-    pygame.draw.rect(window, COLORS['DARK GRAY'], panes['bottom'], 0)
+    drawAllPanes(window, game, panes)
 
     # drawInventory and get the item order
-    item_order = drawInventory(window, panes['main'], player.inventory)
+    selected_item = None
+    item_order = drawInventory(window, panes['main'], player.inventory, selected_item)
 
     show_inventory = True
     while show_inventory:
@@ -610,20 +606,24 @@ def inventoryScreen(window, fps_clock, game, panes):
 
                     # If the number pressed is valid
                     if index < len(item_order):
-                        show_inventory = itemInfoScreen(window, fps_clock, game, panes, item_order[index])
+                        # If the key corresponds to the item selected, deselect it
+                        if selected_item is item_order[index]:
+                            selected_item = None
+                        else:
+                            selected_item = item_order[index]
 
+                        # Redraw Screen
+                        drawAllPanes(window, game, panes)
+                        drawInventory(window, panes['main'], player.inventory, selected_item)
+
+                    # END IF INDEX LESS THAN LENGTH OF ITEM ORDER
+
+                if selected_item:
+                    drawItemInfo(window, panes['main'], selected_item)
             # END IF KEYDOWN EVENT
 
+        # END FOR EVENT LOOP
         pygame.display.update()
         fps_clock.tick()
 
     # END WHILE SHOW INVENTORY
-
-
-def itemInfoScreen(window, fps_clock, game, panes, item):
-    """Called from within the inventory screen function
-
-    Actions associated with items will be performed inside of here
-    """
-    #todo finish itemInfoScreen
-    pass

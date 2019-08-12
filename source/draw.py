@@ -14,7 +14,7 @@ Functions:
 import pygame
 
 from source.assets import Fonts
-from source.constants import BACKGROUNDS, COLORS, FONTS, CELL_SIZE
+from source.constants import BACKGROUNDS, COLORS, FONTS, CELL_SIZE, REACTORS
 from source.formulas import getRangedHitChance, getMeleeHitChance
 from source.utilities import formatFloat
 
@@ -400,6 +400,18 @@ def drawGamePane(window, game, pane, target=None, message=None):
         drawMessageBox(window, pane, message)
 
 
+def drawAllPanes(window, game, panes, target=None, message=None):
+    """Redraws all of the panes found in the standard game screen"""
+    # Fill in the background of the window with black
+    window.fill(COLORS['BLACK'])
+
+    # Draw the side, log and game panes
+    drawGamePane(window, game, panes['main'], target, message)
+    drawStatPane(window, game.player, panes['side'])
+    drawLogPane(window, game.log, panes['log'])
+    pygame.draw.rect(window, COLORS['DARK GRAY'], panes['bottom'], 0)
+
+
 def drawFPS(window, fps_clock):
     """Draws the FPS in the top right of the screen
     
@@ -476,15 +488,18 @@ def drawMessageBox(window, pane, message):
     window.blit(text, text_rect)
 
 
-def drawInventory(surface, pane, inventory):
+def drawInventory(surface, pane, inventory, selected_item):
     """Draws all of the items of the inventory
 
     Returns: List(Item)
     """
     # Identify colors
-    bg_color = COLORS['DARK GRAY']
+    standard_bg_color = COLORS['DARK GRAY']
+    selected_bg_color = COLORS['LIGHT GRAY']
     font_color = COLORS['WHITE']
     border_color = COLORS['YELLOW']
+
+    bg_color = standard_bg_color
 
     # Identify Fonts
     header_font = Fonts.presets['inv_header']
@@ -495,10 +510,11 @@ def drawInventory(surface, pane, inventory):
     inventory_height = pane.height * (1/2)
     inventory_area = pygame.Rect(0, 0, inventory_width, inventory_height)
     inventory_area.center = (pane.centerx /2, pane.centery)
+    border_width = 3
 
     # Draw Inventory Area
     pygame.draw.rect(surface, bg_color, inventory_area, 0)
-    pygame.draw.rect(surface, border_color, inventory_area, 3)
+    pygame.draw.rect(surface, border_color, inventory_area, border_width)
     
     # Distance from the the top of the pane to the top of the word "Inventory"
     title_y_margin = inventory_area.height / 15
@@ -527,7 +543,7 @@ def drawInventory(surface, pane, inventory):
 
     for type in item_types:
         # Draw Header
-        header = header_font.render(type.capitalize(), True, font_color, bg_color)
+        header = header_font.render(type.capitalize(), True, font_color, standard_bg_color)
         header_rect = header.get_rect()
         header_rect.topleft = (indent_left, line_top)
         surface.blit(header, header_rect)
@@ -537,6 +553,16 @@ def drawInventory(surface, pane, inventory):
 
         # Draw Items
         for item in item_types[type]:
+
+            # Draw Gray Rect around selected item
+            if item is selected_item:
+                selected_area = pygame.Rect(inventory_area.left+border_width, line_top,
+                                            inventory_area.width-border_width*2, line_height)
+                pygame.draw.rect(surface, COLORS['LIGHT GRAY'], selected_area, 0)
+                bg_color = selected_bg_color
+            else:
+                bg_color = standard_bg_color
+
             # Draw Index
             index_surf = main_font.render(str(index)[-1]+".", True, font_color, bg_color)
             index_rect = index_surf.get_rect()
@@ -552,6 +578,7 @@ def drawInventory(surface, pane, inventory):
             # Add item to list and increment index
             item_order.append(item)
             index += 1
+
         # END FOR ITEM LOOP
 
         # Add an extra line after item category
@@ -576,5 +603,53 @@ def drawItemListing(surface, item, font,  font_color, bg_color, top_left):
 
     item_name = font.render(item.name, True, font_color, bg_color)
     item_name_rect = item_name.get_rect()
-    item_name_rect.topleft = (top_left[0]+gap, top_left[1]+(icon_size/3))
+    item_name_rect.midleft = (top_left[0]+gap, top_left[1] + icon_size/2)
     surface.blit(item_name, item_name_rect)
+
+def drawItemInfo(surface, pane, item):
+    """Draws info about the specified item"""
+
+
+
+
+    # Identify colors
+    bg_color = COLORS['DARK GRAY']
+    font_color = COLORS['WHITE']
+    border_color = COLORS['YELLOW']
+
+    # Identify Fonts
+    header_font = Fonts.presets['inv_header']
+    main_font = Fonts.presets['inv_listing']
+
+    # Identify Linesize
+    line_size = main_font.get_linesize()
+
+    # Determine height of area from item class
+    if item.item_class =='weapon':
+        area_height = pane.height /2
+    else:
+        area_height = pane.height /4
+
+    # Item Area dimensions
+    area_width = pane.width / 4
+    area = pygame.Rect(0, 0, area_width, area_height)
+    area.center = (pane.width *(3/4), pane.centery)
+    border_width = 3
+
+    # Draw Item Area
+    pygame.draw.rect(surface, bg_color, area, 0)
+    pygame.draw.rect(surface, border_color, area, border_width)
+
+    # Distance from the the top of the area to the name of the item
+    title_y_margin = area.height / 15
+
+    # Draw the item name at the top of the Inventory area
+    title = header_font.render(item.name, True, font_color, bg_color)
+    title_rect = title.get_rect()
+    title_rect.midtop = (area.centerx, area.top + title_y_margin)
+    surface.blit(title, title_rect)
+
+    # Draw Item Image
+    image_area = pygame.Rect(0,title_rect.bottom + line_size, CELL_SIZE, CELL_SIZE)
+    image_area.centerx = area.centerx
+    surface.blit(item.image, image_area)
