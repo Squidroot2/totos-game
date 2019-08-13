@@ -145,7 +145,11 @@ class Target(Entity):
         self.location.removeEntity(self)
 
     def validateMove(self, destination):
-        """Validates the move for the target entity to ensure it does not move out of bounds"""
+        """Validates the move for the target entity to ensure it does not move out of bounds
+
+        Parameters:
+            destination: tuple(int,int)
+        """
         floor_width = self.location.width
         floor_height = self.location.height
 
