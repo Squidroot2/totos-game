@@ -597,7 +597,7 @@ def inventoryScreen(window, fps_clock, game, panes):
                     show_inventory = False
 
                 # If a Number key was pressed
-                if event.key in range(K_0, K_9+1):
+                elif event.key in range(K_0, K_9+1):
                     # Converts the key pressed to an index 0-9
                     if event.key == K_0:
                         index = 9
@@ -618,8 +618,36 @@ def inventoryScreen(window, fps_clock, game, panes):
 
                     # END IF INDEX LESS THAN LENGTH OF ITEM ORDER
 
+                # Item Actions:
+                if selected_item is not None:
+                    if event.key == K_u:
+                        if selected_item in player.inventory.equipped.values():
+                            selected_item.unequip()
+                            show_inventory = False
+                            break
+
+                    elif event.key == K_e:
+                        if selected_item.item_class != "battery" and selected_item not in player.inventory.equipped.values():
+                            selected_item.equip()
+                            show_inventory = False
+                            break
+
+                    elif event.key == K_s:
+                        if selected_item.item_class == "battery":
+                            selected_item.use()
+                            show_inventory = False
+                            break
+
+                    elif event.key == K_d:
+                        selected_item.drop()
+                        show_inventory = False
+                        break
+
+
+                # If Item selected, draw its info
                 if selected_item:
                     drawItemInfo(window, panes['main'], selected_item)
+
             # END IF KEYDOWN EVENT
 
         # END FOR EVENT LOOP

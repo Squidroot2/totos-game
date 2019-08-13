@@ -4,7 +4,7 @@
       "weapon": "PISTOL_1",
       "armor": "ARMOR_1",
       "reactor": "QUICK_1",
-      "other": ["BATTERY_1", "BATTERY_1"]
+      "other": ["CLUB_1","BATTERY_1", "BATTERY_1"]
     },
     "Marksman": {
       "weapon": "RIFLE_1",

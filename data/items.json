@@ -299,32 +299,38 @@
     "BATTERY_1": {
       "name": "Tiny Battery",
       "image": "battery_tiny",
-      "power": 5
+      "power": 5,
+      "difficulty": 1
     },
 	"BATTERY_2": {
 	  "name": "Small Battery",
       "image": null,
-	  "power": 8
+	  "power": 8,
+      "difficulty": 2
 	},
 	"BATTERY_3": {
 	  "name": "Medium Battery",
       "image": null,
-	  "power": 12
+	  "power": 12,
+      "difficulty": 3
 	},
 	"BATTERY_4": {
 	  "name": "Big Battery",
       "image": null,
-	  "power": 15
+	  "power": 15,
+      "difficulty": 4
 	},
 	"BATTERY_5": {
 	  "name": "Huge Battery",
       "image": null,
-	  "power":20
+	  "power":20,
+      "difficulty": 5
 	},
 	"BATTERY_6": {
 	  "name": "Epic Battery",
       "image": null,
-	  "power":25
+	  "power":25,
+      "difficulty": 6
 	}
   }
 }

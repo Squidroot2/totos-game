@@ -1013,11 +1013,16 @@ class Item(Entity):
         self.id = item_id
         self.name = data['name']
         self.image_name = data['image']
+        self.difficulty = data['difficulty']
 
         super().__init__(location, x, y)
 
     def drop(self):
         """Item is moved from inventory to floor"""
+        # Unequip if equipped
+        if self in self.location.equipped.values():
+            self.unequip()
+
         self.location.removeEntity(self)
         self.x = self.location.owner.x
         self.y = self.location.owner.y
@@ -1073,7 +1078,6 @@ class Weapon(Item):
         self.melee_damage = data['melee_damage']
         self.melee_speed = data['melee_speed']
         self.is_quick_draw = data['quick_draw']
-        self.difficulty = data['difficulty']
         self.is_ranged = bool(data['ranged'])
         if self.is_ranged:
             self.ranged_verb = data['ranged']['verb']
@@ -1088,6 +1092,9 @@ class Weapon(Item):
     def equip(self):
         self.location.equipped['weapon'] = self
 
+    def unequip(self):
+        self.location.equipped['weapon'] = None
+
 
 class Armor(Item):
     """Item which provides defense when equipped
@@ -1101,12 +1108,14 @@ class Armor(Item):
         data = Data.getItem("ARMOR", item_id)
 
         self.defense = data['defense']
-        self.difficulty = data['difficulty']
 
         super().__init__(item_id, data, location, x, y)
 
     def equip(self):
         self.location.equipped['armor'] = self
+
+    def unequip(self):
+        self.location.equipped['armor'] = None
 
 
 class Reactor(Item):
@@ -1136,7 +1145,6 @@ class Reactor(Item):
         self.recharge_rate = data['recharge_rate']
         self.recovery_time = data['recovery']
         self.recoil_charge = data['recoil_charge']
-        self.difficulty = data['difficulty']
 
         self.hit_this_turn = False
         self.recovered = 0
@@ -1150,6 +1158,9 @@ class Reactor(Item):
         """Puts the reactor in the equipped reactor slot and reduces the current charge to 0"""
         self.location.equipped['reactor'] = self
         self.current_charge = 0.0
+
+    def unequip(self):
+        self.location.equipped['reactor'] = None
 
     def recharge(self):
         """Recovers or recharges the Reactor. Should be called once per turn
@@ -1208,7 +1219,6 @@ class Battery(Item):
         self.item_class = "battery"
 
         data = Data.getItem("BATTERIES", item_id)
-
         self.power = data['power']
 
         super().__init__(item_id, data, location, x, y)
@@ -1218,4 +1228,3 @@ class Battery(Item):
         target = self.location.equipped['reactor']
         target.current_charge += self.power
         self.location.removeEntity(self)
-        

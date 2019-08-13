@@ -417,7 +417,7 @@ def drawFPS(window, fps_clock):
     
     Parameters:
         window : pygame.Surface
-        fps_clock. pygame.clock.Clock
+        fps_clock : pygame.clock.Clock
     """
     window_rect = window.get_rect()
 
@@ -443,6 +443,7 @@ def drawFillBar(window, pane, y_axis, height, fill_percent, fill_color, outline_
         y_axis : int : the centery of the bar
         height : int
         fill_percent : float : should be between 0 and 1
+        fill_color : tuple(int,int,int)
         outline_color : tuple(int,int,int)
     """
     bar_width = pane.width / 4
@@ -599,18 +600,16 @@ def drawItemListing(surface, item, font,  font_color, bg_color, top_left):
     item_icon = pygame.transform.scale(item.image, (icon_size, icon_size))
 
     # Draw the image of the item
-    surface.blit(item_icon, (top_left))
+    surface.blit(item_icon, top_left)
 
     item_name = font.render(item.name, True, font_color, bg_color)
     item_name_rect = item_name.get_rect()
     item_name_rect.midleft = (top_left[0]+gap, top_left[1] + icon_size/2)
     surface.blit(item_name, item_name_rect)
 
+
 def drawItemInfo(surface, pane, item):
     """Draws info about the specified item"""
-
-
-
 
     # Identify colors
     bg_color = COLORS['DARK GRAY']
@@ -623,17 +622,66 @@ def drawItemInfo(surface, pane, item):
 
     # Identify Linesize
     line_size = main_font.get_linesize()
+    half_line_size = line_size / 2
 
-    # Determine height of area from item class
-    if item.item_class =='weapon':
-        area_height = pane.height /2
+    stats = []
+
+    # Determine height of area description, and stats from item class
+    if item.item_class == 'weapon':
+        item_type, num = item.id.rsplit("_")
+        description = "LVL %d %s" % (item.difficulty, item_type.capitalize())
+
+        # Weapon Stats
+        if item.is_ranged:
+            area_height = pane.height / 2.25
+            stats.append("Ranged Damaged: %.1f" % item.ranged_damage)
+            stats.append("Energy Per Shot: %.1f" % item.energy_per_shot)
+            stats.append("Fire Rate: %d" % item.fire_rate)
+            stats.append("Range: %d" % item.range)
+
+        else:
+            area_height = pane.height / 3
+            stats.append("Melee Only")
+
+        stats.append("Melee Damage: %.1f" % item.melee_damage)
+        stats.append("Melee Speed: %d" % item.melee_speed)
+
+    elif item.item_class == 'armor':
+        area_height = pane.height / 4
+
+        description = "LVL %d %s" % (item.difficulty, item.item_class.capitalize())
+
+        stats.append("Defense: %d" % item.defense)
+
+    elif item.item_class == 'battery':
+        area_height = pane.height / 4
+
+        description = "LVL %d %s" % (item.difficulty, item.item_class.capitalize())
+
+        stats.append("Power: %d" % item.power)
+
+    else:  # item.item_class == 'reactor'
+        area_height = pane.height / 3
+        description = "LVL %d %s" % (item.difficulty, item.item_class.capitalize())
+
+        stats.append("Max Charge: %.1f" % item.max_charge)
+        stats.append("Recharge Rate: %.1f" % item.recharge_rate)
+        stats.append("Recovery Time: %.1f" % item.recovery_time)
+        stats.append("Recoil Charge: %.1f" % item.recoil_charge)
+
+    actions = ["(d)rop"]
+
+    if item.item_class == 'battery':
+        actions.append("u(s)e")
+    elif item in item.location.equipped.values():
+        actions.append("(u)nequip")
     else:
-        area_height = pane.height /4
+        actions.append("(e)quip")
 
     # Item Area dimensions
     area_width = pane.width / 4
     area = pygame.Rect(0, 0, area_width, area_height)
-    area.center = (pane.width *(3/4), pane.centery)
+    area.center = (pane.width * (3/4), pane.centery)
     border_width = 3
 
     # Draw Item Area
@@ -650,6 +698,40 @@ def drawItemInfo(surface, pane, item):
     surface.blit(title, title_rect)
 
     # Draw Item Image
-    image_area = pygame.Rect(0,title_rect.bottom + line_size, CELL_SIZE, CELL_SIZE)
+    image_area = pygame.Rect(0, title_rect.bottom + line_size, CELL_SIZE, CELL_SIZE)
     image_area.centerx = area.centerx
     surface.blit(item.image, image_area)
+
+    # Render Item Level and class
+    desc_surf = main_font.render(description, True, font_color, bg_color)
+    desc_rect = desc_surf.get_rect()
+    desc_rect.midtop = (area.centerx, image_area.bottom + half_line_size)
+    surface.blit(desc_surf, desc_rect)
+
+    # Create stat surfs and rects
+    stat_surfs = [main_font.render(stat, True, font_color, bg_color) for stat in stats]
+    stat_rects = [surf.get_rect() for surf in stat_surfs]
+
+    # Create actions surfs and rects
+    action_surfs = [main_font.render(action, True, font_color, bg_color) for action in actions]
+    action_rects = [surf.get_rect() for surf in action_surfs]
+
+    # Place Stat Rects
+    x_margin = area.width / 10
+    line_left = area.left + x_margin
+    for i, rect in enumerate(stat_rects):
+        rect.topleft = (line_left, desc_rect.bottom + line_size + (i*(line_size*1.5)))
+
+    # Place Action Rects
+    action_y = area.bottom - line_size
+    horizontal_divider = len(actions) + 1
+    for i, rect in enumerate(action_rects, 1):
+        rect.center = (area.left + (area.width / horizontal_divider) * i, action_y)
+
+    # Blit Stats to Surface
+    for i, surf in enumerate(stat_surfs):
+        surface.blit(surf, stat_rects[i])
+
+    # Blit Actions to Surface
+    for i, surf in enumerate(action_surfs):
+        surface.blit(surf, action_rects[i])
