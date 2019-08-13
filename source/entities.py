@@ -181,7 +181,6 @@ class Target(Entity):
                 elif tile[0] == entity.x and tile[1] == entity.y:
                     return entity
 
-
     @property
     def on_top_of(self):
         floor = self.location
@@ -470,7 +469,7 @@ class Character(Entity):
             if is_ranged:
                 # Create Projectile
                 projectile_id = self.getProjectile()
-                Projectile(projectile_id, self.location, (self.x,self.y),(opponent.x,opponent.y), delay=strike*5)
+                Projectile(projectile_id, self.location, (self.x, self.y), (opponent.x, opponent.y), delay=strike*5)
 
             # Send a message if the opponent was killed
             if opponent.is_dead:
@@ -683,7 +682,6 @@ class Character(Entity):
             force_field = Images.getImage('Other', 'force_field')
             surface.blit(force_field, (self.x*CELL_SIZE, self.y*CELL_SIZE))
 
-
     @property
     def energy(self):
         """Amount of energy currently in the character's reactor
@@ -699,7 +697,6 @@ class Character(Entity):
     def energy(self, value):
         """Setter method for energy"""
         self.inventory.equipped['reactor'].current_charge = value
-
 
     @property
     def max_energy(self):
@@ -864,8 +861,7 @@ class Player(Character):
                             see_down_portal = True
                         else:
                             see_up_portal = True
-                
-                
+
                 elif isinstance(entity, Corpse):
                     if entity.x == self.x and entity.y == self.y:
                         corpses_at_feet += 1
@@ -980,7 +976,7 @@ class Player(Character):
     def image(self):
         try:
             if self.inventory.equipped['armor'].image is not Images.missing_image:
-                self.base_image.blit(self.inventory.equipped['armor'].image, (0,0))
+                self.base_image.blit(self.inventory.equipped['armor'].image, (0, 0))
         except AttributeError:
             # Player does not have armor equipped
             pass
@@ -1052,13 +1048,13 @@ class Item(Entity):
         if item_class == "BATTERY":
             item = Battery(item_id, location, x, y)
         elif item_class == "ARMOR":
-            item = Armor(item_id, location, x ,y)
+            item = Armor(item_id, location, x, y)
         elif item_class in ("SWORD", "CLUB", "KNIFE", "PDW", "CANNON", "RIFLE", "PISTOL"):
             item = Weapon(item_id, location, x, y)
         elif item_class in ("QUICK", "BRAWLER", "FEEDER", "RANGER"):
             item = Reactor(item_id, location, x, y)
         else:
-            raise ValueError("%s not recognized as a valid item class" %item_class)
+            raise ValueError("%s not recognized as a valid item class" % item_class)
 
         return item
 
@@ -1205,6 +1201,7 @@ class Reactor(Item):
             return 0
         else:
             return self.recharge_rate
+
 
 class Battery(Item):
     """Item which can be used to charge energy

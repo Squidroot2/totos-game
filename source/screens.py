@@ -66,7 +66,6 @@ def titleScreen(window, fps_clock):
     show_title = True
     while show_title:
 
-
         checkForQuit()
         for event in pygame.event.get(KEYDOWN):
             if event.key == K_RETURN:
@@ -136,7 +135,6 @@ def playerCreateScreen(window, fps_clock):
 
     continue_cover.set_alpha(alpha_max)
     cover_alpha = continue_cover.get_alpha()
-
 
     # Identify the input font
     # Since W seems to be the biggest character, we want to calculate the char_width based on that
@@ -280,9 +278,6 @@ def mainGameScreen(window, fps_clock, game):
     drawGamePane(window, game, panes['main'])
     pygame.draw.rect(window, COLORS['DARK GRAY'], panes['bottom'], 0)
 
-    wait_for_message = False
-    message = None
-
     # game loop
     run_game = True
     while run_game:
@@ -358,8 +353,7 @@ def mainGameScreen(window, fps_clock, game):
 
                 # Inventory Key
                 elif event.key == K_i:
-                    inventoryScreen(window, fps_clock, game, panes)
-                    turn_taken = False
+                    turn_taken = inventoryScreen(window, fps_clock, game, panes)
 
                 # Fire Key
                 elif event.key == K_f:
@@ -443,7 +437,7 @@ def mainGameScreen(window, fps_clock, game):
         if player.location.projectiles:
             while player.location.projectiles:
                 pygame.draw.rect(window, COLORS['BLACK'], panes['main'])
-                drawGamePane(window,game,panes['main'])
+                drawGamePane(window, game, panes['main'])
                 pygame.display.update()
                 fps_clock.tick(FPS)
             # Draw one more time to clear the projectile
@@ -464,7 +458,6 @@ def mainGameScreen(window, fps_clock, game):
         for event in pygame.event.get(KEYDOWN):
             if event.key == K_RETURN:
                 show_screen = False
-
 
 
 def gameOverScreen(window, fps_clock):
@@ -561,7 +554,7 @@ def targetScreen(window, fps_clock, game, panes):
             drawGamePane(window, game, panes['main'], target)
             pygame.draw.rect(window, COLORS['DARK GRAY'], panes['bottom'], 0)
 
-        #drawFPS(window, fps_clock)
+        # drawFPS(window, fps_clock)
         # Update the screen and wait for clock to tick; repeat the while loop
         pygame.display.update()
         fps_clock.tick()
@@ -572,9 +565,11 @@ def targetScreen(window, fps_clock, game, panes):
     # Return bool determining if turn was taken
     return turn_taken
 
-#todo finish invenotory screen
+
 def inventoryScreen(window, fps_clock, game, panes):
-    """Used for drawing the inventory"""
+    """Used for drawing the inventory
+
+    Returns : bool : whether or not a turn was taken"""
     player = game.player
 
     drawAllPanes(window, game, panes)
@@ -582,6 +577,8 @@ def inventoryScreen(window, fps_clock, game, panes):
     # drawInventory and get the item order
     selected_item = None
     item_order = drawInventory(window, panes['main'], player.inventory, selected_item)
+
+    turn_taken = False
 
     show_inventory = True
     while show_inventory:
@@ -624,25 +621,31 @@ def inventoryScreen(window, fps_clock, game, panes):
                         if selected_item in player.inventory.equipped.values():
                             selected_item.unequip()
                             show_inventory = False
+                            turn_taken = False
                             break
 
                     elif event.key == K_e:
-                        if selected_item.item_class != "battery" and selected_item not in player.inventory.equipped.values():
+                        if selected_item.item_class != "battery" and \
+                                selected_item not in player.inventory.equipped.values():
                             selected_item.equip()
                             show_inventory = False
+                            if selected_item.item_class == 'weapon' and selected_item.is_quick_draw:
+                                turn_taken = False
+                            else:
+                                turn_taken = True
                             break
 
                     elif event.key == K_s:
                         if selected_item.item_class == "battery":
                             selected_item.use()
                             show_inventory = False
+                            turn_taken = True
                             break
 
                     elif event.key == K_d:
                         selected_item.drop()
                         show_inventory = False
                         break
-
 
                 # If Item selected, draw its info
                 if selected_item:
@@ -655,3 +658,4 @@ def inventoryScreen(window, fps_clock, game, panes):
         fps_clock.tick()
 
     # END WHILE SHOW INVENTORY
+    return turn_taken
