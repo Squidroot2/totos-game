@@ -204,7 +204,8 @@ class Fonts:
     
     files = {'default': 'freesansbold.ttf',
              'unispace': os.path.join(unispace_folder, 'unispace_rg.ttf'),
-             'unispace_bold': os.path.join(unispace_folder, 'unispace bd.ttf')}
+             'unispace_bold': os.path.join(unispace_folder, 'unispace bd.ttf'),
+             'unispace_ital': os.path.join(unispace_folder, 'unispace it.ttf')}
     
     presets = dict()
              
@@ -220,7 +221,8 @@ class Fonts:
                 'log':          Font(cls.files['default'],12),
                 'inv_title':    Font(cls.files['unispace_bold'], 16),
                 'inv_header':   Font(cls.files['unispace_bold'], 14),
-                'inv_listing':  Font(cls.files['unispace'], 12)}
+                'inv_listing':  Font(cls.files['unispace'], 12),
+                'inv_detail':   Font(cls.files['unispace_ital'], 10)}
 
         cls.presets['inv_header'].set_underline(True)
 

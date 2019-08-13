@@ -7,8 +7,6 @@ Functions:
     gameOverScreen(window, fps_clock)
     targetScreen(window, fps_clock, game, panes)
     inventoryScreen(window, fps_clock, game, panes)
-
-
 """
 
 
@@ -104,9 +102,7 @@ def playerCreateScreen(window, fps_clock):
         fps_clock : pygame.Clock
             Used to keep FPS Steady
 
-    Returns:
-        name : string
-            Chosen name of the player character
+    Returns: string, string : Chosen name of the player character and chosen background
     """
 
     bg_image = Images.getImage('Backgrounds', 'starry')

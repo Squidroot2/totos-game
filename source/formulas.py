@@ -30,6 +30,8 @@ def getMeleeHitChance(attacker_enc, defender_enc):
     
 
 def getRangedHitChance(attacker_enc, defender_enc, range_exceeded):
+    """Returns a float 0-1 that indicates the chance of a ranged attack landing"""
+    
     # Base chance to hit
     base = .95
     

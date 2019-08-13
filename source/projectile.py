@@ -10,12 +10,39 @@ from source.utilities import getDistanceBetweenEntities
 
 # todo figure out a way to draw Projectiles so their animation completes before corpses are drawn
 class Projectile:
-    """Projectiles are images which are blitted to the screen to show that a ranged attack occurred"""
+    """Projectiles are images which are blitted to the screen to show that a ranged attack occurred
+    
+    Attributes:
+        image_dir : string : CLASS; directory in the Images assets class
+        frames_per_tile : int : CLASS; Used to calculate the total number of frames in the animation
+        pixelx : int : current x location on the game surface in pixels
+        pixely : int : current y location on the game surface in pixels
+        dest_pixelx : int : destination x
+        dest_pixely : int : destination y
+        frames_on_screen : int : total number of frames in the animation
+        x_step : float : x amount projectile moves per frame
+        y_step : float : y amount projectile moves per frame
+        location : source.floors.Floor 
+        steps_taken : int : number of frames displayed so far
+        delay : int : number of frames left before starting animation
+        image : pygame.Surface 
+    
+    Methods: 
+        drawNextStep(self, surface) : draws and moves the projectile
+    """
     image_dir = 'Projectiles'
     frames_per_tile = 2
 
     def __init__(self, proj_id, location, source, destination, delay):
-        """Takes in source in destination as tuples that indicate coords on tile_map"""
+        """Init method for Projectile
+        
+        Parameters: 
+            proj_id : string : associated with the name of the image from the Image assets class
+            location : source.floor.Floor 
+            source : tuple(int,int) : Starting x and y position
+            destination : tuple(int, int) : Ending x and y position
+            delay : int : number of frames to wait before starting the animation
+        """
         
         # Determines current position
         self.pixelx = source[0] * CELL_SIZE
@@ -50,16 +77,16 @@ class Projectile:
         # Determines the angle of the projectile image using the arc tangent of "y/x"
         angle = math.degrees(math.atan2(y_difference, x_difference))
         
-        # Gets the image and rotates. Use pygame.transform.rotate rotates clockwise unlike math.atan2
+        # Gets the image and rotates. pygame.transform.rotate rotates clockwise unlike math.atan2
         self.image = pygame.transform.rotate(Images.getImage(self.image_dir, proj_id), -angle)
         
     def drawNextStep(self, surface):
-        
+        """Draws the projectile image at its current location, then moves it and increments the steps taken"""
         # If delay, decrement delay
         if self.delay:
             self.delay -= 1
             return
-            
+        
         else:
             # Draws the projectile
             surface.blit(self.image, (self.pixelx, self.pixely))

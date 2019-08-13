@@ -619,6 +619,7 @@ def drawItemInfo(surface, pane, item):
     # Identify Fonts
     header_font = Fonts.presets['inv_header']
     main_font = Fonts.presets['inv_listing']
+    action_font = Fonts.presets['inv_detail']
 
     # Identify Linesize
     line_size = main_font.get_linesize()
@@ -716,7 +717,7 @@ def drawItemInfo(surface, pane, item):
     stat_rects = [surf.get_rect() for surf in stat_surfs]
 
     # Create actions surfs and rects
-    action_surfs = [main_font.render(action, True, font_color, bg_color) for action in actions]
+    action_surfs = [action_font.render(action, True, font_color, bg_color) for action in actions]
     action_rects = [surf.get_rect() for surf in action_surfs]
 
     # Place Stat Rects
