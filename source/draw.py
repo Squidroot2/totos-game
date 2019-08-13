@@ -675,8 +675,11 @@ def drawItemInfo(surface, pane, item):
         actions.append("u(s)e")
     elif item in item.location.equipped.values():
         actions.append("(u)nequip")
+    elif item.item_class == 'weapon' and item.is_quick_draw:
+        actions.append("(e)quip(fast)")
     else:
         actions.append("(e)quip")
+
 
     # Item Area dimensions
     area_width = pane.width / 4

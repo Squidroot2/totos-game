@@ -358,8 +358,7 @@ def mainGameScreen(window, fps_clock, game):
 
                 # Inventory Key
                 elif event.key == K_i:
-                    inventoryScreen(window, fps_clock, game, panes)
-                    turn_taken = False
+                    turn_taken = inventoryScreen(window, fps_clock, game, panes)
 
                 # Fire Key
                 elif event.key == K_f:
@@ -574,7 +573,9 @@ def targetScreen(window, fps_clock, game, panes):
 
 #todo finish invenotory screen
 def inventoryScreen(window, fps_clock, game, panes):
-    """Used for drawing the inventory"""
+    """Used for drawing the inventory
+
+    Returns : bool : whether or not a turn was taken"""
     player = game.player
 
     drawAllPanes(window, game, panes)
@@ -582,6 +583,8 @@ def inventoryScreen(window, fps_clock, game, panes):
     # drawInventory and get the item order
     selected_item = None
     item_order = drawInventory(window, panes['main'], player.inventory, selected_item)
+
+    turn_taken= False
 
     show_inventory = True
     while show_inventory:
@@ -624,18 +627,24 @@ def inventoryScreen(window, fps_clock, game, panes):
                         if selected_item in player.inventory.equipped.values():
                             selected_item.unequip()
                             show_inventory = False
+                            turn_taken = True
                             break
 
                     elif event.key == K_e:
                         if selected_item.item_class != "battery" and selected_item not in player.inventory.equipped.values():
                             selected_item.equip()
                             show_inventory = False
+                            if selected_item.item_class == 'weapon' and selected_item.is_quick_draw:
+                                turn_taken = False
+                            else:
+                                turn_taken = True
                             break
 
                     elif event.key == K_s:
                         if selected_item.item_class == "battery":
                             selected_item.use()
                             show_inventory = False
+                            turn_taken = True
                             break
 
                     elif event.key == K_d:
@@ -655,3 +664,4 @@ def inventoryScreen(window, fps_clock, game, panes):
         fps_clock.tick()
 
     # END WHILE SHOW INVENTORY
+    return turn_taken
