@@ -346,7 +346,7 @@ def drawLogPane(window, log, pane):
     log_top = pane.top + y_margin
 
     # Get tha last messages from the log
-    messages = log.getLastMessages(12, 40)
+    messages = log.getLastLines(12, 40)
 
     # Create lists to store surfaces and rects
     text_surfs = list()
