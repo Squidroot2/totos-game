@@ -494,6 +494,10 @@ class Character(Entity):
         Paramaters:
             damage : int
         """
+        # Reactor is tagged as being hit this turn
+        if self.inventory.equipped['reactor']:
+            self.inventory.equipped['reactor'].hit_this_turn = True
+
         # If the character has some energy, damage is dealt to it first
         if not self.energy == 0:
 
@@ -510,9 +514,7 @@ class Character(Entity):
         else:
             damage_to_flesh = damage
 
-        # Reactor is tagged as being hit this turn
-        if self.inventory.equipped['reactor']:
-            self.inventory.equipped['reactor'].hit_this_turn = True
+
 
         # Determine if the damage to flesh was lethal
         killed = formulas.determineLethal(damage_to_flesh, self.life)
@@ -975,6 +977,20 @@ class Player(Character):
 
         except AttributeError:
             return 0
+
+    def getRecoveryTime(self):
+        """Returns the number of turns it will take for the player's reactor to start recharging again"""
+
+        if self.energy > 0 or self.inventory.equipped['reactor'] is None:
+            return 0
+
+        time_to_recover = self.inventory.equipped['reactor'].recovery_time - \
+                          self.inventory.equipped['reactor'].recovered
+
+        if time_to_recover < 0:
+            return 0
+        else:
+            return time_to_recover
 
     @property
     def image(self):

@@ -161,6 +161,11 @@ def drawStatPane(window, player, pane):
     eps = player.getEnergyPerShot()
     enc = player.getEncumbrance()
     percent_to_next_level = player.getPercentToNextLevel()
+    charge_this_turn = player.getChargeThisTurn()
+    if player.getRecoveryTime():
+        recovery_left = "(%d)" % player.getRecoveryTime()
+    else:
+        recovery_left = ""
 
 
 
@@ -172,7 +177,7 @@ def drawStatPane(window, player, pane):
     defense = "Defense: %d" % player.getDefense()
     life = "Life: %d" % player.life
     energy_value = "%.1f / %d" % (player.energy, player.max_energy)
-    recharge = "Recharge: %s"  % formatFloat("%.2f", player.getChargeThisTurn())
+    recharge = "Recharge: %s %s" % (formatFloat("%.2f", player.getChargeThisTurn()), recovery_left)
     # Ranged Stats
     str_eps = "EPS: %.1f (%.1f)" % (eps, eps - player.getRecoilCharge())
     r_dmg = "DMG: %.1f" % player.getRangedDamage()
@@ -680,7 +685,6 @@ def drawItemInfo(surface, pane, item):
         actions.append("(e)quip(fast)")
     else:
         actions.append("(e)quip")
-
 
     # Item Area dimensions
     area_width = pane.width / 4

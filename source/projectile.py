@@ -83,10 +83,15 @@ class Projectile:
     def drawNextStep(self, surface):
         """Draws the projectile image at its current location, then moves it and increments the steps taken"""
         # If delay, decrement delay
+        assert(self.steps_taken <= self.frames_on_screen)
+
         if self.delay:
             self.delay -= 1
             return
-        
+
+        elif self.steps_taken == self.frames_on_screen:
+            self.location.removeProjectile(self)
+
         else:
             # Draws the projectile
             surface.blit(self.image, (self.pixelx, self.pixely))
@@ -97,8 +102,4 @@ class Projectile:
             
             # Increments steps taken
             self.steps_taken += 1
-            
-            # Determines if projectile has taken enough steps to reach destination
-            if self.steps_taken == self.frames_on_screen:
-                self.location.removeProjectile(self)
 
