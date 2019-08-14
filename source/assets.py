@@ -195,17 +195,18 @@ class Data:
         return cls.data['Inventories']['PLAYER'][background]
 
 
-#todo use Fonts Class to create Fonts
 class Fonts:
     main_folder = 'fonts'
     
     # Font types
     unispace_folder = os.path.join(main_folder, 'unispace')
+    rokkitt_folder = os.path.join(main_folder, 'rokkitt')
     
     files = {'default': 'freesansbold.ttf',
              'unispace': os.path.join(unispace_folder, 'unispace_rg.ttf'),
              'unispace_bold': os.path.join(unispace_folder, 'unispace bd.ttf'),
-             'unispace_ital': os.path.join(unispace_folder, 'unispace it.ttf')}
+             'unispace_ital': os.path.join(unispace_folder, 'unispace it.ttf'),
+             'rokkitt': os.path.join(rokkitt_folder, 'Rokkitt-Regular.ttf')}
     
     presets = dict()
              
@@ -218,7 +219,7 @@ class Fonts:
                 'info_header':  Font(cls.files['unispace'], 16),
                 'info':         Font(cls.files['unispace'], 14),
                 'info_S':       Font(cls.files['unispace'],12),
-                'log':          Font(cls.files['default'],12),
+                'log':          Font(cls.files['rokkitt'], 12),
                 'inv_title':    Font(cls.files['unispace_bold'], 16),
                 'inv_header':   Font(cls.files['unispace_bold'], 14),
                 'inv_listing':  Font(cls.files['unispace'], 12),

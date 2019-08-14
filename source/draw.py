@@ -14,7 +14,7 @@ Functions:
 import pygame
 
 from source.assets import Fonts
-from source.constants import BACKGROUNDS, COLORS, FONTS, CELL_SIZE, REACTORS
+from source.constants import BACKGROUNDS, COLORS, FONTS, CELL_SIZE
 from source.formulas import getRangedHitChance, getMeleeHitChance
 from source.utilities import formatFloat
 
@@ -335,6 +335,9 @@ def drawLogPane(window, log, pane):
     # 0 represents the width; if zero fills in rect
     pygame.draw.rect(window, COLORS['WHITE'], pane, 0)
 
+    # Identity Font
+    log_font = Fonts.presets['log']
+
     # Adds a Margin to the top and left side of the messages box
     x_margin = 10
     y_margin = 5
@@ -351,11 +354,11 @@ def drawLogPane(window, log, pane):
     for line, message in enumerate(messages):
 
         # Create a surface and rect for each line of messages
-        surf = FONTS['LOG'].render(message, True, COLORS['BLACK'], COLORS['WHITE'])
+        surf = log_font.render(message, True, COLORS['BLACK'], COLORS['WHITE'])
         rect = surf.get_rect()
 
         # Place rect based on line number
-        rect.topleft = (log_left, log_top + FONTS['LOG'].get_linesize() * line)
+        rect.topleft = (log_left, log_top + log_font.get_linesize() * line)
 
         # Append surf and rect to list
         text_surfs.append(surf)
