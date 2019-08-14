@@ -11,6 +11,7 @@ from collections import Counter
 import pygame
 # My Modules
 from source.constants import CELL_SIZE, FLOOR_WIDTH, FLOOR_HEIGHT
+from source.utilities import smartSplit
 
 
 
@@ -70,9 +71,16 @@ class Log:
         self.buffer = []
         self.setInstance(self)
 
-    def getLastMessages(self, num):
+    def getLastMessages(self, num, max_length):
         """Gets a specified number of messages from the end of the messages list"""
-        return self.messages[-num:]
+        last_messages = []
+
+        for message in self.messages[-num:]:
+            if len(message) > max_length:
+                last_messages.extend(smartSplit(message, max_length))
+            else:
+                last_messages.append(message)
+        return last_messages[-num:]
 
     def addEOTUnderscore(self):
         """Adds an underscore to the last message of the turn"""

@@ -92,8 +92,8 @@ def getPanes(window_rect):
     # Explicit variables for the size of the panes
     bottom_pane_height = window_rect.height / 25
     side_pane_width = window_rect.width / 4
-    log_pane_width = window_rect.width / 5
-    log_pane_height = window_rect.height / 6
+    log_pane_width = window_rect.width / 4.4
+    log_pane_height = window_rect.height / 4
 
     # Calculate bottom pane dimensions
     bottom_pane_top = window_rect.bottom - bottom_pane_height
@@ -334,6 +334,7 @@ def drawLogPane(window, log, pane):
     # Fills in the pane in black
     # 0 represents the width; if zero fills in rect
     pygame.draw.rect(window, COLORS['WHITE'], pane, 0)
+    pygame.draw.rect(window, COLORS['BLACK'], pane, 1)
 
     # Identity Font
     log_font = Fonts.presets['log']
@@ -345,7 +346,7 @@ def drawLogPane(window, log, pane):
     log_top = pane.top + y_margin
 
     # Get tha last messages from the log
-    messages = log.getLastMessages(8)
+    messages = log.getLastMessages(12, 40)
 
     # Create lists to store surfaces and rects
     text_surfs = list()
