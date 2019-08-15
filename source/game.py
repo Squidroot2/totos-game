@@ -11,6 +11,7 @@ from collections import Counter
 import pygame
 # My Modules
 from source.constants import CELL_SIZE, FLOOR_WIDTH, FLOOR_HEIGHT
+from source.utilities import smartSplit
 
 
 
@@ -49,7 +50,7 @@ class Log:
         messages : List of strings
             Stores  messages to be drawn to the screen
     Methods:
-        getLastMessage(self, num) : Gets a specified number of messages from the end of the messages list
+        getLastMessage(self, lines) : Gets a specified number of messages from the end of the messages list
         addEOTUnderscore(self) : Adds an underscore to the last message of the turn
         setInstance(cls, instance) : CLASS; Used by the init function to keep track of the current instance in a class
             attribute
@@ -70,9 +71,24 @@ class Log:
         self.buffer = []
         self.setInstance(self)
 
-    def getLastMessages(self, num):
-        """Gets a specified number of messages from the end of the messages list"""
-        return self.messages[-num:]
+    def getLastLines(self, lines, max_length):
+        """Gets a specified number of lines of messages from the end of the messages list
+
+        Parameters:
+            lines : int
+            max_length : int
+
+        Returns: List[string]
+        """
+        last_messages = []
+
+        for message in self.messages[-lines:]:
+            if len(message) > max_length:
+                last_messages.extend(smartSplit(message, max_length))
+            else:
+                last_messages.append(message)
+
+        return last_messages[-lines:]
 
     def addEOTUnderscore(self):
         """Adds an underscore to the last message of the turn"""

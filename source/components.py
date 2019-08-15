@@ -7,10 +7,11 @@ Classes:
 """
 # Standard Library
 import random
+from collections import Counter
 # Third Party
 import pygame
 # My Modules
-from source.constants import CELL_SIZE, BACKGROUNDS
+from source.constants import CELL_SIZE, BACKGROUNDS, REACTORS
 from source.utilities import getDistanceBetweenEntities
 from source.assets import Data
 
@@ -264,9 +265,10 @@ class Camera:
 
 
 class Inventory:
-    ''' Component Class'''
-    def __init__(self, owner, inv_type):
+    ''' Component Class which hold items that a character is carrying'''
+    capacity = 10
 
+    def __init__(self, owner, inv_type):
 
         # Type Validation
         type_is_valid = inv_type in ('empty', 'BOXER') or inv_type in BACKGROUNDS
@@ -274,15 +276,15 @@ class Inventory:
 
         self.owner = owner
         self.contents = []
-        self.equipped = {"weapon": None, "armor": None, "generator": None}
+        self.equipped = {"weapon": None, "armor": None, "reactor": None}
 
         # If the inventory type is not empty, get the inventory data and create the items.
         if inv_type != "empty":
             self.populate(inv_type)
 
-            # Set the generator to full energy if there is one equipped
-            if self.equipped['generator'] is not None:
-                self.equipped['generator'].rechargeToFull()
+            # Set the reactor to full energy if there is one equipped
+            if self.equipped['reactor'] is not None:
+                self.equipped['reactor'].rechargeToFull()
 
     def populate(self, inv_type):
         """Populates the inventory with the intial items using the inventory type"""
@@ -317,4 +319,28 @@ class Inventory:
             self.equipped[slot] = None
         for item in self.contents:
             item.drop()
+
+    def getItemsByType(self):
+        """Returns a dictionary of lists sorted by the item type"""
+        items = {"weapons":[],
+                 "armor":[],
+                 "reactors":[],
+                 "batteries":[]}
+
+        for item in self.contents:
+            (item_type, num) = item.id.rsplit("_")
+            if item_type == "BATTERY":
+                items['batteries'].append(item)
+                continue
+            elif item_type == "ARMOR":
+                items['armor'].append(item)
+                continue
+            elif item_type in REACTORS:
+                items['reactors'].append(item)
+                continue
+            else:
+                items['weapons'].append(item)
+
+        return items
+
 

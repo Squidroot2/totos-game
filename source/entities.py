@@ -11,7 +11,7 @@ Classes:
     Item(Entity)
     Weapon(Item)
     Armor(Item)
-    Generator(Item)
+    Reactor(Item)
     Battery(Item)
     
 """
@@ -27,6 +27,7 @@ from source.constants import CELL_SIZE, BACKGROUNDS, COLORS, DRAW_ORDER
 from source.game import Log
 from source.utilities import getDistanceBetweenEntities, getLineBetweenEntities
 from source.assets import Images, Data
+from source.projectile import Projectile
 
 
 class Entity:
@@ -144,7 +145,11 @@ class Target(Entity):
         self.location.removeEntity(self)
 
     def validateMove(self, destination):
-        """Validates the move for the target entity to ensure it does not move out of bounds"""
+        """Validates the move for the target entity to ensure it does not move out of bounds
+
+        Parameters:
+            destination: tuple(int,int)
+        """
         floor_width = self.location.width
         floor_height = self.location.height
 
@@ -179,7 +184,6 @@ class Target(Entity):
                     continue
                 elif tile[0] == entity.x and tile[1] == entity.y:
                     return entity
-
 
     @property
     def on_top_of(self):
@@ -278,7 +282,7 @@ class Character(Entity):
         validateMove(self, destination) : Returns True if the destination is walkable and False if it isn'tagged
         checkEntityObstruct(self, destination) : Checks if an obstructing entity is in the destination.
         attack(self, opponent, is_ranged=False) : Attacks a specified opponent
-        takeDamage(self, damage) : Reduces the amount of energy in the characters generator and deals any remaining to flesh
+        takeDamage(self, damage) : Reduces the amount of energy in the characters reactor and deals any remaining to flesh
         kill(self) : Kill the character
         getDefense(self) : Gets the total defense of the character
         getMeleeDamage(self) : Gets the total melee damage per strike
@@ -286,14 +290,14 @@ class Character(Entity):
         getAttackRate(self, is_ranged=False) : Gets the number of attacks that can be performed in a turn
         getEncumbrance(self) : The amount that equipment outlevels character
         getEnergyPerShot(self) : The energy that every shot uses
-        getRecoilCharge(self) : The amount of energy that is recycled back into the generator after every shot
+        getRecoilCharge(self) : The amount of energy that is recycled back into the reactor after every shot
         getWeaponRange(self) 
         getMeleeVerb(self) : Gets the verb to describe a melee attack
         getRangedVerb(self) : Gets the verb to describe a ranged attack
         
     Properties:
-        energy : int : RW; Amount of energy in the Character's Generator
-        max_energy : int : RO; Amount of energy that a Character's Generator could hold
+        energy : int : RW; Amount of energy in the Character's Reactor
+        max_energy : int : RO; Amount of energy that a Character's Reactor could hold
 
     Children:
         Player(Character)"""
@@ -324,6 +328,7 @@ class Character(Entity):
             self.ranged_damage = data['innate_ranged']['damage']
             self.range = data['innate_ranged']['range']
             self.ranged_attack_rate = data['innate_ranged']['rate']
+            self.projectile = data['innate_ranged']['projectile']
         
         # Gets the image
         self.image_name = data['image']
@@ -458,12 +463,17 @@ class Character(Entity):
             # rolls random float 0-1 to determine if attack landed
             roll = random.random()
             
-            # If attack landed deal damage to buffer and 
+            # If attack landed deal damage to opponent and add message to Buffer
             if roll < hit_chance:
-                Log.addToBuffer("%s %s %s" % (self.name, verb, opponent.name))
+                Log.addToBuffer("%s %s %s (%.1f dmg)" % (self.name, verb, opponent.name, damage))
                 opponent.takeDamage(damage)
             else:
                 Log.addToBuffer(self.name + " missed")
+            
+            if is_ranged:
+                # Create Projectile
+                projectile_id = self.getProjectile()
+                Projectile(projectile_id, self.location, (self.x, self.y), (opponent.x, opponent.y), delay=strike*5)
 
             # Send a message if the opponent was killed
             if opponent.is_dead:
@@ -471,17 +481,23 @@ class Character(Entity):
                     self.collectXP(opponent)
                 except AttributeError:
                     pass
-                Log.addToBuffer("%s killed %s" %(self.name, opponent.name))
+                Log.addToBuffer("%s killed %s" % (self.name, opponent.name))
                 break
+
+        # END FOR STRIKE LOOP
          
     def takeDamage(self, damage):
-        """Reduces the amount of energy in the character's generator and deals any remaining to flesh
+        """Reduces the amount of energy in the character's reactor and deals any remaining to flesh
 
         Attacks to flesh do not nessearilly reduce life points but rather affect the chance to kill or chance to injure
 
         Paramaters:
             damage : int
         """
+        # Reactor is tagged as being hit this turn
+        if self.inventory.equipped['reactor']:
+            self.inventory.equipped['reactor'].hit_this_turn = True
+
         # If the character has some energy, damage is dealt to it first
         if not self.energy == 0:
 
@@ -498,9 +514,7 @@ class Character(Entity):
         else:
             damage_to_flesh = damage
 
-        # Generator is tagged as being hit this turn
-        if self.inventory.equipped['generator']:
-            self.inventory.equipped['generator'].hit_this_turn = True
+
 
         # Determine if the damage to flesh was lethal
         killed = formulas.determineLethal(damage_to_flesh, self.life)
@@ -515,6 +529,7 @@ class Character(Entity):
 
             # If injured, log message and reduce life by 1
             if injured:
+                self.location.tile_map[self.x][self.y].addSplatter()
                 Log.addToBuffer(self.name + " was weakened")
                 self.life -= 1
 
@@ -614,18 +629,18 @@ class Character(Entity):
             return 0
 
     def getRecoilCharge(self):
-        """The amount of energy that is recycled back into the generator after every shot.
+        """The amount of energy that is recycled back into the reactor after every shot.
         
-        This is either the amount of energy per shot on the equipped weapon or the recoil charge on the generator,
+        This is either the amount of energy per shot on the equipped weapon or the recoil charge on the reactor,
         whichever is lower
         
         Returns: float
         """
         try:
-            if self.getEnergyPerShot() < self.inventory.equipped['generator'].recoil_charge:
+            if self.getEnergyPerShot() < self.inventory.equipped['reactor'].recoil_charge:
                 return self.getEnergyPerShot()
             else:
-                return self.inventory.equipped['generator'].recoil_charge
+                return self.inventory.equipped['reactor'].recoil_charge
         except AttributeError:
             return 0
 
@@ -658,6 +673,13 @@ class Character(Entity):
         else:
             return self.ranged_verb
 
+    def getProjectile(self):
+        """Returns a string representing the projectile id"""
+        try:
+            return self.inventory.equipped['weapon'].projectile
+        except AttributeError:
+            return self.projectile
+
     def draw(self, surface):
         """Extends the entity draw function to draw a forcefield if the character has energy"""
         super().draw(surface)
@@ -666,35 +688,31 @@ class Character(Entity):
             force_field = Images.getImage('Other', 'force_field')
             surface.blit(force_field, (self.x*CELL_SIZE, self.y*CELL_SIZE))
 
-
     @property
     def energy(self):
-        """Amount of energy currently in the character's generator
+        """Amount of energy currently in the character's reactor
 
         Returns: int
         """
-        if self.inventory.equipped['generator'] is None:
+        if self.inventory.equipped['reactor'] is None:
             return 0
         else:
-            return self.inventory.equipped['generator'].current_charge
+            return self.inventory.equipped['reactor'].current_charge
 
     @energy.setter
     def energy(self, value):
         """Setter method for energy"""
-        try:
-            self.inventory.equipped['generator'].current_charge = value
-        except AttributeError:
-            print("No Generator to hold energy")
+        self.inventory.equipped['reactor'].current_charge = value
 
     @property
     def max_energy(self):
-        """Amount of energy the character's generator could hold
+        """Amount of energy the character's reactor could hold
 
         Returns:: int"""
-        if self.inventory.equipped['generator'] is None:
+        if self.inventory.equipped['reactor'] is None:
             return 0
         else:
-            return self.inventory.equipped['generator'].max_charge
+            return self.inventory.equipped['reactor'].max_charge
 
 
 class Player(Character):
@@ -705,14 +723,9 @@ class Player(Character):
     draw_order = DRAW_ORDER['PLAYER']
     base_image = None
 
-    xp_ceiling = {1:1,
-                  2:2,
-                  3:3,
-                  4:4,
-                  5:5}
+    xp_ceiling = [0, 1, 5, 10, 15, 25]
 
     max_level = len(xp_ceiling)
-
 
     def __init__(self, name, background, floor, x, y):
         """Extends the Character init method
@@ -854,8 +867,7 @@ class Player(Character):
                             see_down_portal = True
                         else:
                             see_up_portal = True
-                
-                
+
                 elif isinstance(entity, Corpse):
                     if entity.x == self.x and entity.y == self.y:
                         corpses_at_feet += 1
@@ -927,7 +939,7 @@ class Player(Character):
             enemy: Character"""
         self.xp += enemy.xp
 
-        while not self.level == self.max_level and self.xp > self.xp_ceiling[self.level]:
+        while not self.level == self.max_level and self.xp >= self.xp_ceiling[self.level]:
             self.levelUp()
 
     def levelUp(self):
@@ -950,11 +962,41 @@ class Player(Character):
         if self.level == self.max_level:
             Log.addToBuffer("%s has reached max level" % self.name)
 
+    def getPercentToNextLevel(self):
+        """Returns a floating point number between 0 and 1 that indicates how close the player is to the next level"""
+        if self.level == self.max_level:
+            return 1.0
+        else:
+            ceiling_last_lvl = self.xp_ceiling[self.level - 1]
+            return (self.xp - ceiling_last_lvl) / (self.xp_ceiling[self.level] - ceiling_last_lvl)
+
+    def getChargeThisTurn(self):
+        """Returns the amount that the reactor will charge this turn"""
+        try:
+            return self.inventory.equipped['reactor'].getRechargeThisTurn()
+
+        except AttributeError:
+            return 0
+
+    def getRecoveryTime(self):
+        """Returns the number of turns it will take for the player's reactor to start recharging again"""
+
+        if self.energy > 0 or self.inventory.equipped['reactor'] is None:
+            return 0
+
+        time_to_recover = self.inventory.equipped['reactor'].recovery_time - \
+                          self.inventory.equipped['reactor'].recovered
+
+        if time_to_recover < 0:
+            return 0
+        else:
+            return time_to_recover
+
     @property
     def image(self):
         try:
             if self.inventory.equipped['armor'].image is not Images.missing_image:
-                self.base_image.blit(self.inventory.equipped['armor'].image, (0,0))
+                self.base_image.blit(self.inventory.equipped['armor'].image, (0, 0))
         except AttributeError:
             # Player does not have armor equipped
             pass
@@ -982,15 +1024,21 @@ class Item(Entity):
     image_dir = "Items"
     draw_order = DRAW_ORDER['ITEM']
 
-    def __init__(self, data, location, x, y):
+    def __init__(self, item_id, data, location, x, y):
 
+        self.id = item_id
         self.name = data['name']
         self.image_name = data['image']
+        self.difficulty = data['difficulty']
 
         super().__init__(location, x, y)
 
     def drop(self):
         """Item is moved from inventory to floor"""
+        # Unequip if equipped
+        if self in self.location.equipped.values():
+            self.unequip()
+
         self.location.removeEntity(self)
         self.x = self.location.owner.x
         self.y = self.location.owner.y
@@ -1013,18 +1061,20 @@ class Item(Entity):
     @staticmethod
     def createItem(item_id, location, x=None, y=None):
         """Creates an item based on the type of ID"""
-        item_class = item_id[:-2]
+        # Everything before the underscore is the item class
+        split_id = item_id.rsplit("_")
+        item_class = split_id[0]
 
         if item_class == "BATTERY":
             item = Battery(item_id, location, x, y)
         elif item_class == "ARMOR":
-            item = Armor(item_id, location, x ,y)
+            item = Armor(item_id, location, x, y)
         elif item_class in ("SWORD", "CLUB", "KNIFE", "PDW", "CANNON", "RIFLE", "PISTOL"):
             item = Weapon(item_id, location, x, y)
         elif item_class in ("QUICK", "BRAWLER", "FEEDER", "RANGER"):
-            item = Generator(item_id, location, x, y)
+            item = Reactor(item_id, location, x, y)
         else:
-            raise ValueError("%s not recognized as a valid item class" %item_class)
+            raise ValueError("%s not recognized as a valid item class" % item_class)
 
         return item
 
@@ -1036,13 +1086,14 @@ class Weapon(Item):
 
     """
     def __init__(self, item_id, location, x=None, y=None):
+        self.item_class = 'weapon'
+
         data = Data.getItem("WEAPONS", item_id)
 
         self.melee_verb = data['melee_verb']
         self.melee_damage = data['melee_damage']
         self.melee_speed = data['melee_speed']
         self.is_quick_draw = data['quick_draw']
-        self.difficulty = data['difficulty']
         self.is_ranged = bool(data['ranged'])
         if self.is_ranged:
             self.ranged_verb = data['ranged']['verb']
@@ -1050,11 +1101,15 @@ class Weapon(Item):
             self.energy_per_shot = data['ranged']['energy']
             self.fire_rate = data['ranged']['fire_rate']
             self.range = data['ranged']['range']
+            self.projectile = data['ranged']['projectile']
 
-        super().__init__(data, location, x, y)
+        super().__init__(item_id, data, location, x, y)
 
     def equip(self):
         self.location.equipped['weapon'] = self
+
+    def unequip(self):
+        self.location.equipped['weapon'] = None
 
 
 class Armor(Item):
@@ -1065,26 +1120,21 @@ class Armor(Item):
 
     """
     def __init__(self, item_id, location, x=None, y=None):
-
+        self.item_class = 'armor'
         data = Data.getItem("ARMOR", item_id)
 
         self.defense = data['defense']
-        self.difficulty = data['difficulty']
 
-        super().__init__(data, location, x, y)
+        super().__init__(item_id, data, location, x, y)
 
     def equip(self):
         self.location.equipped['armor'] = self
 
-    #todo remove unused code
-    def drawOnOwner(self, surface):
-        """Used to draw the armor onto the player in the tile_map
-
-        Currently Unused"""
-        surface.blit(self.image, (self.location.owner.x * CELL_SIZE, self.location.owner.y * CELL_SIZE))
+    def unequip(self):
+        self.location.equipped['armor'] = None
 
 
-class Generator(Item):
+class Reactor(Item):
     """Item which provides energy when equipped
 
     Child of Item, Entity
@@ -1099,19 +1149,18 @@ class Generator(Item):
         recovered : int : This will normally be at zero unless the charge is 0. 
             If the charge is at zero and hit_this_turn is False, increments by 1 until it reaches recovery time
             If hit while recovering, recovered resets to 0
-            Generator will not recharge until recovered
+            Reactor will not recharge until recovered
         current_charge : float
     """
 
     def __init__(self, item_id, location, x=None, y=None):
-
-        data = Data.getItem("GENERATORS", item_id)
+        self.item_class = 'reactor'
+        data = Data.getItem("REACTORS", item_id)
 
         self.max_charge = data['max_charge']
         self.recharge_rate = data['recharge_rate']
         self.recovery_time = data['recovery']
         self.recoil_charge = data['recoil_charge']
-        self.difficulty = data['difficulty']
 
         self.hit_this_turn = False
         self.recovered = 0
@@ -1119,20 +1168,23 @@ class Generator(Item):
         # Current Charge Starts at 0
         self.current_charge = 0.0
 
-        super().__init__(data, location, x, y)
+        super().__init__(item_id, data, location, x, y)
 
     def equip(self):
-        """Puts the generator in the equipped generator slot and reduces the current charge to 0"""
-        self.location.equipped['generator'] = self
+        """Puts the reactor in the equipped reactor slot and reduces the current charge to 0"""
+        self.location.equipped['reactor'] = self
         self.current_charge = 0.0
 
+    def unequip(self):
+        self.location.equipped['reactor'] = None
+
     def recharge(self):
-        """Recovers or recharges the the Generator. Should be called once per turn
+        """Recovers or recharges the Reactor. Should be called once per turn
         
-        If the generator was not hit this turn and has not been completely depleted, recharges by the recharge rate amount
+        If the reactor was not hit this turn and has not been completely depleted, recharges by the recharge rate amount
         After recharging, it ensures that current_charge does not exceed max_charge
         
-        If the generator was not hit this turn and is depleted, increases the recovered counter.
+        If the reactor was not hit this turn and is depleted, increases the recovered counter.
         If the recovered counter reached the recovery time, recharge by the recharge rate amount
         
         If was hit this turn, reset recovered counter
@@ -1141,7 +1193,7 @@ class Generator(Item):
         if not self.hit_this_turn:
             if self.current_charge == 0:
                 if self.recovered < self.recovery_time:
-                    # If the generator has not recovered yet, return
+                    # If the reactor has not recovered yet, return
                     self.recovered += 1
                     return
                 else:
@@ -1161,22 +1213,14 @@ class Generator(Item):
         """Sets the current charge to be equal to the max charge"""
         self.current_charge = self.max_charge
 
-    #todo remove unused code
-    def drawForceField(self, surface):
-        """Draws a blue force field around the character to indeicate the energy in the generator
-        
-        Currently Unused
-        """
-
-        surf = pygame.Surface((CELL_SIZE, CELL_SIZE))
-        radius = int(CELL_SIZE/2)
-        center_of_tile = (int(CELL_SIZE/2), int(CELL_SIZE/2))
-
-        pygame.draw.circle(surf, COLORS['LIGHT BLUE'], center_of_tile, radius)
-
-        surf.set_alpha(128)
-
-        surface.blit(surf, (self.location.owner.x * CELL_SIZE, self.location.owner.y * CELL_SIZE))
+    def getRechargeThisTurn(self):
+        """Used for printing to the information pane"""
+        if self.hit_this_turn:
+            return 0
+        elif self.current_charge == 0 and self.recovered < self.recovery_time:
+            return 0
+        else:
+            return self.recharge_rate
 
 
 class Battery(Item):
@@ -1189,16 +1233,15 @@ class Battery(Item):
 
     def __init__(self, item_id, location, x=None, y=None):
         """Extends the Entity init method"""
+        self.item_class = "battery"
 
         data = Data.getItem("BATTERIES", item_id)
-
         self.power = data['power']
 
-        super().__init__(data, location, x, y)
+        super().__init__(item_id, data, location, x, y)
 
     def use(self):
-        """Uses the battery, which increases the amount of charge in the generator"""
-        target = self.location.equipped['generator']
+        """Uses the battery, which increases the amount of charge in the reactor"""
+        target = self.location.equipped['reactor']
         target.current_charge += self.power
         self.location.removeEntity(self)
-        

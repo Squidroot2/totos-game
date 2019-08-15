@@ -84,6 +84,44 @@ def getLineBetweenEntities(coordsA, coordsB):
 
     return path
 
+
+def smartSplit(string, max_length):
+    """Takes a string and returns a list of strings that are less than the given max_length"""
+
+    split_chars = (".", ",", " ", ";")
+
+    strings = [string]
+
+    for i, string in enumerate(strings):
+        if len(string) > max_length:
+            found_split = False
+            index = max_length
+            while not found_split:
+                if string[index] in split_chars:
+                    strings.remove(string)
+                    strings.insert(i, string[index+1:])
+                    strings.insert(i, string[:index+1])
+                    found_split = True
+                else:
+                    index -= 1
+                    if index < 0:
+                        break
+
+    return strings
+
+
+def formatFloat(formatter, val):
+    """Format float to drop off leading zero
+
+    Parameters"""
+    output = formatter % val
+    if output.startswith("0."):
+        return output[1:]
+    if output.startswith("-0."):
+        return "-" + output[2:]
+    return output
+
+
 def terminateGame():
     """Quits the program"""
     pygame.quit()

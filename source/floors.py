@@ -33,6 +33,7 @@ class Floor:
         # Initialize empty variables
         self.entities = []
         self.sort_entities = False
+        self.projectiles = []
         self.rooms = []
         self.portals = {'up': None, 'down': None}
         self.landing_room = None
@@ -176,7 +177,7 @@ class Floor:
         for xtile in range(area.left, area.right):
             # ignore x out of range
             if xtile >= len(self.tile_map) or xtile < 0: continue
-            
+
             for ytile in range(area.top, area.bottom):
                 # ignore y out of range
                 if ytile >= len(self.tile_map[xtile]) or ytile < 0: continue
@@ -213,12 +214,15 @@ class Floor:
                 if self.tile_map[x][y].discovered and not self.map.fov[y][x]:
                     self.tile_map[x][y].drawFog(surface)
 
+        for projectile in self.projectiles:
+            projectile.drawNextStep(surface)
+
+
     def addEntity(self, entity):
         """Adds an entity to the entities list attribute
 
         Parameters:
             entity : Entity
-                entity to add
         """
         self.entities.append(entity)
         self.sort_entities = True
@@ -226,6 +230,14 @@ class Floor:
     def removeEntity(self, entity):
         """Removes an entity from the entities list attribute"""
         self.entities.remove(entity)
+    
+    def addProjectile(self, projectile):
+        """Adds a projectile to the projectiles list"""
+        self.projectiles.append(projectile)
+    
+    def removeProjectile(self, projectile):
+        """Removes the projectile from the projectiles list"""
+        self.projectiles.remove(projectile)
 
     @staticmethod
     def generateDungeon(num_of_floors):
@@ -310,3 +322,9 @@ class Tile:
         width = self.CELL_SIZE
         height = self.CELL_SIZE
         return pygame.Rect(left, top, width, height)
+    
+    def addSplatter(self):
+        """Copies the images and adds a blood splatter to it"""
+        self.image = self.image.copy()
+        splatter = Images.getRandomSplatter()
+        self.image.blit(splatter, (0,0))

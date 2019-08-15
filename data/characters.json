@@ -1,6 +1,6 @@
 {
   "PLAYER" : {
-    "name": null,
+    "name": "example",
     "image": "player",
 	"verb": "punched",
     "level": 1,
@@ -13,7 +13,8 @@
       "verb": "spit at",
       "damage": 0.1,
       "range": 1,
-      "rate": 1
+      "rate": 1,
+      "projectile": "speck"
     },
     "ai": null,
     "inventory": null
@@ -29,7 +30,7 @@
     "defense": 2,
     "attack_rate": 1,
     "innate_ranged": null,
-    "ai": "brainless",
+    "ai": "basic",
     "inventory": null
   },
   "WIERDMUNK": {
@@ -60,7 +61,8 @@
       "verb": "threw vertex",
       "damage": 2,
       "range": 4,
-      "rate": 1
+      "rate": 1,
+      "projectile": "vertex"
     },
     "ai": "ranger",
     "inventory": null

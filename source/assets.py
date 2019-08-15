@@ -9,8 +9,10 @@ Classes:
 """
 # Standard Library
 import os
+import random
 # Third Party
 import pygame
+from pygame.font import Font
 # My Modules
 from source.utilities import loadJson
 
@@ -19,6 +21,7 @@ def loadAssets():
     """Runs the load method on all classes"""
     Images.load()
     Data.load()
+    Fonts.create()
 
 
 class Images:
@@ -30,6 +33,8 @@ class Images:
     tile_images = os.path.join(main_folder, 'tiles')
     item_images = os.path.join(main_folder, 'items')
     bg_images = os.path.join(main_folder, 'backgrounds')
+    splatter_images = os.path.join(main_folder, 'splatters')
+    proj_images = os.path.join(main_folder, 'projectiles')
     
     # Missing Image
     missing_image_path = os.path.join(main_folder, 'unknown.png')
@@ -59,11 +64,27 @@ class Images:
                         'pistol1': os.path.join(item_images, 'pistol1.png'),
                         'dagger1': os.path.join(item_images, 'dagger1.png'),
                         'battery_tiny': os.path.join(item_images, 'battery_tiny.png'),
-                        'armor1': os.path.join(item_images, 'armor_1.png')
+                        'armor1': os.path.join(item_images, 'armor_1.png'),
+                        'armor2': os.path.join(item_images, 'armor_2.png'),
+                        'knight1': os.path.join(item_images, 'knight_1.png'),
+                        'archer1': os.path.join(item_images, 'archer_1.png')
                     },
                     'Backgrounds': {
                         'title': os.path.join(bg_images, 'title_screen.png'),
                         'starry': os.path.join(bg_images, 'starry_bg.png')
+                    },
+                    'Splatters': {
+                        1: os.path.join(splatter_images, 'splatter01.png'),
+                        2: os.path.join(splatter_images, 'splatter02.png'),
+                        3: os.path.join(splatter_images, 'splatter03.png'),
+                        4: os.path.join(splatter_images, 'splatter04.png')
+                    },
+                    'Projectiles' : {
+                        'green_beam': os.path.join(proj_images, 'green_beam.png'),
+                        'red_beam': os.path.join(proj_images, 'red_beam.png'),
+                        'red_slug': os.path.join(proj_images, 'red_slug.png'),
+                        'vertex': os.path.join(proj_images, 'vertex.png'),
+                        'speck': os.path.join(proj_images, 'speck.png')
                     }
     }
 
@@ -100,6 +121,13 @@ class Images:
             return cls.images[directory][image]
         except KeyError:
             return cls.missing_image
+    
+    @classmethod
+    def getRandomSplatter(cls):
+        """Returns a random image from the splatter directory"""
+        return random.choice(list(cls.images['Splatters'].values()))
+        
+        
 
 
 class Data:
@@ -165,3 +193,40 @@ class Data:
     @classmethod
     def getPlayerInventory(cls, background):
         return cls.data['Inventories']['PLAYER'][background]
+
+
+class Fonts:
+    main_folder = 'fonts'
+    
+    # Font types
+    unispace_folder = os.path.join(main_folder, 'unispace')
+    rokkitt_folder = os.path.join(main_folder, 'rokkitt')
+    
+    files = {'default': 'freesansbold.ttf',
+             'unispace': os.path.join(unispace_folder, 'unispace_rg.ttf'),
+             'unispace_bold': os.path.join(unispace_folder, 'unispace bd.ttf'),
+             'unispace_ital': os.path.join(unispace_folder, 'unispace it.ttf'),
+             'rokkitt': os.path.join(rokkitt_folder, 'Rokkitt-Regular.ttf')}
+    
+    presets = dict()
+             
+    @classmethod
+    def create(cls):
+        cls.presets = {
+                'title':        Font(cls.files['default'], 70),
+                'main':         Font(cls.files['default'], 28),
+                'sub_main':      Font(cls.files['default'], 20),
+                'info_header':  Font(cls.files['unispace'], 16),
+                'info':         Font(cls.files['unispace'], 14),
+                'info_S':       Font(cls.files['unispace'],12),
+                'log':          Font(cls.files['rokkitt'], 12),
+                'inv_title':    Font(cls.files['unispace_bold'], 16),
+                'inv_header':   Font(cls.files['unispace_bold'], 14),
+                'inv_listing':  Font(cls.files['unispace'], 12),
+                'inv_detail':   Font(cls.files['unispace_ital'], 10)}
+
+        cls.presets['inv_header'].set_underline(True)
+
+    
+    
+    

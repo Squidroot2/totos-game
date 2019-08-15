@@ -27,10 +27,12 @@ CELL_SIZE = 32
 COLORS = {'BLACK':      (  0,  0,  0),
           'DARK GRAY':  ( 25, 25, 25),
           'GRAY':       ( 50, 50, 50),
+          'LIGHT GRAY': (100,100,100),
           'WHITE':      (255,255,255),
           'RED':        (255,  0,  0),
           'LIGHT BLUE': (100,255,255),
           'YELLOW':     (255,255,  0),
+          'ORANGE':     (255,165,  0),
           'GOLDENROD':  (190,145, 20)}
 
 DRAW_ORDER =    {'CORPSE': 0,
@@ -40,6 +42,8 @@ DRAW_ORDER =    {'CORPSE': 0,
                  'PLAYER': 4,
                  'TARGET': 5}
 
+WEAPONS = ["PISTOL", "RIFLE", "PDW", "CANNON", "KNIFE", "CLUB", "SWORD"]
+REACTORS = ["QUICK", "BRAWLER", "FEEDER", "RANGER"]
 
 pygame.font.init()
 FONT_FILES = {'UNISPACE' : os.path.join('fonts', 'unispace_rg.ttf')}

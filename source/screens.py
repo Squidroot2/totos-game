@@ -1,15 +1,12 @@
-"""Contains the screen functions and the draw functions that the screen function use
+"""Contains the screen functions which update the display to show different things to the player
 
 Functions:
     titleScreen(window, fps_clock)
     playerCreateScreen(window, fps_clock)
-    drawClassSelect(window)
     mainGameScreen(window, fps_clock, game)
-    gameOverScreen(window, fps_clock) 
-    getPanes(window_rect) : Takes a pygame.Rect object representing the window and returns a dictionary of Rect Objects
-    drawStatPane(window, player, pane) : Draws the player's statistic on the right side of the screen
-    drawLogPane(window, log, pane) : Draws the messages in the log pane
-
+    gameOverScreen(window, fps_clock)
+    targetScreen(window, fps_clock, game, panes)
+    inventoryScreen(window, fps_clock, game, panes)
 """
 
 
@@ -18,12 +15,13 @@ import pygame
 from pygame.constants import *
 
 # My Modules
-from source.constants import COLORS, FONTS, FPS, BACKGROUNDS, CELL_SIZE
+from source.constants import COLORS, FONTS, FPS, BACKGROUNDS
+from source.draw import drawClassSelect, getPanes, drawStatPane, drawLogPane, drawGamePane, drawFPS, drawInventory, \
+                        drawAllPanes, drawItemInfo
 from source.utilities import checkForQuit
 from source.entities import Target
 from source.floors import Floor
 from source.assets import Images
-from source.formulas import getRangedHitChance, getMeleeHitChance
 
 
 def titleScreen(window, fps_clock):
@@ -66,7 +64,6 @@ def titleScreen(window, fps_clock):
     show_title = True
     while show_title:
 
-
         checkForQuit()
         for event in pygame.event.get(KEYDOWN):
             if event.key == K_RETURN:
@@ -105,9 +102,7 @@ def playerCreateScreen(window, fps_clock):
         fps_clock : pygame.Clock
             Used to keep FPS Steady
 
-    Returns:
-        name : string
-            Chosen name of the player character
+    Returns: string, string : Chosen name of the player character and chosen background
     """
 
     bg_image = Images.getImage('Backgrounds', 'starry')
@@ -136,7 +131,6 @@ def playerCreateScreen(window, fps_clock):
 
     continue_cover.set_alpha(alpha_max)
     cover_alpha = continue_cover.get_alpha()
-
 
     # Identify the input font
     # Since W seems to be the biggest character, we want to calculate the char_width based on that
@@ -239,58 +233,6 @@ def playerCreateScreen(window, fps_clock):
     return name, BACKGROUNDS[bg_chosen_index]
 
 
-def drawClassSelect(window, selected_class):
-    """Draw the Class Selection Buttons"""
-    assert selected_class in BACKGROUNDS
-
-    window_rect = window.get_rect()
-
-    left_margin = window_rect.width / 25
-
-    # Button Dimensions
-    button_width = (window_rect.width-left_margin*2) / len(BACKGROUNDS)
-    button_height = window_rect.height / 3
-    button_top = window_rect.height / 3
-    border_thickness = 1
-
-    for i, background in enumerate(BACKGROUNDS):
-
-        # Identify colors for buttons and text
-        if background == selected_class:
-            button_color = COLORS['WHITE']
-            text_color = COLORS['BLACK']
-        else:
-            button_color = COLORS['BLACK']
-            text_color = COLORS['WHITE']
-
-        # Render text for background and get associated rect
-        background_text = FONTS['MAIN'].render(background, True, text_color, button_color)
-        background_text_rect = background_text.get_rect()
-
-        # Determine horizontal location for rect and create inner and outer
-        left = left_margin + button_width*i
-        border_rect = pygame.Rect(left, button_top, button_width, button_height)
-        inner_rect = pygame.Rect(left+border_thickness, button_top+border_thickness, button_width-border_thickness, button_height-border_thickness)
-
-        # Inner and outer Rect
-        if background == selected_class:
-            pygame.draw.rect(window, button_color, inner_rect, 0)
-        pygame.draw.rect(window, COLORS['RED'], border_rect, border_thickness)
-
-        # Draw text in center of button
-        background_text_rect.center = border_rect.center
-        window.blit(background_text, background_text_rect)
-
-    # The vertical margin for the text
-    text_margin = FONTS['SUBMAIN'].get_linesize()
-    
-    choose_prompt = FONTS['SUBMAIN'].render('Choose Background with arrow keys', True, COLORS['WHITE'], COLORS['BLACK'])
-    choose_rect = choose_prompt.get_rect()
-    choose_rect.midtop = (window_rect.centerx, border_rect.bottom + text_margin)
-
-    window.blit(choose_prompt, choose_rect)
-
-
 def generateDungeonScreen(window):
     """A loading screen for generating the dungeon. Returns the dungeon"""
     window_rect = window.get_rect()
@@ -325,12 +267,16 @@ def mainGameScreen(window, fps_clock, game):
     # Gets a dict of Rects
     panes = getPanes(window_rect)
 
+    # Initial draw to screen
+    window.fill(COLORS['BLACK'])
+    drawStatPane(window, player, panes['side'])
+    drawLogPane(window, game.log, panes['log'])
+    drawGamePane(window, game, panes['main'])
+    pygame.draw.rect(window, COLORS['DARK GRAY'], panes['bottom'], 0)
+
     # game loop
     run_game = True
     while run_game:
-
-        # Turns true if player does an action that uses up their turn
-        turn_taken = False
 
         # Event Handler
         checkForQuit()
@@ -340,6 +286,9 @@ def mainGameScreen(window, fps_clock, game):
             if event.type == KEYDOWN:
                 # A Key press assumes turn taken until decided otherwise
                 turn_taken = True
+
+                # Clears the message
+                message = None
 
                 # Movement Keys
                 if event.key == K_UP or event.key == K_KP8:
@@ -375,7 +324,6 @@ def mainGameScreen(window, fps_clock, game):
                         else:
                             new_floor = game.dungeon[player.location.number]
                             player.changeFloors(new_floor, "down")
-                            game.surface.fill(COLORS['BLACK'])
 
                     # If the player does not move, turn is not taken
                     else:
@@ -393,9 +341,7 @@ def mainGameScreen(window, fps_clock, game):
                         # Otherwise, move the player to the previous floor
                         else:
                             new_floor = game.dungeon[player.location.number-2]
-
                             player.changeFloors(new_floor, "up")
-                            game.surface.fill(COLORS['BLACK'])
 
                     # If the player does not move, turn is not taken
                     else:
@@ -403,8 +349,7 @@ def mainGameScreen(window, fps_clock, game):
 
                 # Inventory Key
                 elif event.key == K_i:
-                    # todo write open inventory screen
-                    turn_taken = False
+                    turn_taken = inventoryScreen(window, fps_clock, game, panes)
 
                 # Fire Key
                 elif event.key == K_f:
@@ -417,12 +362,16 @@ def mainGameScreen(window, fps_clock, game):
                 # Pick Up Key
                 # todo be able to choose from a list of items to pick up
                 elif event.key == K_g:
-                    items = player.getItemsAtFeet()
-                    if len(items) > 0:
-                        items[0].pickUp(player.inventory)
-                        game.log.addMessage("%s picked up a %s" % (player.name, items[0].name))
+                    if len(player.inventory.contents) < player.inventory.capacity:
+                        items = player.getItemsAtFeet()
+                        if len(items) > 0:
+                            items[0].pickUp(player.inventory)
+                            game.log.addMessage("%s picked up a %s" % (player.name, items[0].name))
+                        else:
+                            game.log.addMessage("Nothing to pick up here")
                     else:
-                        game.log.addMessage("Nothing to pick up here")
+                        game.log.addMessage("Inventory is Full")
+                        turn_taken = False
 
                 # Explore Key
                 elif event.key == K_x:
@@ -431,52 +380,73 @@ def mainGameScreen(window, fps_clock, game):
                 
                 # Look Key
                 elif event.key == K_l:
-                    # todo write look functionality
-                    message = player.lookAround()
+                    if message:
+                        message = None
+                    else:
+                        message = player.lookAround()
                     turn_taken = False
 
                 else:
                     turn_taken = False
 
-        # If turn was taken...
-        if turn_taken:
-            # iterate through all entities in the entities list
-            for entity in player.location.entities:
-                #  every entity with an AI takes a turn
-                if entity.ai:
-                    entity.ai.takeTurn()
-                # Recharge all equipped generators
-                if entity.inventory and entity.inventory.equipped['generator']:
-                    entity.inventory.equipped['generator'].recharge()
-                    entity.inventory.equipped['generator'].hit_this_turn = False
+                # If turn was taken...
+                if turn_taken:
+                    # iterate through all entities in the entities list
+                    for entity in player.location.entities:
+                        #  every entity with an AI takes a turn
+                        if entity.ai:
+                            entity.ai.takeTurn()
+                        # Recharge all equipped reactors
+                        if entity.inventory and entity.inventory.equipped['reactor']:
+                            entity.inventory.equipped['reactor'].recharge()
+                            entity.inventory.equipped['reactor'].hit_this_turn = False
 
-            # See what the player can see
-            player.calculateFOV()
-            player.discoverTiles()
+                    # See what the player can see
+                    player.calculateFOV()
+                    player.discoverTiles()
 
-            # Write whats in the log's buffer and add an underscore
-            game.log.write()
-            game.log.addEOTUnderscore()
+                    # Write whats in the log's buffer and add an underscore
+                    game.log.write()
+                    game.log.addEOTUnderscore()
 
-        if player.is_dead:
-            run_game = False
-            game.log.addMessage("You Died!")
-            game.log.addMessage("Press Enter to Continue...")
+                    if player.is_dead:
+                        run_game = False
+                        message = "You Died!"
+                        game.log.addMessage("Press Enter to Continue...")
 
-        # Fill in the background of the window with black
-        window.fill(COLORS['BLACK'])
+                # END IF TURN TAKEN
 
-        # Draw the side and log panes
-        drawStatPane(window, player, panes['side'])
-        drawLogPane(window, game.log, panes['log'])
-        drawGamePane(window, game, panes['main'])
-        drawFPS(window, fps_clock)
-        pygame.draw.rect(window, COLORS['DARK GRAY'], panes['bottom'], 0)
+                # Fill in the background of the window with black
+                window.fill(COLORS['BLACK'])
 
+                # Draw the side and log panes
+                drawStatPane(window, player, panes['side'])
+                drawLogPane(window, game.log, panes['log'])
+                drawGamePane(window, game, panes['main'], message=message)
+                pygame.draw.rect(window, COLORS['DARK GRAY'], panes['bottom'], 0)
+
+            # END FOR KEYDOWN EVENT LOOP
+        # END FOR EVENT LOOP
+
+        # If there are projectiles, draw their animation until there there are no projectiles
+        # todo figure out why sometimes projectiles are not cleared
+        if player.location.projectiles:
+            while player.location.projectiles:
+                pygame.draw.rect(window, COLORS['BLACK'], panes['main'])
+                drawGamePane(window, game, panes['main'])
+                pygame.display.update()
+                fps_clock.tick(FPS)
+            # Draw one more time to clear the projectile
+            pygame.draw.rect(window, COLORS['BLACK'], panes['main'])
+            drawGamePane(window, game, panes['main'])
+       
+        # drawFPS(window, fps_clock)
+        
         # Update the screen and wait for clock to tick; repeat the while loop
         pygame.display.update()
         fps_clock.tick()
 
+    # END WHILE RUN GAME
     # Stop until player hit enter key
     show_screen = True
     while show_screen:
@@ -484,7 +454,6 @@ def mainGameScreen(window, fps_clock, game):
         for event in pygame.event.get(KEYDOWN):
             if event.key == K_RETURN:
                 show_screen = False
-
 
 
 def gameOverScreen(window, fps_clock):
@@ -572,16 +541,16 @@ def targetScreen(window, fps_clock, game, panes):
                     else:
                         game.log.addMessage("Not A Valid Target")
 
-        # Fill in the background of the window with black
-        window.fill(COLORS['BLACK'])
+            # Fill in the background of the window with black
+            window.fill(COLORS['BLACK'])
 
-        # Draw the side, log and game panes
-        drawStatPane(window, player, panes['side'])
-        drawLogPane(window, game.log, panes['log'])
-        drawGamePane(window, game, panes['main'], target)
-        drawFPS(window, fps_clock)
-        pygame.draw.rect(window, COLORS['DARK GRAY'], panes['bottom'], 0)
+            # Draw the side, log and game panes
+            drawStatPane(window, player, panes['side'])
+            drawLogPane(window, game.log, panes['log'])
+            drawGamePane(window, game, panes['main'], target)
+            pygame.draw.rect(window, COLORS['DARK GRAY'], panes['bottom'], 0)
 
+        # drawFPS(window, fps_clock)
         # Update the screen and wait for clock to tick; repeat the while loop
         pygame.display.update()
         fps_clock.tick()
@@ -593,318 +562,96 @@ def targetScreen(window, fps_clock, game, panes):
     return turn_taken
 
 
-def getPanes(window_rect):
-    """Takes a pygame.Rect object representing the window and returns a dictionary of Rect Objects for the four panes
-    of the mainGameScreen"""
+def inventoryScreen(window, fps_clock, game, panes):
+    """Used for drawing the inventory
 
-    # log pane margin from bottom
-    log_y_margin = 10
-
-    # Explicit variables for the size of the panes
-    bottom_pane_height = window_rect.height / 25
-    side_pane_width = window_rect.width / 4
-    log_pane_width = window_rect.width / 5
-    log_pane_height = window_rect.height / 6
-
-    # Calculate bottom pane dimensions
-    bottom_pane_top = window_rect.bottom - bottom_pane_height
-    bottom_pane_width = window_rect.width - side_pane_width
-
-    # Calculate side pane dimension
-    side_pane_left = window_rect.width - side_pane_width
-
-    # Calculate main pane dimensions
-    main_pane_width = window_rect.width - side_pane_width
-    main_pane_height = window_rect.height - bottom_pane_height
-
-    # Calculate log pane dimension
-    log_pane_bottom = window_rect.height - log_y_margin
-
-    # Create Rect Objects
-    bottom_pane = pygame.Rect(0, bottom_pane_top, bottom_pane_width, bottom_pane_height)
-    side_pane = pygame.Rect(side_pane_left, 0, side_pane_width, window_rect.height)
-    main_pane = pygame.Rect(0, 0, main_pane_width, main_pane_height)
-    log_pane = pygame.Rect(0, 0, log_pane_width, log_pane_height)
-
-    # Align log pane within the side pane
-    log_pane.midbottom = (side_pane.centerx, log_pane_bottom)
-
-    # Create dictionary
-    panes = {'bottom': bottom_pane,
-             'side': side_pane,
-             'log': log_pane,
-             'main': main_pane}
-
-    # Return dictionary
-    return panes
-
-
-def drawStatPane(window, player, pane):
-    """Draws the players statistics on the right side of the screen
-
-    Parameters:
-        window : pygame.Surface
-        player : Player
-        pane : pygame.Rect
-    """
-
-    # Define the colors used
-    background_color = COLORS['DARK GRAY']
-    font_color = COLORS['WHITE']
-    energy_value_font_color = COLORS['GOLDENROD']
-
-    # Fills in the pane in black
-    pygame.draw.rect(window, background_color, pane, 0)
-    
-    #todo use linesizes throughout function
-    # Get linesizes
-    header_size = FONTS['INFO_HEADER'].get_linesize()
-    line_size = FONTS['INFO'].get_linesize()
-
-    half_line_size = line_size/2
-
-    x_margin = pane.width/10
-    y_margin = pane.height/25
-    
-    # todo use indent_left to reduce repeated arithmetic
-    indent_left = pane.left + x_margin
-
-    # Stats used multiple times
-    eps = player.getEnergyPerShot()
-    enc = player.getEncumbrance()
-
-    # Strings used
-    full_name = player.name + " the " + player.background
-    floor_number = "Floor : %d" % player.location.number
-    experience = "XL: %d" % player.level
-    defense = "Defense: %d" % player.getDefense()
-    life = "Life: %d" % player.life
-    energy_value = "%.1f / %d" % (player.energy, player.max_energy)
-    # Ranged Stats
-    str_eps = "EPS: %.1f (%.1f)" % (eps, eps - player.getRecoilCharge())
-    r_dmg = "DMG: %.1f" % player.getRangedDamage()
-    r_ar = "AR:  %d" % player.getAttackRate(is_ranged=True)
-    r_acc = "ACC: %d%%" % (100 * getRangedHitChance(enc, 0, 0))
-    rng = "RNG: %d" % player.getRange()
-    # Melee Stats
-    m_dmg = "DMG: %.1f" % player.getMeleeDamage()
-    m_ar = "AR:  %d" % player.getAttackRate(is_ranged=False)
-    m_acc = "ACC: %d%%" % (100 * getMeleeHitChance(enc, 0))
-
-    # Dictionary of text surfaces that will be blitted to the screen
-    text_surfs = dict()
-
-    text_surfs['name'] = FONTS['INFO'].render(full_name, True, font_color, background_color)
-    text_surfs['floor'] = FONTS['INFO'].render(floor_number, True, font_color, background_color)
-    text_surfs['xp'] = FONTS['INFO'].render(experience, True, font_color, background_color)
-    text_surfs['defense'] = FONTS['INFO'].render(defense, True, font_color, background_color)
-    text_surfs['life'] = FONTS['INFO'].render(life, True, font_color, background_color)
-    text_surfs['energy_key'] = FONTS['INFO'].render("Energy:", True, font_color, background_color)
-    
-    text_surfs['energy_value'] = FONTS['INFO'].render(energy_value, True, energy_value_font_color)
-    
-    text_surfs['ranged'] = FONTS['INFO_HEADER'].render("Ranged", True, font_color, background_color)
-    text_surfs['r_dmg'] = FONTS['INFO'].render(r_dmg, True, font_color, background_color)
-    text_surfs['r_ar'] = FONTS['INFO'].render(r_ar, True, font_color, background_color)
-    text_surfs['r_acc'] = FONTS['INFO'].render(r_acc, True, font_color, background_color)
-    text_surfs['r_rng'] = FONTS['INFO'].render(rng, True, font_color, background_color)
-    text_surfs['r_eps'] = FONTS['INFO'].render(str_eps, True, font_color, background_color)
-    
-    text_surfs['melee'] = FONTS['INFO_HEADER'].render("Melee", True, font_color, background_color)
-    text_surfs['m_dmg'] = FONTS['INFO'].render(m_dmg, True, font_color, background_color)
-    text_surfs['m_ar'] = FONTS['INFO'].render(m_ar, True, font_color, background_color)
-    text_surfs['m_acc'] = FONTS['INFO'].render(m_acc, True, font_color, background_color)   
-
-    # Create Dictionary of Rectangle objects for each rect
-    text_rects = {surf: text_surfs[surf].get_rect() for surf in text_surfs}
-
-    # Place rectangles
-    text_rects['name'].midleft = (indent_left, y_margin)
-    text_rects['floor'].topleft = (indent_left, text_rects['name'].bottom + line_size)
-    text_rects['xp'].topleft = (indent_left, text_rects['floor'].bottom + half_line_size)
-    text_rects['energy_key'].topleft = (indent_left, text_rects['xp'].bottom + half_line_size)
-    text_rects['life'].topleft = (indent_left, text_rects['energy_key'].bottom + half_line_size)
-    text_rects['defense'].topleft = (pane.centerx, text_rects['life'].top)
-    # Energy Value is placed after energy bar
-    
-    # Draw Line Separating top stats from damage stats
-    line_y = text_rects['life'].bottom + header_size
-    line_start = indent_left
-    line_end = pane.right-x_margin
-    line_width = 1
-    pygame.draw.line(window, COLORS['BLACK'], (line_start, line_y), (line_end, line_y), line_width)
-    
-    # Place Ranged Stats
-    text_rects['ranged'].topleft = (indent_left, line_y + header_size)
-    text_rects['r_dmg'].topleft = (indent_left, text_rects['ranged'].bottom + half_line_size)
-    text_rects['r_ar'].topleft = (indent_left, text_rects['r_dmg'].bottom + half_line_size)
-    text_rects['r_acc'].topleft = (indent_left, text_rects['r_ar'].bottom + half_line_size)
-    text_rects['r_rng'].topleft = (indent_left, text_rects['r_acc'].bottom + half_line_size)
-    text_rects['r_eps'].topleft = (indent_left, text_rects['r_rng'].bottom + half_line_size)
-    
-    # Place Melee Stats
-    text_rects['melee'].topleft = (pane.centerx, text_rects['ranged'].top)
-    text_rects['m_dmg'].topleft = (pane.centerx, text_rects['r_dmg'].top)
-    text_rects['m_ar'].topleft = (pane.centerx, text_rects['r_ar'].top)
-    text_rects['m_acc'].topleft = (pane.centerx, text_rects['r_acc'].top)
-
-    # Define Energy Bar Dimensions
-    energy_bar_width = pane.width/4
-    energy_bar_height = line_size
-    energy_bar_left = text_rects['energy_key'].right + 20
-    energy_bar_top = text_rects['energy_key'].top
-
-    energy_bar = pygame.Rect(energy_bar_left, energy_bar_top, energy_bar_width, energy_bar_height)
-
-    # Place Energy Value over the Energy Bar
-    text_rects['energy_value'].center = energy_bar.center
-
-    # Draw to Screen
-    pygame.draw.rect(window, COLORS['WHITE'], energy_bar, 1)
-
-    # Define Energy Fill, A bar that is proportionate to the amount of energy remaining
-    energy_fill = energy_bar.copy()
-    energy_fill.y += 1
-    energy_fill.x += 1
-    energy_fill.height -= 2
-    try:
-        energy_fill.width = (energy_bar.width - 2) * (player.energy / player.max_energy)
-    except ZeroDivisionError:
-        energy_fill.width = 0
-
-    # Draw Energy Fill to Screen
-    pygame.draw.rect(window, COLORS['LIGHT BLUE'], energy_fill, 0)
-
-    # Get the equipment and creates two dictionaries: one for images, one for names
-    equipment = player.inventory.equipped
-    item_images = dict()
-    item_names = dict()
-    for slot in equipment:
-        if equipment[slot] is not None:
-            item_images[slot] = equipment[slot].image
-            item_names[slot] = equipment[slot].name
-        else:
-            item_images[slot] = pygame.Surface((CELL_SIZE, CELL_SIZE))
-            item_names[slot] = "None"
-
-    # Create dict for rects of the item images
-    item_image_rects = {item: item_images[item].get_rect() for item in item_images}
-
-    # The distance between the images
-    image_dist = (pane.width-x_margin*2)/3
-
-    item_text_surfs = dict()
-    item_text_rects = dict()
-
-    # Draw a line above the items
-    line_y = text_rects['r_eps'].bottom + line_size
-    line_end = pane.right - x_margin
-    pygame.draw.line(window, COLORS['BLACK'], (indent_left, line_y), (line_end, line_y), 1)
-
-    # Place the rects for the images, amd render text associated with them
-
-    #todo change generator to reactor
-    for i, slot in enumerate(item_image_rects):
-
-        # Title text
-        # title_top = line_y + CELL_SIZE/2
-        item_text_surfs[slot+'_title'] = FONTS['INFO'].render(slot.capitalize(), True, font_color, background_color)
-        item_text_rects[slot+'_title'] = item_text_surfs[slot+'_title'].get_rect()
-        item_text_rects[slot+'_title'].midtop = (pane.left + ((i+1)*image_dist),
-                                                 line_y + line_size)
-
-        # Item Image
-        item_image_rects[slot].midtop = (item_text_rects[slot+'_title'].centerx,
-                                         item_text_rects[slot+'_title'].bottom + half_line_size)
-
-        # Name text
-        item_text_surfs[slot+'_name'] = FONTS['INFO_S'].render(item_names[slot], True, font_color, background_color)
-        item_text_rects[slot+'_name'] = item_text_surfs[slot+'_name'].get_rect()
-        item_text_rects[slot+'_name'].midtop = (item_image_rects[slot].centerx,
-                                                item_image_rects[slot].bottom + half_line_size)
-
-    # Draw picture of images and the associated text
-    for item in item_images:
-        window.blit(item_images[item], item_image_rects[item])
-        window.blit(item_text_surfs[item+'_title'], item_text_rects[item+'_title'])
-        window.blit(item_text_surfs[item+'_name'], item_text_rects[item+'_name'])
-
-    # Print Text
-    for text in text_surfs:
-        window.blit(text_surfs[text], text_rects[text])
-
-
-def drawLogPane(window, log, pane):
-    """Draws the messages in the log pane"""
-    # Fills in the pane in black
-    # 0 represents the width; if zero fills in rect
-    pygame.draw.rect(window, COLORS['WHITE'], pane, 0)
-
-    # Adds a Margin to the top and left side of the messages box
-    x_margin = 10
-    y_margin = 5
-    log_left = pane.left + x_margin
-    log_top = pane.top + y_margin
-
-    # Get tha last messages from the log
-    messages = log.getLastMessages(8)
-
-    # Create lists to store surfaces and rects
-    text_surfs = list()
-    text_rects = list()
-
-    for line, message in enumerate(messages):
-
-        # Create a surface and rect for each line of messages
-        surf = FONTS['LOG'].render(message, True, COLORS['BLACK'], COLORS['WHITE'])
-        rect = surf.get_rect()
-
-        # Place rect based on line number
-        rect.topleft = (log_left, log_top + FONTS['LOG'].get_linesize() * line)
-
-        # Append surf and rect to list
-        text_surfs.append(surf)
-        text_rects.append(rect)
-
-    # Blits all text surfaces to the location of their Rect
-    for i, surf in enumerate(text_surfs):
-        window.blit(surf, text_rects[i])
-
-
-def drawGamePane(window, game, pane, target=None):
-    """Draws on the game surface then blits game surface to the window"""
-
-    # Pulls the player and current floor from the game object
+    Returns : bool : whether or not a turn was taken"""
     player = game.player
-    floor = player.location
 
-    # Run the draw method on floor
-    floor.draw(game.surface, player.camera)
+    drawAllPanes(window, game, panes)
 
-    # Update the camera's position
-    player.camera.update()
+    # drawInventory and get the item order
+    selected_item = None
+    item_order = drawInventory(window, panes['main'], player.inventory, selected_item)
 
-    # Create a Rect with the same dimensions as the camera; center it in the main pane
-    game_area = player.camera.getRect().copy()
-    game_area.center = pane.center
+    turn_taken = False
 
-    if target:
-        target.drawPath(game.surface)
+    show_inventory = True
+    while show_inventory:
 
-    # Blit everything on the game surface to the window
-    window.blit(game.surface, game_area, player.camera.getRect())
+        # Event Handler
+        checkForQuit()
+        for event in pygame.event.get():
 
+            # Determine what to do with Key Presses
+            if event.type == KEYDOWN:
 
-def drawFPS(window, fps_clock):
-    window_rect = window.get_rect()
+                if event.key in (K_ESCAPE, K_i):
+                    show_inventory = False
 
-    fps = int(fps_clock.get_fps())
+                # If a Number key was pressed
+                elif event.key in range(K_0, K_9+1):
+                    # Converts the key pressed to an index 0-9
+                    if event.key == K_0:
+                        index = 9
+                    else:
+                        index = event.key - K_1
 
-    x_margin = 19
-    y_margin = 10
+                    # If the number pressed is valid
+                    if index < len(item_order):
+                        # If the key corresponds to the item selected, deselect it
+                        if selected_item is item_order[index]:
+                            selected_item = None
+                        else:
+                            selected_item = item_order[index]
 
-    fps_surf = FONTS['SUBMAIN'].render(str(fps), True, COLORS['GRAY'])
-    fps_rect = fps_surf.get_rect()
-    fps_rect.topleft = (window_rect.left + x_margin, window_rect.top + y_margin)
+                        # Redraw Screen
+                        drawAllPanes(window, game, panes)
+                        drawInventory(window, panes['main'], player.inventory, selected_item)
 
-    window.blit(fps_surf, fps_rect)
+                    # END IF INDEX LESS THAN LENGTH OF ITEM ORDER
+
+                # Item Actions:
+                if selected_item is not None:
+                    if event.key == K_u:
+                        if selected_item in player.inventory.equipped.values():
+                            selected_item.unequip()
+                            show_inventory = False
+                            turn_taken = False
+                            break
+
+                    elif event.key == K_e:
+                        if selected_item.item_class != "battery" and \
+                                selected_item not in player.inventory.equipped.values():
+                            selected_item.equip()
+                            show_inventory = False
+                            if selected_item.item_class == 'weapon' and selected_item.is_quick_draw:
+                                turn_taken = False
+                            else:
+                                turn_taken = True
+                            break
+
+                    elif event.key == K_s:
+                        if selected_item.item_class == "battery":
+                            selected_item.use()
+                            show_inventory = False
+                            turn_taken = True
+                            break
+
+                    elif event.key == K_d:
+                        selected_item.drop()
+                        show_inventory = False
+                        break
+
+                # If Item selected, draw its info
+                if selected_item:
+                    drawItemInfo(window, panes['main'], selected_item)
+
+            # END IF KEYDOWN EVENT
+
+        # END FOR EVENT LOOP
+        pygame.display.update()
+        fps_clock.tick()
+
+    # END WHILE SHOW INVENTORY
+    return turn_taken

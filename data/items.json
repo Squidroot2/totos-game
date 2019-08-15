@@ -8,7 +8,7 @@
     },
     "ARMOR_2": {
       "name": "Cosmic Cloth",
-      "image": null,
+      "image": "armor2",
       "defense": 2,
       "difficulty": 2
     },
@@ -20,7 +20,7 @@
     },
     "ARMOR_4": {
       "name": "Lunar Leather",
-      "image:": null,
+      "image": null,
       "defense": 4,
       "difficulty": 3
     },
@@ -171,7 +171,8 @@
         "damage": 5,
         "energy": 2,
         "fire_rate": 1,
-        "range": 3
+        "range": 3,
+        "projectile": "red_beam"
       }
     },
     "RIFLE_1": {
@@ -184,10 +185,11 @@
       "difficulty": 1,
       "ranged": {
 		"verb": "shot",
-        "damage": 10,
+        "damage": 8,
         "energy": 3,
         "fire_rate": 1,
-        "range": 2
+        "range": 5,
+        "projectile": "green_beam"
       }
     },
     "CANNON_1": {
@@ -203,7 +205,8 @@
         "damage": 10,
         "energy": 3,
         "fire_rate": 1,
-        "range": 2
+        "range": 2,
+        "projectile": "red_slug"
       }
     },
     "PDW_1": {
@@ -219,7 +222,8 @@
         "damage": 2,
         "energy": 2,
         "fire_rate": 3,
-        "range": 2
+        "range": 2,
+        "projectile": "red_beam"
       }
     },
     "KNIFE_1": {
@@ -236,8 +240,8 @@
       "name": "Nightstick",
       "image": null,
 	  "melee_verb" : "hit",
-      "melee_damage": 2,
-      "melee_speed": 3,
+      "melee_damage": 6,
+      "melee_speed": 1,
       "quick_draw": true,
       "difficulty": 1,
       "ranged": null
@@ -246,14 +250,14 @@
       "name": "Nu-Steel Sword",
       "image": null,
 	  "melee_verb" : "slashed",
-      "melee_damage": 5,
+      "melee_damage": 4,
       "melee_speed": 2,
       "quick_draw": false,
       "difficulty": 1,
       "ranged": null
     }
   },
-  "GENERATORS": {
+  "REACTORS": {
     "QUICK_1": {
       "name": "Squire MK1",
       "image": null,
@@ -265,7 +269,7 @@
     },
     "BRAWLER_1": {
       "name": "Knight MK1",
-      "image": null,
+      "image": "knight1",
       "max_charge": 10,
       "recharge_rate": 0.3,
       "recovery": 3,
@@ -274,7 +278,7 @@
     },
     "FEEDER_1": {
       "name": "Archer MK1",
-      "image": null,
+      "image": "archer1",
       "max_charge": 5,
       "recharge_rate": 0.1,
       "recovery": 3,
@@ -295,32 +299,38 @@
     "BATTERY_1": {
       "name": "Tiny Battery",
       "image": "battery_tiny",
-      "power": 5
+      "power": 5,
+      "difficulty": 1
     },
 	"BATTERY_2": {
 	  "name": "Small Battery",
       "image": null,
-	  "power": 8
+	  "power": 8,
+      "difficulty": 2
 	},
 	"BATTERY_3": {
 	  "name": "Medium Battery",
       "image": null,
-	  "power": 12
+	  "power": 12,
+      "difficulty": 3
 	},
 	"BATTERY_4": {
 	  "name": "Big Battery",
       "image": null,
-	  "power": 15
+	  "power": 15,
+      "difficulty": 4
 	},
 	"BATTERY_5": {
 	  "name": "Huge Battery",
       "image": null,
-	  "power":20
+	  "power":20,
+      "difficulty": 5
 	},
 	"BATTERY_6": {
 	  "name": "Epic Battery",
       "image": null,
-	  "power":25
+	  "power":25,
+      "difficulty": 6
 	}
   }
 }
