@@ -269,7 +269,7 @@ def validateInventories(item_names):
         "weapon": Maybe(In(item_names)),
         "armor": Maybe(In(item_names)),
         "reactor": Maybe(In(item_names)),
-        "other": Maybe(In(item_names))
+        "other": Maybe(list)
         }, required=True)
 
     for inventory_type in data:
@@ -300,7 +300,7 @@ def validateLeveledList(item_names, character_names):
     main_schema = Schema({
         'ENEMIES': dict,
         'ITEMS': dict
-    })
+    }, required=True)
     # Validate main schema
     try:
         main_schema(data)
