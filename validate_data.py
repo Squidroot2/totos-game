@@ -56,17 +56,19 @@ def runValidation():
     if not valid:
         print("Error in %s \n" % inventories_json)
         return False
-        
-        
-    # todo validate inventories and leveled_lists JSONs
-        
+
     # Characters JSON file
-    valid = validateCharacters()
+    valid, character_names = validateCharacters(inventory_list)
     if not valid:
-        print("Error(s) in %s" % characters_json)
-        print()
+        print("Error(s) in %s \n" % characters_json)
         return False
-    
+
+    # todo validate leveled_lists JSONs
+    valid = validateLeveledList(item_names, character_names)
+    if not valid:
+        print("Error(s) in %s \n" % leveled_lists_json)
+        return False
+
     return True
 
 def validatePresent():
@@ -79,13 +81,16 @@ def validatePresent():
     return True
     
         
-def validateCharacters():
-    """Validate the characters json"""
+def validateCharacters(inventory_list):
+    """Validate the characters json
+
+    Returns: bool, list
+    """
     try:
         data = loadJson(characters_json)
     except JSONDecodeError:
         print("Error loading %s" %characters_json)
-        return False
+        return False, []
     
     char_schema = Schema({
         'name': str,
@@ -104,18 +109,20 @@ def validateCharacters():
             'rate': int,
             'projectile': str
         }, required=True),
-        'ai': Any(None, str),
-        'inventory': Any(None, str)
+        'ai': Maybe(str),
+        'inventory': Maybe(In(inventory_list))
     }, required=True)
 
+    names = []
     try:
         for char_id in data:
+            names.append(char_id)
             char_schema(data[char_id])
     except voluptuous.error.Invalid as e:
         print("Error with Character %s: %s" % (char_id, e))
-        return False
+        return False, names
 
-    return True
+    return True, names
 
 
 def validateItems():
@@ -146,7 +153,7 @@ def validateItems():
     
     armor_schema = Schema({
         'name': str,
-        'image': Any(None, str),
+        'image': Maybe(str),
         'defense': int,
         'difficulty': int
     }, required=True)
@@ -178,7 +185,7 @@ def validateItems():
     }, required=True)
     battery_schema = Schema({
         'name': str,
-        'image': Any(None, str),
+        'image': Maybe(str),
         'power': Any(int, float),
         'difficulty': int
     }, required=True)
@@ -242,6 +249,7 @@ def validateItems():
             
     return valid, item_names
 
+
 def validateInventories(item_names):
     """Validates the inventories JSON
     
@@ -251,21 +259,21 @@ def validateInventories(item_names):
     try:
         data = loadJson(inventories_json)
     except JSONDecodeError:
-        print("Error loading %s" %items_json)
+        print("Error loading %s" % items_json)
         return False, []
     
     inventory_list = []
     
-    # todo use item_nanes to validate items in inventory
+    # todo use item_names to validate items in inventory
     inventory_schema = Schema({
         "weapon": Maybe(In(item_names)),
-        "armor": Maybe(str),
-        "reactor": Maybe(str),
-        "other": Maybe(list)
+        "armor": Maybe(In(item_names)),
+        "reactor": Maybe(In(item_names)),
+        "other": Maybe(In(item_names))
         }, required=True)
-    
-    
+
     for inventory_type in data:
+        inventory_list.append(inventory_type)
         for inventory in data[inventory_type]:
             try:
                 inventory_schema(data[inventory_type][inventory])
@@ -275,7 +283,59 @@ def validateInventories(item_names):
         
         
     return valid, inventory_list
-    
-        
+
+
+def validateLeveledList(item_names, character_names):
+    #todo
+    valid = True
+
+    # Attempt Loading File
+    try:
+        data = loadJson(leveled_lists_json)
+    except JSONDecodeError:
+        print("Error loading %s" % leveled_lists_json)
+        return False
+
+    # Main Schema
+    main_schema = Schema({
+        'ENEMIES': dict,
+        'ITEMS': dict
+    })
+    # Validate main schema
+    try:
+        main_schema(data)
+    except voluptuous.error.Invalid as e:
+        print("Error with structure of %s: %s" % (leveled_lists_json, e))
+        return False
+
+    # Item Leveled List Schema
+    items_schema = Schema({
+        In(item_names): int
+    })
+
+    # Validate Item Schema
+    for item_list in data["ITEMS"]:
+        try:
+            items_schema(data["ITEMS"][item_list])
+        except voluptuous.error.Invalid as e:
+            print("Error in Item Leveled List %s: %s" % (item_list, e))
+            valid = False
+
+    # Enemy Leveled List Schema
+    items_schema = Schema({
+        In(character_names): int
+    })
+
+    # Validate Enemy Schema
+    for enemy_list in data["ENEMIES"]:
+        try:
+            items_schema(data["ENEMIES"][enemy_list])
+        except voluptuous.error.Invalid as e:
+            print("Error in Item Leveled List %s: %s" % (enemy_list, e))
+            valid = False
+
+    return valid
+
+
 if __name__ == '__main__':
     main()
