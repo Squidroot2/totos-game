@@ -1,6 +1,6 @@
 {
   "PLAYER" : {
-    "name": null,
+    "name": "example",
     "image": "player",
 	"verb": "punched",
     "level": 1,
