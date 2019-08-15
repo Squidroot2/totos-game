@@ -260,7 +260,7 @@
   "REACTORS": {
     "QUICK_1": {
       "name": "Squire MK1",
-      "image": null,
+      "image": "squire1",
       "max_charge": 5,
       "recharge_rate": 0.5,
       "recovery": 3,

@@ -67,7 +67,8 @@ class Images:
                         'armor1': os.path.join(item_images, 'armor_1.png'),
                         'armor2': os.path.join(item_images, 'armor_2.png'),
                         'knight1': os.path.join(item_images, 'knight_1.png'),
-                        'archer1': os.path.join(item_images, 'archer_1.png')
+                        'archer1': os.path.join(item_images, 'archer_1.png'),
+                        'squire1': os.path.join(item_images, 'squire_1.png')
                     },
                     'Backgrounds': {
                         'title': os.path.join(bg_images, 'title_screen.png'),
