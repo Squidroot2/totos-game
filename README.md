@@ -13,8 +13,9 @@ Trial of the Outer Spiral is a sci-fi themed [roguelike](https://en.wikipedia.or
 ## How To Play
 ### Object of Game
 The object of the Trial of the Outer Spiral is to get through all 100 floors of the randomly generated trial. Each floor is filled with Enemies 
-which are trying to stop you. Run or fight is up to you but you must find the down portal on each floor in order to proceed. You will also find items along the floor which will help you on your journey. Items include weapons, armor, 
-reactors, and batteries. If you should fall before reaching the end of the trial, you must start from the beginning. 
+which are trying to stop you. Run or fight is up to you but you must find the down portal on each floor in order to proceed. You will also find items along the floor which will help you on your journey. Items include weapons, 
+armor, reactors, and batteries. If you should fall before reaching the end of the trial, you must start from the beginning. 
+
 
 
 ### Controls

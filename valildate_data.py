@@ -2,7 +2,7 @@
 from source.utilities import loadJson
 from source.constants import WEAPONS, REACTORS
 from json.decoder import JSONDecodeError
-from voluptuous import Schema, Any
+from voluptuous import Schema, Any, Maybe, In
 import voluptuous.error
 import os.path
 
@@ -14,42 +14,60 @@ leveled_lists_json = os.path.join(data_folder, 'leveled_lists.json')
 inventories_json = os.path.join(data_folder, 'inventories.json')
 
 def main():
-    print()
-    print("Validating Files...")
-    print()
+    """First confirm all files are present and can be loaded,
+    Then load and verify Items and put items into items list
+    Then load and verify inventory using items list and put inventories into inventory list
+    Then load and verify characters using inventory list and put characters into character list
+    Finally load and verify leveled_lists using characters and items lists"""
     
-    validation_failed = False
+    print()
+    print("Validating Files... \n")
+    
+    validation_succeeded = runValidation()
+    
+    # Print Success if there were not failures
+    if validation_succeeded:
+        print("Validation Completed Successfully!")
+    else:
+        print("Validation Failed")
+    input()
+
+def runValidation():
+    """Runs all validation
+    
+    Returns: bool
+    """
+    
     
     # Files are present
     valid = validatePresent()
     if not valid:
-        print("Error: Missing File(s)")
-        print()
-        validation_failed = True
+        print("Error: Missing File(s) \n")
+        return False
+   
+    # Items JSON file
+    valid, item_names = validateItems()
+    if not valid:
+        print("Error in %s \n" % items_json)
+        return False
+
+    
+    valid, inventory_list = validateInventories(item_names)
+    if not valid:
+        print("Error in %s \n" % inventories_json)
+        return False
+        
+        
+    # todo validate inventories and leveled_lists JSONs
         
     # Characters JSON file
     valid = validateCharacters()
     if not valid:
         print("Error(s) in %s" % characters_json)
         print()
-        validation_failed = True
+        return False
     
-    # Items JSON file
-    valid = validateItems()
-    if not valid:
-        print("Error in %s" % items_json)
-        print()
-        validation_failed = True
-
-    # todo validate inventories and leveled_lists JSONs
-    
-    # Print Success if there were not failures
-    if not validation_failed:
-        print("Validation Completed Successfully!")
-    
-    else:
-        print("Validation Failed")
-    input()
+    return True
 
 def validatePresent():
     """Determines if the files are present"""
@@ -112,7 +130,7 @@ def validateItems():
         data = loadJson(items_json)
     except JSONDecodeError:
         print("Error loading %s" %items_json)
-        return False
+        return False, []
 
     # Get the Categories of items
     try:
@@ -122,7 +140,7 @@ def validateItems():
         batteries = data['BATTERIES']
     except KeyError as e:
         print("Missing Category %s in %s" % (e, items_json))
-        return False
+        return False, []
 
     # Schemas
     
@@ -165,8 +183,10 @@ def validateItems():
         'difficulty': int
     }, required=True)
 
+    item_names = []
     # Validate Batteries
     for battery in batteries:
+        item_names.append(battery)
         try:
             id_parts = battery.split("_")
             assert (id_parts[0] == "BATTERY")
@@ -180,6 +200,7 @@ def validateItems():
 
     # Validate Armors
     for armor in armors:
+        item_names.append(armor)
         try:
             id_parts = armor.split("_")
             assert (id_parts[0] == "ARMOR")
@@ -193,6 +214,7 @@ def validateItems():
 
     # Validate Weapons
     for weapon in weapons:
+        item_names.append(weapon)
         try:
             id_parts = weapon.split("_")
             assert (id_parts[0] in WEAPONS)
@@ -206,6 +228,7 @@ def validateItems():
 
     # Validate Reactors
     for reactor in reactors:
+        item_names.append(reactor)
         try:
             id_parts = reactor.split("_")
             assert (id_parts[0] in REACTORS)
@@ -216,8 +239,43 @@ def validateItems():
         except voluptuous.error.Invalid as e:
             print("Error with %s: %s" % (reactor, e))
             valid = False
-    return valid
+            
+    return valid, item_names
 
-
+def validateInventories(item_names):
+    """Validates the inventories JSON
+    
+    returns : bool, list
+    """
+    valid = True
+    try:
+        data = loadJson(inventories_json)
+    except JSONDecodeError:
+        print("Error loading %s" %items_json)
+        return False, []
+    
+    inventory_list = []
+    
+    # todo use item_nanes to validate items in inventory
+    inventory_schema = Schema({
+        "weapon": Maybe(In(item_names)),
+        "armor": Maybe(str),
+        "reactor": Maybe(str),
+        "other": Maybe(list)
+        }, required=True)
+    
+    
+    for inventory_type in data:
+        for inventory in data[inventory_type]:
+            try:
+                inventory_schema(data[inventory_type][inventory])
+            except voluptuous.error.Invalid as e:
+                print("Error with inventory type %s, %s: %s" %(inventory_type, inventory, e))
+                valid = False
+        
+        
+    return valid, inventory_list
+    
+        
 if __name__ == '__main__':
     main()
