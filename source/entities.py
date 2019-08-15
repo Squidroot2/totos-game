@@ -160,13 +160,22 @@ class Target(Entity):
 
     def drawPath(self, surface):
         path = self.getPath()
+        range = self.origin.getRange()
+
+        if len(path) <= range:
+            color = COLORS['RED']
+        elif range < len(path) <= formulas.getMaxRange(self.origin.getEncumbrance(), range):
+            color = COLORS['DARK YELLOW']
+        else:
+            color = COLORS['GRAY']
+
         for tile in path:
             # Stop drawing if path blocked or not in FOV
             if not self.location.map.walkable[tile[1]][tile[0]] or not self.location.map.fov[tile[1]][tile[0]]:
                 break
             surf = pygame.Surface((CELL_SIZE, CELL_SIZE))
             surf.set_alpha(64)
-            surf.fill(COLORS['RED'])
+            surf.fill(color)
             surface.blit(surf, (tile[0]*CELL_SIZE, tile[1]*CELL_SIZE))
     
     def getPath(self):

@@ -45,6 +45,10 @@ def getRangedHitChance(attacker_enc, defender_enc, range_exceeded):
     # Return sum of base, penalities, and bonus
     return math.fsum([base, enc_penalty, range_penalty, enc_bonus])
 
+def getMaxRange(encumbrance, peak_range):
+    """Given the encumbrance and rated range, returns the range at which, any further and the chance to hit would be 0"""
+    return math.floor((((0.1*encumbrance)-.95)/-.15) + peak_range)
+
 
 def getDamageDealt(attack, defense):
     """Determines the damage dealt using the attacker's raw attack damage and the defender's defense
