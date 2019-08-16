@@ -20,6 +20,16 @@
 	"ITEMS": {
 	  "LEVEL_1": {
 	    "BATTERY_1": 100
-	  }
+	  },
+      "LEVEL_2": {
+        "BATTERY_1": 50,
+        "QUICK_1": 8,
+        "BRAWLER_1": 8,
+        "FEEDER_1": 8,
+        "RANGER_1": 8,
+        "ARMOR_2": 3,
+        "KNIFE_1": 10,
+        "PISTOL_1": 5
+      }
 	}
 }
