@@ -34,7 +34,8 @@ COLORS = {'BLACK':      (  0,  0,  0),
           'YELLOW':     (255,255,  0),
           'DARK YELLOW':(175,175,  0),
           'ORANGE':     (255,165,  0),
-          'GOLDENROD':  (190,145, 20)}
+          'GOLDENROD':  (190,145, 20),
+          'BLUE':       (  0,  0,255)}
 
 DRAW_ORDER =    {'CORPSE': 0,
                  'PORTAL': 1,

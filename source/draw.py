@@ -437,7 +437,16 @@ def drawMapPane(window, player, floor, pane):
             if x == player.x and y == player.y:
                 pygame.draw.rect(map_surface, COLORS['YELLOW'], (x * 2, y * 2, 2, 2), 0)
                 continue
+
             if floor.tile_map[x][y].discovered:
+                if x == floor.portals['up'].x and y == floor.portals['up'].y:
+                    pygame.draw.rect(map_surface, COLORS['RED'], (x*2, y*2, 2, 2), 0)
+                    continue
+
+                if x == floor.portals['down'].x and y == floor.portals['down'].y:
+                    pygame.draw.rect(map_surface, COLORS['BLUE'], (x * 2, y * 2, 2, 2), 0)
+                    continue
+
                 if floor.map.walkable[y][x]:
                     pygame.draw.rect(map_surface, COLORS['GRAY'], (x*2,y*2, 2, 2), 0)
                 else:

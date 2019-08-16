@@ -16,7 +16,7 @@ from pygame.constants import *
 
 # My Modules
 from source.constants import COLORS, FONTS, FPS, BACKGROUNDS
-from source.draw import drawClassSelect, getPanes, drawStatPane, drawLogPane, drawGamePane, drawFPS, drawInventory, \
+from source.draw import drawClassSelect, getPanes, drawMapPane, drawGamePane, drawFPS, drawInventory, \
                         drawAllPanes, drawItemInfo
 from source.utilities import checkForQuit
 from source.entities import Target
@@ -308,6 +308,22 @@ def mainGameScreen(window, fps_clock, game):
                 elif event.key == K_KP5:
                     pass
 
+                # Rest Key
+                elif event.key == K_KP0:
+                    while not player.getEnemiesinFOV() and player.energy < player.max_energy:
+                        for entity in player.location.entities:
+                            #  every entity with an AI takes a turn
+                            if entity.ai:
+                                entity.ai.takeTurn()
+                            # Recharge all equipped reactors
+                            if entity.inventory and entity.inventory.equipped['reactor']:
+                                entity.inventory.equipped['reactor'].recharge()
+                                entity.inventory.equipped['reactor'].hit_this_turn = False
+
+                        drawAllPanes(window, game, panes, message=message)
+                        pygame.display.update()
+                        fps_clock.tick(FPS)
+
                 # Down Portal Key
                 elif event.unicode == ">":
                     # Check if player is on down portal
@@ -418,18 +434,17 @@ def mainGameScreen(window, fps_clock, game):
         # END FOR EVENT LOOP
 
         # If there are projectiles, draw their animation until there there are no projectiles
-        # todo figure out why sometimes projectiles are not cleared
         if player.location.projectiles:
             while player.location.projectiles:
                 pygame.draw.rect(window, COLORS['BLACK'], panes['main'])
                 drawGamePane(window, game, panes['main'])
+                drawMapPane(window, player, player.location, panes['map'])
                 pygame.display.update()
                 fps_clock.tick(FPS)
             # Draw one more time to clear the projectile
             pygame.draw.rect(window, COLORS['BLACK'], panes['main'])
             drawGamePane(window, game, panes['main'])
-       
-        # drawFPS(window, fps_clock)
+            drawMapPane(window, player, player.location, panes['map'])
         
         # Update the screen and wait for clock to tick; repeat the while loop
         pygame.display.update()
@@ -530,14 +545,7 @@ def targetScreen(window, fps_clock, game, panes):
                     else:
                         game.log.addMessage("Not A Valid Target")
 
-            # Fill in the background of the window with black
-            window.fill(COLORS['BLACK'])
-
-            # Draw the side, log and game panes
-            drawStatPane(window, player, panes['side'])
-            drawLogPane(window, game.log, panes['log'])
-            drawGamePane(window, game, panes['main'], target)
-            pygame.draw.rect(window, COLORS['DARK GRAY'], panes['bottom'], 0)
+            drawAllPanes(window, game, panes, target=target)
 
         # drawFPS(window, fps_clock)
         # Update the screen and wait for clock to tick; repeat the while loop

@@ -793,6 +793,25 @@ class Player(Character):
     def getFOV(self):
         return self.location.map.fov
 
+    def getEnemiesinFOV(self):
+        """Returns an interger count of the enemies in the FOV"""
+        count = 0
+        fov_map = self.getFOV()
+        for entity in reversed(self.location.entities):
+            if entity is self:
+                continue
+
+            if not isinstance(entity, Character):
+                continue
+
+            if not entity.discovered:
+                continue
+
+            if fov_map[entity.y][entity.x]:
+                count += 1
+
+        return count
+
     def discoverTiles(self):
         fov = numpy.where(self.getFOV())
         for i in range(len(fov[0])):
