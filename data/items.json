@@ -25,7 +25,7 @@
       "difficulty": 3
     },
     "ARMOR_5": {
-      "name": "Galactic Glass",
+      "name": "Transcendent Titanium",
       "image": null,
       "defense": 5,
       "difficulty": 3
@@ -43,7 +43,7 @@
       "difficulty": 4
     },
     "ARMOR_8": {
-      "name": "Transcendent Titanium",
+      "name": "Galactic Glass",
       "image": null,
       "defense": 8,
       "difficulty": 5
