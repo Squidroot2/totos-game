@@ -92,7 +92,7 @@ In addition to the starting items, the player will also pick up items found thro
 
 **Fire Mode**
 * Move Target: Numpad
-* Fire: F
+* Fire: F or Enter
 * Exit Fire Mode: ESC
 
 ## Compatibility
