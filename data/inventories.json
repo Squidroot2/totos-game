@@ -21,7 +21,7 @@
     "Pointman": {
       "weapon": "CANNON_1",
       "armor": "ARMOR_1",
-      "reactor": "RANGER_1",
+      "reactor": "HEAVY_1",
       "other": ["BATTERY_1", "BATTERY_1"]
     },
     "Gladiator": {

@@ -293,7 +293,16 @@
       "recovery": 3,
       "recoil_charge": 2,
       "difficulty": 1
-    }
+    },
+	"HEAVY_1": {
+	  "name": "Warlord MK1",
+	  "image": "warlord1",
+	  "max_charge": 10,
+	  "recharge_rate": 0.1,
+	  "recovery": 5,
+	  "recoil_charge": 2,
+	  "difficulty": 2
+	}
   },
   "BATTERIES": {
     "BATTERY_1": {
