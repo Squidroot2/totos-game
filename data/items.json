@@ -258,7 +258,7 @@
     }
   },
   "REACTORS": {
-    "QUICK_1": {
+    "LIGHT_1": {
       "name": "Squire MK1",
       "image": "squire1",
       "max_charge": 5,
@@ -274,9 +274,9 @@
       "recharge_rate": 0.3,
       "recovery": 3,
       "recoil_charge": 0,
-      "difficulty": 2
+      "difficulty": 1
     },
-    "FEEDER_1": {
+    "RECYCLE_1": {
       "name": "Archer MK1",
       "image": "archer1",
       "max_charge": 5,
@@ -285,7 +285,7 @@
       "recoil_charge": 3,
       "difficulty": 1
     },
-    "RANGER_1": {
+    "MEDIUM_1": {
       "name": "Lancer MK1",
       "image": "lancer1",
       "max_charge": 8,
@@ -301,7 +301,7 @@
 	  "recharge_rate": 0.1,
 	  "recovery": 5,
 	  "recoil_charge": 2,
-	  "difficulty": 2
+	  "difficulty": 1
 	}
   },
   "BATTERIES": {

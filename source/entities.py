@@ -23,7 +23,7 @@ import pygame
 # My Modules
 from source import formulas
 from source.components import AI, Inventory, Camera
-from source.constants import CELL_SIZE, BACKGROUNDS, COLORS, DRAW_ORDER
+from source.constants import CELL_SIZE, BACKGROUNDS, COLORS, DRAW_ORDER, WEAPONS, REACTORS
 from source.game import Log
 from source.utilities import getDistanceBetweenEntities, getLineBetweenEntities
 from source.assets import Images, Data
@@ -1097,9 +1097,9 @@ class Item(Entity):
             item = Battery(item_id, location, x, y)
         elif item_class == "ARMOR":
             item = Armor(item_id, location, x, y)
-        elif item_class in ("SWORD", "CLUB", "KNIFE", "PDW", "CANNON", "RIFLE", "PISTOL"):
+        elif item_class in WEAPONS:
             item = Weapon(item_id, location, x, y)
-        elif item_class in ("QUICK", "BRAWLER", "FEEDER", "RANGER"):
+        elif item_class in REACTORS:
             item = Reactor(item_id, location, x, y)
         else:
             raise ValueError("%s not recognized as a valid item class" % item_class)

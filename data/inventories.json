@@ -3,19 +3,19 @@
     "Officer": {
       "weapon": "PISTOL_1",
       "armor": "ARMOR_1",
-      "reactor": "QUICK_1",
+      "reactor": "LIGHT_1",
       "other": ["CLUB_1","BATTERY_1", "BATTERY_1"]
     },
     "Marksman": {
       "weapon": "RIFLE_1",
       "armor": "ARMOR_1",
-      "reactor": "RANGER_1",
+      "reactor": "MEDIUM_1",
       "other": ["BATTERY_1", "BATTERY_1"]
     },
     "Agent": {
       "weapon": "PDW_1",
       "armor": "ARMOR_1",
-      "reactor": "FEEDER_1",
+      "reactor": "RECYCLE_1",
       "other": ["BATTERY_1", "BATTERY_1"]
     },
     "Pointman": {
