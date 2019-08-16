@@ -268,11 +268,7 @@ def mainGameScreen(window, fps_clock, game):
     panes = getPanes(window_rect)
 
     # Initial draw to screen
-    window.fill(COLORS['BLACK'])
-    drawStatPane(window, player, panes['side'])
-    drawLogPane(window, game.log, panes['log'])
-    drawGamePane(window, game, panes['main'])
-    pygame.draw.rect(window, COLORS['DARK GRAY'], panes['bottom'], 0)
+    drawAllPanes(window, game, panes)
 
     # game loop
     run_game = True
@@ -416,14 +412,7 @@ def mainGameScreen(window, fps_clock, game):
 
                 # END IF TURN TAKEN
 
-                # Fill in the background of the window with black
-                window.fill(COLORS['BLACK'])
-
-                # Draw the side and log panes
-                drawStatPane(window, player, panes['side'])
-                drawLogPane(window, game.log, panes['log'])
-                drawGamePane(window, game, panes['main'], message=message)
-                pygame.draw.rect(window, COLORS['DARK GRAY'], panes['bottom'], 0)
+                drawAllPanes(window, game, panes, message=message)
 
             # END FOR KEYDOWN EVENT LOOP
         # END FOR EVENT LOOP
