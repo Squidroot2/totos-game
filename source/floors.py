@@ -138,7 +138,7 @@ class Floor:
     def generateItems(self):
         """Based on the level list, determines items that show up"""
         # Uses a random function to determine if the number of items on the floor
-        num_of_items = round(random.triangular(low=1,high=6,mode=5))
+        num_of_items = round(random.triangular(low=1, high=6, mode=3))
         
         # Get leveled list
         leveled_list = Data.getLeveledList("ITEMS", self.number)
