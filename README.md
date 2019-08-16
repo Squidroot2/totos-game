@@ -1,5 +1,5 @@
 # Trial of the Outer Spiral
-Trial of the Outer Spiral is a sci-fi themed [roguelike](https://en.wikipedia.org/wiki/Roguelike) game written in Python. This project is stil a work in progress
+Trial of the Outer Spiral is a sci-fi themed [roguelike](https://en.wikipedia.org/wiki/Roguelike) game written in Python. This project is still a work in progress
 
 ## Requirements
   * Python 3
