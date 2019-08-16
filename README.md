@@ -20,7 +20,9 @@ armor, reactors, and batteries. If you should fall before reaching the end of th
 
 ### Controls
 **Main**
-* Movement: Numpad
+* Movement: Numpad 
+* Wait: Numpad 5
+* Rest : KeyPad 0
 * Fire: F
 * Pick Up: G
 * Look Around: L
