@@ -45,7 +45,7 @@ DRAW_ORDER =    {'CORPSE': 0,
                  'TARGET': 5}
 
 WEAPONS = {"PISTOL", "RIFLE", "PDW", "CANNON", "KNIFE", "CLUB", "SWORD"}
-REACTORS = {"QUICK", "BRAWLER", "FEEDER", "RANGER"}
+REACTORS = {"QUICK", "BRAWLER", "FEEDER", "RANGER", "HEAVY"}
 
 pygame.font.init()
 FONT_FILES = {'UNISPACE' : os.path.join('fonts', 'unispace_rg.ttf')}

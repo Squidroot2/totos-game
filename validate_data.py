@@ -264,12 +264,11 @@ def validateInventories(item_names):
     
     inventory_list = []
     
-    # todo use item_names to validate items in inventory
     inventory_schema = Schema({
         "weapon": Maybe(In(item_names)),
         "armor": Maybe(In(item_names)),
         "reactor": Maybe(In(item_names)),
-        "other": Maybe(list)
+        "other": Maybe([In(item_names)])
         }, required=True)
 
     for inventory_type in data:
