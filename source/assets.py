@@ -61,14 +61,16 @@ class Images:
                         'white-tile': os.path.join(tile_images, 'white-tile.png')
                     },
                     'Items': {
-                        'pistol1': os.path.join(item_images, 'pistol1.png'),
-                        'dagger1': os.path.join(item_images, 'dagger1.png'),
+                        'pistol1': os.path.join(item_images, 'wp_pistol_1.png'),
+                        'dagger1': os.path.join(item_images, 'wp_dagger_1.png'),
                         'battery_tiny': os.path.join(item_images, 'battery_tiny.png'),
                         'armor1': os.path.join(item_images, 'armor_1.png'),
                         'armor2': os.path.join(item_images, 'armor_2.png'),
-                        'knight1': os.path.join(item_images, 'knight_1.png'),
-                        'archer1': os.path.join(item_images, 'archer_1.png'),
-                        'squire1': os.path.join(item_images, 'squire_1.png')
+                        'knight1': os.path.join(item_images, 're_knight_1.png'),
+                        'archer1': os.path.join(item_images, 're_archer_1.png'),
+                        'squire1': os.path.join(item_images, 're_squire_1.png'),
+                        'warlord1': os.path.join(item_images, 're_warlord_1.png'),
+                        'lancer1': os.path.join(item_images, 're_lancer_1.png')
                     },
                     'Backgrounds': {
                         'title': os.path.join(bg_images, 'title_screen.png'),
