@@ -50,15 +50,17 @@ Total defense is the character's natural defense plus any defense from the armor
 Characters can perform multiple attacks in a single turn against a single target. This is determined by innate ability OR if using a weapon, the weapons stats. In general, a low-damage/high rate is going to be better for low-defense opponents, while a high-damage/low-rate is going to be better against high-defense opponents.
 
 **Accuracy.**
-By default, ranged attacks have an accuracy of 95% and melee attacks have an accuracy of 100%. There are a couple of facters that can modify this percentage. Namely, these are encumbrance and range which are explained below. Note that the accuracy displayed on the side panel only takes into account the player's encumbrance.
+By default, attacks have an accuracy of 100%. There are a couple of factors that can modify this percentage. Namely, these are encumbrance and range which are explained below. Note that the accuracy displayed on the side panel only takes into account the player's encumbrance.
 
 **Encumbrance.**
 Encumbrance is when a character uses an item that has a level above their own. This is done for every equipped item individually, not an average. 
 For example, if a LVL 2 Character has a LVL 4 Weapon, LVL 1 Reactor, and LVL 2 Armor, the character has an encumbrance of 2. 
-Every level encumbrance reduces the character's accuracy by 15 percentage points. On the flip side, the chance to hit is increased by 10 percentage points for every point of encumbrance that the defending character has.
+Every level encumbrance reduces the character's ranged accuracy by 25 percentage points and melee accuracy by 10 percentage points. On the flip side, the chance to hit is increased by 10 percentage points for every point of encumbrance that the defending character has.
 
 **Range.**
-All ranged weapons have a range statistic which determines how far they can shoot while maintaining peak accuracy. Note that weapons can be aimed outside of this range so range should be thought of as "optimal range" rather than "maximum range". For every tile past the range, accuracy is reduced by 15 percentage points.
+All ranged weapons have a range statistic which determines how far they can shoot while maintaining peak accuracy.
+Note that weapons can be aimed outside of this range so range should be thought of as "optimal range" rather than "maximum range".
+For every tile past the range, accuracy is reduced by 30 percentage points.
 
 ### The Player
 **Background.**
