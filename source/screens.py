@@ -67,8 +67,8 @@ def titleScreen(window, fps_clock):
     while show_title:
 
         checkForQuit()
-        for event in pygame.event.get(KEYDOWN):
-            if event.key == K_RETURN:
+        for event in pygame.event.get():
+            if event.type == KEYDOWN and event.key == K_RETURN:
                 show_title = False
 
         # Decreases or increases alpha of cover
@@ -110,17 +110,18 @@ def mainMenuScreen(window, fps_clock):
     while not option_chosen:
         drawMainMenu(window, selected_index, choices, grey_out)
         checkForQuit()
-        for event in pygame.event.get(KEYDOWN):
-            if event.key in (K_KP2, K_DOWN) and selected_index < (len(choices)-1):
-                selected_index += 1
-                continue
-            elif event.key in (K_KP8, K_UP) and selected_index > 0:
-                selected_index -= 1
-                continue
-            elif event.key == K_RETURN:
-                if choices[selected_index] in grey_out:
+        for event in pygame.event.get():
+            if event.type == KEYDOWN:
+                if event.key in (K_KP2, K_DOWN) and selected_index < (len(choices)-1):
+                    selected_index += 1
                     continue
-                option_chosen = True
+                elif event.key in (K_KP8, K_UP) and selected_index > 0:
+                    selected_index -= 1
+                    continue
+                elif event.key == K_RETURN:
+                    if choices[selected_index] in grey_out:
+                        continue
+                    option_chosen = True
 
         pygame.display.flip()
         fps_clock.tick(FPS)
