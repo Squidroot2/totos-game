@@ -9,6 +9,8 @@ Functions:
     inventoryScreen(window, fps_clock, game, panes)
 """
 
+# Standard Library
+import os.path
 
 # Third Party
 import pygame
@@ -18,7 +20,7 @@ from pygame.constants import *
 from source.constants import COLORS, FONTS, FPS, BACKGROUNDS
 from source.draw import drawClassSelect, getPanes, drawMapPane, drawGamePane, drawFPS, drawInventory, \
                         drawAllPanes, drawItemInfo, drawMainMenu
-from source.utilities import checkForQuit
+from source.quit import checkForQuit, SAVE_LOCATION
 from source.entities import Target
 from source.floors import Floor
 from source.assets import Images, Fonts
@@ -99,9 +101,14 @@ def mainMenuScreen(window, fps_clock):
     choices = ("New Game", "Load Game", "How To Play", "Quit")
     selected_index = 0
 
+    # GRAY OUT
+    grey_out = {'How To Play'}
+    if not os.path.exists(SAVE_LOCATION):
+        grey_out.add("Load Game")
+
     option_chosen = False
     while not option_chosen:
-        drawMainMenu(window, selected_index, choices)
+        drawMainMenu(window, selected_index, choices, grey_out)
         checkForQuit()
         for event in pygame.event.get(KEYDOWN):
             if event.key in (K_KP2, K_DOWN) and selected_index < (len(choices)-1):
@@ -111,6 +118,8 @@ def mainMenuScreen(window, fps_clock):
                 selected_index -= 1
                 continue
             elif event.key == K_RETURN:
+                if choices[selected_index] in grey_out:
+                    continue
                 option_chosen = True
 
         pygame.display.flip()
@@ -135,13 +144,15 @@ def playerCreateScreen(window, fps_clock):
 
     window_rect = window.get_rect()
 
+    main_font = Fonts.presets['main']
+
     # Shows the name prompt
-    name_prompt = FONTS['MAIN'].render("Name: ", True, COLORS['WHITE'])
+    name_prompt = main_font.render("Name: ", True, COLORS['WHITE'])
     name_prompt_rect = name_prompt.get_rect()
     name_prompt_rect.center = (window_rect.centerx, window_rect.height/7)
 
     # Flashing prompt shown near bottom of screen
-    continue_prompt = FONTS['MAIN'].render("Press Enter to Continue", True, COLORS['YELLOW'])
+    continue_prompt = main_font.render("Press Enter to Continue", True, COLORS['YELLOW'])
     continue_prompt_rect = continue_prompt.get_rect()
     continue_prompt_rect.center = (window_rect.centerx, window_rect.height*(6/7))
 
@@ -160,12 +171,12 @@ def playerCreateScreen(window, fps_clock):
 
     # Identify the input font
     # Since W seems to be the biggest character, we want to calculate the char_width based on that
-    input_font = FONTS['MAIN']
+    input_font = main_font
     char_width = input_font.size("W")[0]
 
     # Initialize the name as an empty string
     name = ''
-    max_name_length = 10
+    max_name_length = 15
 
     # Input Area; The White Space Where Text is typed
     input_area = pygame.rect.Rect(0,
@@ -195,28 +206,38 @@ def playerCreateScreen(window, fps_clock):
         checkForQuit()
         for event in pygame.event.get():
             if event.type == KEYDOWN:
-                if event.key == K_RETURN and name != '':
-                    name_chosen = True
-                    break
+                # If Return, and valid name, keep name
+                if event.key == K_RETURN:
+                    if name != '':
+                        name_chosen = True
+                        break
+                    continue
 
                 # If Backspace, remove character
                 elif event.key == K_BACKSPACE:
                     name = name[:-1]
                     continue
 
-                # If left or right, change chosen background index
+                # Move chosen background index to the left
                 elif event.key in (K_KP4, K_LEFT):
                     if bg_chosen_index > 0:
                         bg_chosen_index -= 1
                     continue
-
+                # Move chosen background index to the right
                 elif event.key in (K_KP6, K_RIGHT):
                     if bg_chosen_index < len(BACKGROUNDS)-1:
                         bg_chosen_index += 1
                     continue
 
+                # Escape to Cancel the player creation
+                elif event.key == K_ESCAPE:
+                    return None, None
+
+                # Add characters as long as less than max_name length
                 elif len(name) < max_name_length:
-                    name += event.unicode
+                    if event.key != K_TAB:
+                        name += event.unicode
+                    print(event.unicode)
 
         # Decreases or increases alpha of cover
         if decrease_alpha:
@@ -301,7 +322,7 @@ def mainGameScreen(window, fps_clock, game):
     while run_game:
 
         # Event Handler
-        checkForQuit()
+        checkForQuit(game)
         for event in pygame.event.get():
 
             # Determine what to do with Key Presses
@@ -485,6 +506,8 @@ def mainGameScreen(window, fps_clock, game):
             if event.key == K_RETURN:
                 show_screen = False
 
+    gameOverScreen(window, fps_clock)
+
 
 def gameOverScreen(window, fps_clock):
     """Shown after the player dies
@@ -534,7 +557,7 @@ def targetScreen(window, fps_clock, game, panes):
     while target_mode:
 
         # Event Handler
-        checkForQuit()
+        checkForQuit(game)
         for event in pygame.event.get():
 
             # Determine what to do with Key Presses
@@ -603,7 +626,7 @@ def inventoryScreen(window, fps_clock, game, panes):
     while show_inventory:
 
         # Event Handler
-        checkForQuit()
+        checkForQuit(game)
         for event in pygame.event.get():
 
             # Determine what to do with Key Presses

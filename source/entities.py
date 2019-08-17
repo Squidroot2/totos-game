@@ -90,7 +90,7 @@ class Entity:
         self.location = location
         self.location.addEntity(self)
         self.obstruct = obstruct
-        self.image = Images.getImage(self.image_dir, self.image_name)
+
         self.discovered = False
         self.last_known_x = None
         self.last_known_y = None
@@ -109,6 +109,8 @@ class Entity:
         else:
             self.inventory = None
 
+        self.setImage()
+
     def draw(self, surface):
         """Takes a pygame surface object and blits the object's 'image' to it at the determined x and y coordinates
 
@@ -123,6 +125,10 @@ class Entity:
     def drawAtLastKnown(self, surface):
         """Draws the entity at the last known location rather than necessarily the actual location"""
         surface.blit(self.image, (self.last_known_x*CELL_SIZE, self.last_known_y*CELL_SIZE))
+
+    def setImage(self):
+        """Sets the image. To be used after loading save"""
+        self.image = Images.getImage(self.image_dir, self.image_name)
 
 
 class Target(Entity):

@@ -10,9 +10,7 @@ Functions:
 """
 
 
-import configparser, sys, json
-import pygame
-from pygame.constants import *
+import configparser, json
 
 
 def readINI(config_path):
@@ -120,15 +118,3 @@ def formatFloat(formatter, val):
     if output.startswith("-0."):
         return "-" + output[2:]
     return output
-
-
-def terminateGame():
-    """Quits the program"""
-    pygame.quit()
-    sys.exit()
-
-
-def checkForQuit():
-    """Terminates the game if the QUIT event is present or the Escape key has been pressed"""
-    for event in pygame.event.get(QUIT): # get all the QUIT events
-        terminateGame() # terminate if any QUIT events are present

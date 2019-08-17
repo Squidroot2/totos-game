@@ -295,6 +295,9 @@ class Tile:
         """Returns a tuple with image and location. Perhaps used for mass blitting"""
         return self.image, (self.pixel_x, self.pixel_y)
 
+    def setImage(self):
+        self.image = Images.getImage(self.image_dir, self.image_name)
+
     def update(self, tcod_map):
         """Loads the image for each image depending on the values in the walkable and transparent array"""
         self.walkable = tcod_map.walkable[self.y][self.x]
@@ -305,7 +308,7 @@ class Tile:
         else:
             self.image_name = 'wall'
         
-        self.image = Images.getImage(self.image_dir, self.image_name)
+        self.setImage()
 
     def drawFog(self, surface):
         """Covers the tile in a translucent gray surface"""

@@ -38,7 +38,33 @@ class Game:
         self.log = Log(self)
         self.surface = pygame.Surface((FLOOR_WIDTH*CELL_SIZE, FLOOR_HEIGHT*CELL_SIZE))
 
+    def removeSurfaces(self):
+        """Removes all images so that the game can be pickled (saved)"""
+        for floor in self.dungeon:
+            for entity in floor.entities:
+                entity.image = None
+                if entity.inventory:
+                    for item in entity.inventory.contents:
+                        item.image = None
+            for x in range(FLOOR_WIDTH):
+                for y in range(FLOOR_HEIGHT):
+                    floor.tile_map[x][y].image = None
 
+        self.surface = None
+
+    def setSurfaces(self):
+        """Gets the surfaces back after loading the save"""
+        for floor in self.dungeon:
+            for entity in floor.entities:
+                entity.setImage()
+                if entity.inventory:
+                    for item in entity.inventory.contents:
+                        item.setImage()
+            for x in range(FLOOR_WIDTH):
+                for y in range(FLOOR_HEIGHT):
+                    floor.tile_map[x][y].setImage()
+
+        self.surface = pygame.Surface((FLOOR_WIDTH*CELL_SIZE, FLOOR_HEIGHT*CELL_SIZE))
 class Log:
     """Keeps track of game information. Is used to print output to the screen
 

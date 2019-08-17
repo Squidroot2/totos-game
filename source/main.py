@@ -8,9 +8,11 @@ Functions:
 import pygame
 from source.constants import WINDOW_WIDTH, WINDOW_HEIGHT
 from source.entities import Player
-from source.game import Game
+from source.game import Game, Log
 from source.screens import mainGameScreen, titleScreen, playerCreateScreen, gameOverScreen, generateDungeonScreen, mainMenuScreen
 from source.assets import loadAssets
+from source.quit import terminateGame, loadSave
+
 
 def main():
     """The main function of the program
@@ -19,12 +21,21 @@ def main():
     window, fps_clock = initializePygame()
     loadAssets()
     titleScreen(window, fps_clock)
-    mainMenuScreen(window, fps_clock)
-
     while True:
-        game = setupGame(window, fps_clock)
-        mainGameScreen(window,fps_clock,game)
-        gameOverScreen(window, fps_clock)
+        choice = mainMenuScreen(window, fps_clock)
+        if choice == "New Game":
+            name, background = playerCreateScreen(window, fps_clock)
+            if name is not None:
+                game = setupGame(window, fps_clock, name, background)
+                mainGameScreen(window, fps_clock, game)
+
+        elif choice == "Load Game":
+            game = loadSave()
+            Log.instance = game.log
+            mainGameScreen(window, fps_clock, game)
+
+        else:
+            terminateGame()
 
 def initializePygame():
     """Initializes the pygame modules and returns SCREEN and FPS_CLOCK
@@ -40,7 +51,7 @@ def initializePygame():
     return window, fps_clock
 
 
-def setupGame(window, fps_clock):
+def setupGame(window, fps_clock, name, background):
     """Runs the titleScreen and the playerCreateScreen to get information from user. Then, creates player and dungeon and puts them in a game object
     
     Parameters:
@@ -63,7 +74,7 @@ def setupGame(window, fps_clock):
             Game(dungeon, player)
     """
 
-    name, background = playerCreateScreen(window, fps_clock)
+
 
     # Shows loading screen for generating dungeon
     dungeon = generateDungeonScreen(window)

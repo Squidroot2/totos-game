@@ -12,17 +12,19 @@ Functions:
  """
 
 import pygame
-
 from source.assets import Fonts, Images
 from source.constants import BACKGROUNDS, COLORS, FONTS, CELL_SIZE, FLOOR_HEIGHT, FLOOR_WIDTH
 from source.formulas import getRangedHitChance, getMeleeHitChance
 from source.utilities import formatFloat
 
 
-def drawMainMenu(window, selected_index, choices):
+
+def drawMainMenu(window, selected_index, choices, gray_out):
+    """Draws the main menu"""
     window_rect = window.get_rect()
 
     font_color = COLORS['WHITE']
+    alt_color = COLORS['GRAY']
 
     bg_image = Images.getImage('Backgrounds', 'title')
 
@@ -40,7 +42,10 @@ def drawMainMenu(window, selected_index, choices):
     window.blit(bg_image, window_rect)
 
     for i, choice in enumerate(choices):
-        choice_text = Fonts.presets['main'].render(choice, True, font_color)
+        if choice not in gray_out:
+            choice_text = Fonts.presets['main'].render(choice, True, font_color)
+        else:
+            choice_text = Fonts.presets['main'].render(choice, True, alt_color)
         choice_rect = choice_text.get_rect()
         choice_rect.midtop = (window_rect.centerx, choice_top + (i * text_dist))
 
@@ -69,8 +74,11 @@ def drawClassSelect(window, selected_class):
 
     left_margin = window_rect.width / 25
 
+    main_font = Fonts.presets['main']
+    subtext_font = Fonts.presets['sub_main']
+
     # Button Dimensions
-    button_width = (window_rect.width-left_margin*2) / len(BACKGROUNDS)
+    button_width = (window_rect.width - left_margin * 2) / len(BACKGROUNDS)
     button_height = window_rect.height / 3
     button_top = window_rect.height / 3
     border_thickness = 1
@@ -86,14 +94,14 @@ def drawClassSelect(window, selected_class):
             text_color = COLORS['WHITE']
 
         # Render text for background and get associated rect
-        background_text = FONTS['MAIN'].render(background, True, text_color, button_color)
+        background_text = main_font.render(background, True, text_color, button_color)
         background_text_rect = background_text.get_rect()
 
         # Determine horizontal location for rect and create inner and outer
-        left = left_margin + button_width*i
+        left = left_margin + button_width * i
         border_rect = pygame.Rect(left, button_top, button_width, button_height)
-        inner_rect = pygame.Rect(left+border_thickness, button_top+border_thickness,
-                                 button_width-border_thickness, button_height-border_thickness)
+        inner_rect = pygame.Rect(left + border_thickness, button_top + border_thickness,
+                                 button_width - border_thickness, button_height - border_thickness)
 
         # Inner and outer Rect
         if background == selected_class:
@@ -105,9 +113,9 @@ def drawClassSelect(window, selected_class):
         window.blit(background_text, background_text_rect)
 
     # The vertical margin for the text
-    text_margin = FONTS['SUBMAIN'].get_linesize()
+    text_margin = subtext_font.get_linesize()
 
-    choose_prompt = FONTS['SUBMAIN'].render('Choose Background with arrow keys', True, COLORS['WHITE'], COLORS['BLACK'])
+    choose_prompt = subtext_font.render('Choose Background with arrow keys', True, COLORS['WHITE'], COLORS['BLACK'])
     choose_rect = choose_prompt.get_rect()
     choose_rect.midtop = (window_rect.centerx, border_rect.bottom + text_margin)
 
@@ -155,14 +163,14 @@ def getPanes(window_rect):
     log_pane_bottom = window_rect.height - log_y_margin
 
     # Calculate map pane dimension
-    map_pane_left = side_pane_left - FLOOR_WIDTH*map_scale - map_x_margin
+    map_pane_left = side_pane_left - FLOOR_WIDTH * map_scale - map_x_margin
 
     # Create Rect Objects
     bottom_pane = pygame.Rect(0, bottom_pane_top, bottom_pane_width, bottom_pane_height)
     side_pane = pygame.Rect(side_pane_left, 0, side_pane_width, window_rect.height)
     main_pane = pygame.Rect(0, 0, main_pane_width, main_pane_height)
     log_pane = pygame.Rect(0, 0, log_pane_width, log_pane_height)
-    map_pane = pygame.Rect(map_pane_left, map_y_margin, FLOOR_WIDTH*map_scale, FLOOR_HEIGHT*map_scale)
+    map_pane = pygame.Rect(map_pane_left, map_y_margin, FLOOR_WIDTH * map_scale, FLOOR_HEIGHT * map_scale)
 
     # Align log pane within the side pane
     log_pane.midbottom = (side_pane.centerx, log_pane_bottom)
@@ -200,10 +208,10 @@ def drawStatPane(window, player, pane):
     header_size = FONTS['INFO_HEADER'].get_linesize()
     line_size = FONTS['INFO'].get_linesize()
 
-    half_line_size = line_size/2
+    half_line_size = line_size / 2
 
-    x_margin = pane.width/10
-    y_margin = pane.height/25
+    x_margin = pane.width / 10
+    y_margin = pane.height / 25
 
     indent_left = pane.left + x_margin
 
@@ -220,7 +228,7 @@ def drawStatPane(window, player, pane):
     full_name = player.name + " the " + player.background
     floor_number = "Floor : %d" % player.location.number
     experience = "XL: %d" % player.level
-    xp_percent = "%.1f%%" % (100*percent_to_next_level)
+    xp_percent = "%.1f%%" % (100 * percent_to_next_level)
     defense = "Defense: %d" % player.getDefense()
     life = "Life: %d" % player.life
     energy_value = "%.1f / %d" % (player.energy, player.max_energy)
@@ -279,7 +287,7 @@ def drawStatPane(window, player, pane):
     # Draw Line Separating top stats from damage stats
     line_y = text_rects['life'].bottom + header_size
     line_start = indent_left
-    line_end = pane.right-x_margin
+    line_end = pane.right - x_margin
     line_width = 1
     pygame.draw.line(window, COLORS['BLACK'], (line_start, line_y), (line_end, line_y), line_width)
 
@@ -323,7 +331,7 @@ def drawStatPane(window, player, pane):
     item_image_rects = {item: item_images[item].get_rect() for item in item_images}
 
     # The interval used to space out item images
-    image_interval = pane.width / 6   # Images are centered at 1/6, 3/6, and 5/6
+    image_interval = pane.width / 6  # Images are centered at 1/6, 3/6, and 5/6
 
     # Dicts for item text and rects
     item_text_surfs = dict()
@@ -336,7 +344,7 @@ def drawStatPane(window, player, pane):
 
     # Vertical lines separating the items
     vert_line_start = line_y + half_line_size
-    vert_line_end = (line_y + line_size*4 + CELL_SIZE)
+    vert_line_end = (line_y + line_size * 4 + CELL_SIZE)
     line_dist = pane.width / len(equipment)
 
     # Place the rects for the images, amd render text associated with them
@@ -344,32 +352,32 @@ def drawStatPane(window, player, pane):
 
         # Title text
         # title_top = line_y + CELL_SIZE/2
-        item_text_surfs[slot+'_title'] = FONTS['INFO'].render(slot.capitalize(), True, font_color, background_color)
-        item_text_rects[slot+'_title'] = item_text_surfs[slot+'_title'].get_rect()
-        item_text_rects[slot+'_title'].midtop = (pane.left + image_interval + (i*2*image_interval),
-                                                 line_y + line_size)
+        item_text_surfs[slot + '_title'] = FONTS['INFO'].render(slot.capitalize(), True, font_color, background_color)
+        item_text_rects[slot + '_title'] = item_text_surfs[slot + '_title'].get_rect()
+        item_text_rects[slot + '_title'].midtop = (pane.left + image_interval + (i * 2 * image_interval),
+                                                   line_y + line_size)
 
         # Item Image
-        item_image_rects[slot].midtop = (item_text_rects[slot+'_title'].centerx,
-                                         item_text_rects[slot+'_title'].bottom + half_line_size)
+        item_image_rects[slot].midtop = (item_text_rects[slot + '_title'].centerx,
+                                         item_text_rects[slot + '_title'].bottom + half_line_size)
 
         # Name text
-        item_text_surfs[slot+'_name'] = FONTS['INFO_S'].render(item_names[slot], True, font_color, background_color)
-        item_text_rects[slot+'_name'] = item_text_surfs[slot+'_name'].get_rect()
-        item_text_rects[slot+'_name'].midtop = (item_image_rects[slot].centerx,
-                                                item_image_rects[slot].bottom + half_line_size)
+        item_text_surfs[slot + '_name'] = FONTS['INFO_S'].render(item_names[slot], True, font_color, background_color)
+        item_text_rects[slot + '_name'] = item_text_surfs[slot + '_name'].get_rect()
+        item_text_rects[slot + '_name'].midtop = (item_image_rects[slot].centerx,
+                                                  item_image_rects[slot].bottom + half_line_size)
 
         # Line in between. Not drawn first time around
         if i > 0:
             vert_line_x = pane.left + line_dist * i
             pygame.draw.line(window, COLORS['BLACK'], (vert_line_x, vert_line_start),
-                            (vert_line_x, vert_line_end), 2)
+                             (vert_line_x, vert_line_end), 2)
 
     # Draw picture of images and the associated text
     for item in item_images:
         window.blit(item_images[item], item_image_rects[item])
-        window.blit(item_text_surfs[item+'_title'], item_text_rects[item+'_title'])
-        window.blit(item_text_surfs[item+'_name'], item_text_rects[item+'_name'])
+        window.blit(item_text_surfs[item + '_title'], item_text_rects[item + '_title'])
+        window.blit(item_text_surfs[item + '_name'], item_text_rects[item + '_name'])
 
     # Print Text
     for text in text_surfs:
@@ -400,7 +408,6 @@ def drawLogPane(window, log, pane):
     text_rects = list()
 
     for line, message in enumerate(messages):
-
         # Create a surface and rect for each line of messages
         surf = log_font.render(message, True, COLORS['BLACK'], COLORS['WHITE'])
         rect = surf.get_rect()
@@ -476,28 +483,28 @@ def drawMapPane(window, player, floor, pane):
     map_surface.fill(COLORS['BLACK'])
 
     # Draw Border
-    border = (pane.left-1, pane.top-1, pane.width+2, pane.height+2)
+    border = (pane.left - 1, pane.top - 1, pane.width + 2, pane.height + 2)
     pygame.draw.rect(window, COLORS['YELLOW'], border, 1)
 
     for x in range(FLOOR_WIDTH):
         for y in range(FLOOR_HEIGHT):
             if x == player.x and y == player.y:
-                pygame.draw.rect(map_surface, COLORS['YELLOW'], (x*scale, y*scale, scale, scale), 0)
+                pygame.draw.rect(map_surface, COLORS['YELLOW'], (x * scale, y * scale, scale, scale), 0)
                 continue
 
             if floor.tile_map[x][y].discovered:
                 if x == floor.portals['up'].x and y == floor.portals['up'].y:
-                    pygame.draw.rect(map_surface, COLORS['RED'], (x*scale, y*scale, scale, scale), 0)
+                    pygame.draw.rect(map_surface, COLORS['RED'], (x * scale, y * scale, scale, scale), 0)
                     continue
 
                 if x == floor.portals['down'].x and y == floor.portals['down'].y:
-                    pygame.draw.rect(map_surface, COLORS['MILD BLUE'], (x*scale, y*scale, scale, scale), 0)
+                    pygame.draw.rect(map_surface, COLORS['MILD BLUE'], (x * scale, y * scale, scale, scale), 0)
                     continue
 
                 if floor.map.walkable[y][x]:
-                    pygame.draw.rect(map_surface, COLORS['GRAY'], (x*scale, y*scale, scale, scale), 0)
+                    pygame.draw.rect(map_surface, COLORS['GRAY'], (x * scale, y * scale, scale, scale), 0)
                 else:
-                    pygame.draw.rect(map_surface, COLORS['WHITE'], (x*scale, y*scale, scale, scale), 0)
+                    pygame.draw.rect(map_surface, COLORS['WHITE'], (x * scale, y * scale, scale, scale), 0)
 
     map_surface.set_alpha(160)
     window.blit(map_surface, pane)
@@ -571,7 +578,7 @@ def drawMessageBox(window, pane, message):
 
     message_box.center = (pane.centerx, pane.centery - y_offset)
 
-    pygame.draw.rect(window, COLORS['BLACK'], message_box,  0)
+    pygame.draw.rect(window, COLORS['BLACK'], message_box, 0)
 
     text = FONTS['SUBMAIN'].render(message, True, COLORS['WHITE'], COLORS['BLACK'])
     text_rect = text.get_rect()
@@ -599,7 +606,7 @@ def drawInventory(surface, pane, inventory, selected_item):
 
     # Inventory Area dimensions
     inventory_width = pane.width / 4
-    inventory_height = pane.height * (1/2)
+    inventory_height = pane.height * (1 / 2)
     inventory_area = pygame.Rect(0, 0, inventory_width, inventory_height)
     inventory_area.center = (pane.centerx / 2, pane.centery)
     border_width = 3
@@ -607,7 +614,7 @@ def drawInventory(surface, pane, inventory, selected_item):
     # Draw Inventory Area
     pygame.draw.rect(surface, bg_color, inventory_area, 0)
     pygame.draw.rect(surface, border_color, inventory_area, border_width)
-    
+
     # Distance from the the top of the pane to the top of the word "Inventory"
     title_y_margin = inventory_area.height / 15
 
@@ -618,7 +625,7 @@ def drawInventory(surface, pane, inventory, selected_item):
     surface.blit(title, title_rect)
 
     # Get the margin on the left side
-    x_margin = pane.width/25
+    x_margin = pane.width / 25
     indent_left = inventory_area.left + x_margin
 
     # The amount that the line top is moved for each item printed
@@ -648,15 +655,15 @@ def drawInventory(surface, pane, inventory, selected_item):
 
             # Draw Gray Rect around selected item
             if item is selected_item:
-                selected_area = pygame.Rect(inventory_area.left+border_width, line_top,
-                                            inventory_area.width-border_width*2, line_height)
+                selected_area = pygame.Rect(inventory_area.left + border_width, line_top,
+                                            inventory_area.width - border_width * 2, line_height)
                 pygame.draw.rect(surface, COLORS['LIGHT GRAY'], selected_area, 0)
                 bg_color = selected_bg_color
             else:
                 bg_color = standard_bg_color
 
             # Draw Index
-            index_surf = main_font.render(str(index)[-1]+".", True, font_color, bg_color)
+            index_surf = main_font.render(str(index)[-1] + ".", True, font_color, bg_color)
             index_rect = index_surf.get_rect()
             index_rect.topleft = (indent_left, line_top)
             surface.blit(index_surf, index_rect)
@@ -681,11 +688,11 @@ def drawInventory(surface, pane, inventory, selected_item):
     return item_order
 
 
-def drawItemListing(surface, item, font,  font_color, bg_color, top_left):
+def drawItemListing(surface, item, font, font_color, bg_color, top_left):
     """Draws the specified item as a line in the inventory"""
     # Space inbetween left side of image and left side of text
 
-    icon_size = int(CELL_SIZE/2)
+    icon_size = int(CELL_SIZE / 2)
 
     gap = icon_size * (3 / 2)
     item_icon = pygame.transform.scale(item.image, (icon_size, icon_size))
@@ -695,7 +702,7 @@ def drawItemListing(surface, item, font,  font_color, bg_color, top_left):
 
     item_name = font.render(item.name, True, font_color, bg_color)
     item_name_rect = item_name.get_rect()
-    item_name_rect.midleft = (top_left[0]+gap, top_left[1] + icon_size/2)
+    item_name_rect.midleft = (top_left[0] + gap, top_left[1] + icon_size / 2)
     surface.blit(item_name, item_name_rect)
 
 
@@ -777,7 +784,7 @@ def drawItemInfo(surface, pane, item):
     # Item Area dimensions
     area_width = pane.width / 4
     area = pygame.Rect(0, 0, area_width, area_height)
-    area.center = (pane.width * (3/4), pane.centery)
+    area.center = (pane.width * (3 / 4), pane.centery)
     border_width = 3
 
     # Draw Item Area
@@ -816,7 +823,7 @@ def drawItemInfo(surface, pane, item):
     x_margin = area.width / 10
     line_left = area.left + x_margin
     for i, rect in enumerate(stat_rects):
-        rect.topleft = (line_left, desc_rect.bottom + line_size + (i*(line_size*1.5)))
+        rect.topleft = (line_left, desc_rect.bottom + line_size + (i * (line_size * 1.5)))
 
     # Place Action Rects
     action_y = area.bottom - line_size
