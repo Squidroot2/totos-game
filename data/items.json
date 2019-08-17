@@ -178,15 +178,32 @@
     "RIFLE_1": {
       "name": "Hunting Rifle",
       "image": null,
-	  "melee_verb": "hit",
+      "melee_verb": "hit",
       "melee_damage": 1,
       "melee_speed": 1,
       "quick_draw": false,
       "difficulty": 2,
       "ranged": {
-		"verb": "shot",
+        "verb": "shot",
         "damage": 8,
         "energy": 3,
+        "fire_rate": 1,
+        "range": 5,
+        "projectile": "green_beam"
+      }
+    },
+    "RIFLE_2": {
+      "name": "Blackout Rifle",
+      "image": "rifle_black",
+      "melee_verb": "bashed",
+      "melee_damage": 1,
+      "melee_speed": 1,
+      "quick_draw": false,
+      "difficulty": 3,
+      "ranged": {
+        "verb": "shot",
+        "damage": 10,
+        "energy": 4,
         "fire_rate": 1,
         "range": 5,
         "projectile": "green_beam"

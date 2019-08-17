@@ -1,11 +1,16 @@
 """ Contains formulas that are used during combat 
 
-Functions:
+Constants:
+    RANGE_BASE_HIT_CHANCE = 1 : Chance to land attack before penalties
+    RANGE_EXCEEDED_PENALTY = -0.3 : Affect on Ranged Hitch chance for each tile further than the rated range
+    RANGE_ENCUMBRANCE_PENALTY = -0.25 : Affect on Ranged hit chance for each point of encumbrance
 
-....getHitChance(attacker_enc, defender_enc)
-....getDamaageDealt(attack, defense)
-....determineLethal(damage, life)
-....determineInjury(damage, life)
+Functions:
+    getMeleeHitChance(attacker_enc, defender_enc)
+    getRangedHitChance(attacker_enc, defender_enc, range_exceeded)
+    getDamageDealt(attack, defense)
+    determineLethal(damage, life)
+    determineInjury(damage, life)
 """
 # Standard Library
 import math
@@ -13,6 +18,7 @@ import random
 RANGE_BASE_HIT_CHANCE = 1
 RANGE_EXCEEDED_PENALTY = -0.3
 RANGE_ENCUMBRANCE_PENALTY = -0.25
+
 
 def getMeleeHitChance(attacker_enc, defender_enc):
     """ Takes the attackers encumbrance and the defender's encumbrance and returns a floating number between 0 and 1 representing the chance to hit the defender
@@ -28,7 +34,7 @@ def getMeleeHitChance(attacker_enc, defender_enc):
     enc_bonus = defender_enc * 0.1
         
     # Return sum of base, penalty and bonus
-    return math.fsum([base,enc_penalty, enc_bonus])
+    return math.fsum([base, enc_penalty, enc_bonus])
     
 
 def getRangedHitChance(attacker_enc, defender_enc, range_exceeded):
@@ -47,9 +53,19 @@ def getRangedHitChance(attacker_enc, defender_enc, range_exceeded):
     # Return sum of base, penalities, and bonus
     return math.fsum([base, enc_penalty, range_penalty, enc_bonus])
 
+
 def getMaxRange(encumbrance, peak_range):
-    """Given the encumbrance and rated range, returns the range at which, any further and the chance to hit would be 0"""
-    return math.floor((((-RANGE_ENCUMBRANCE_PENALTY * encumbrance) - RANGE_BASE_HIT_CHANCE) / RANGE_EXCEEDED_PENALTY) + peak_range)
+    """Returns the range at which, any further and the chance to hit would be 0
+
+    Parameters:
+        encumbrance : int
+        peak_range : int
+
+    Returns: int
+    """
+    encumbrance_penalty_total = -RANGE_ENCUMBRANCE_PENALTY * encumbrance
+
+    return math.floor(((encumbrance_penalty_total - RANGE_BASE_HIT_CHANCE) / RANGE_EXCEEDED_PENALTY) + peak_range)
 
 
 def getDamageDealt(attack, defense):
@@ -57,10 +73,9 @@ def getDamageDealt(attack, defense):
     
     Parameters:
         attack: float or int
-        defense; float or int
+        defense: float or int
     
-    Returns:
-        : float : Rounded to the first decimal place
+    Returns: float : Rounded to the first decimal place
     
     Calls:
         math.log(x, base)
@@ -72,7 +87,8 @@ def getDamageDealt(attack, defense):
     damage = attack - attack*reduction
 
     # Damage is rounded to nearest tenth
-    return round(damage,1)
+    return round(damage, 1)
+
 
 def determineLethal(damage, life):
     """Returns whether the damage to flesh killed the character or not"""
@@ -87,10 +103,11 @@ def determineLethal(damage, life):
     else:
         return False
 
+
 def determineInjury(damage, life):
     """Returns whether the damage to flesh has inflicted an injury which will reduce the life points"""
 
-    chance = damage*2/life
+    chance = damage*3/life
 
     roll = random.random()
 

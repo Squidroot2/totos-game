@@ -63,6 +63,7 @@ class Images:
                     'Items': {
                         'pistol1': os.path.join(item_images, 'wp_pistol_1.png'),
                         'dagger1': os.path.join(item_images, 'wp_dagger_1.png'),
+                        'rifle_black': os.path.join(item_images, 'wp_rifle_blackout.png'),
                         'battery_tiny': os.path.join(item_images, 'battery_tiny.png'),
                         'armor1': os.path.join(item_images, 'armor_1.png'),
                         'armor2': os.path.join(item_images, 'armor_2.png'),
