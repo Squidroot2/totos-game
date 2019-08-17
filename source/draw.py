@@ -93,6 +93,9 @@ def getPanes(window_rect):
     map_y_margin = 20
     map_x_margin = 20
 
+    # Map scale
+    map_scale = 3
+
     # Explicit variables for the size of the panes
     bottom_pane_height = window_rect.height / 25
     side_pane_width = window_rect.width / 4
@@ -114,14 +117,14 @@ def getPanes(window_rect):
     log_pane_bottom = window_rect.height - log_y_margin
 
     # Calculate map pane dimension
-    map_pane_left = side_pane_left - FLOOR_WIDTH*2 - map_x_margin
+    map_pane_left = side_pane_left - FLOOR_WIDTH*map_scale - map_x_margin
 
     # Create Rect Objects
     bottom_pane = pygame.Rect(0, bottom_pane_top, bottom_pane_width, bottom_pane_height)
     side_pane = pygame.Rect(side_pane_left, 0, side_pane_width, window_rect.height)
     main_pane = pygame.Rect(0, 0, main_pane_width, main_pane_height)
     log_pane = pygame.Rect(0, 0, log_pane_width, log_pane_height)
-    map_pane = pygame.Rect(map_pane_left, map_y_margin, FLOOR_WIDTH*2, FLOOR_HEIGHT*2)
+    map_pane = pygame.Rect(map_pane_left, map_y_margin, FLOOR_WIDTH*map_scale, FLOOR_HEIGHT*map_scale)
 
     # Align log pane within the side pane
     log_pane.midbottom = (side_pane.centerx, log_pane_bottom)
@@ -432,31 +435,36 @@ def drawAllPanes(window, game, panes, target=None, message=None):
 
 
 def drawMapPane(window, player, floor, pane):
-    """Draws the translucent map"""
+    """Draws the translucent map into the map pane"""
+    scale = 3
     map_surface = pygame.Surface((pane.width, pane.height))
     map_surface.fill(COLORS['BLACK'])
+
+    # Draw Border
+    border = (pane.left-1, pane.top-1, pane.width+2, pane.height+2)
+    pygame.draw.rect(window, COLORS['YELLOW'], border, 1)
 
     for x in range(FLOOR_WIDTH):
         for y in range(FLOOR_HEIGHT):
             if x == player.x and y == player.y:
-                pygame.draw.rect(map_surface, COLORS['YELLOW'], (x * 2, y * 2, 2, 2), 0)
+                pygame.draw.rect(map_surface, COLORS['YELLOW'], (x*scale, y*scale, scale, scale), 0)
                 continue
 
             if floor.tile_map[x][y].discovered:
                 if x == floor.portals['up'].x and y == floor.portals['up'].y:
-                    pygame.draw.rect(map_surface, COLORS['RED'], (x*2, y*2, 2, 2), 0)
+                    pygame.draw.rect(map_surface, COLORS['RED'], (x*scale, y*scale, scale, scale), 0)
                     continue
 
                 if x == floor.portals['down'].x and y == floor.portals['down'].y:
-                    pygame.draw.rect(map_surface, COLORS['BLUE'], (x * 2, y * 2, 2, 2), 0)
+                    pygame.draw.rect(map_surface, COLORS['MILD BLUE'], (x*scale, y*scale, scale, scale), 0)
                     continue
 
                 if floor.map.walkable[y][x]:
-                    pygame.draw.rect(map_surface, COLORS['GRAY'], (x*2,y*2, 2, 2), 0)
+                    pygame.draw.rect(map_surface, COLORS['GRAY'], (x*scale, y*scale, scale, scale), 0)
                 else:
-                    pygame.draw.rect(map_surface, COLORS['WHITE'], (x*2,y*2, 2, 2), 0)
+                    pygame.draw.rect(map_surface, COLORS['WHITE'], (x*scale, y*scale, scale, scale), 0)
 
-    map_surface.set_alpha(128)
+    map_surface.set_alpha(160)
     window.blit(map_surface, pane)
 
 
