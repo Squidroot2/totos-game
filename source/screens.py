@@ -10,7 +10,7 @@ Functions:
 """
 
 # Standard Library
-import os.path
+import os
 
 # Third Party
 import pygame
@@ -498,6 +498,9 @@ def mainGameScreen(window, fps_clock, game):
         fps_clock.tick()
 
     # END WHILE RUN GAME
+    # Delete the save
+    os.remove(SAVE_LOCATION)
+
     # Stop until player hit enter key
     show_screen = True
     while show_screen:
@@ -510,13 +513,12 @@ def mainGameScreen(window, fps_clock, game):
 
 
 def gameOverScreen(window, fps_clock):
-    """Shown after the player dies
+    """Shown after the player dies and deletes the save if there is one
 
     Parameters:
         window : pygame.Surface
         fps_clock : pygame.Clock
     """
-
     window.fill(COLORS['BLACK'])
 
     window_rect = window.get_rect()
