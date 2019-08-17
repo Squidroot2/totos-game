@@ -89,6 +89,10 @@ def getPanes(window_rect):
     # log pane margin from bottom
     log_y_margin = 10
 
+    # Map pane margins
+    map_y_margin = 20
+    map_x_margin = 20
+
     # Explicit variables for the size of the panes
     bottom_pane_height = window_rect.height / 25
     side_pane_width = window_rect.width / 4
@@ -110,14 +114,14 @@ def getPanes(window_rect):
     log_pane_bottom = window_rect.height - log_y_margin
 
     # Calculate map pane dimension
-    map_pane_left = side_pane_left - FLOOR_WIDTH*2
+    map_pane_left = side_pane_left - FLOOR_WIDTH*2 - map_x_margin
 
     # Create Rect Objects
     bottom_pane = pygame.Rect(0, bottom_pane_top, bottom_pane_width, bottom_pane_height)
     side_pane = pygame.Rect(side_pane_left, 0, side_pane_width, window_rect.height)
     main_pane = pygame.Rect(0, 0, main_pane_width, main_pane_height)
     log_pane = pygame.Rect(0, 0, log_pane_width, log_pane_height)
-    map_pane = pygame.Rect(map_pane_left, 0, FLOOR_WIDTH*2, FLOOR_HEIGHT*2)
+    map_pane = pygame.Rect(map_pane_left, map_y_margin, FLOOR_WIDTH*2, FLOOR_HEIGHT*2)
 
     # Align log pane within the side pane
     log_pane.midbottom = (side_pane.centerx, log_pane_bottom)
@@ -426,7 +430,7 @@ def drawAllPanes(window, game, panes, target=None, message=None):
     drawMapPane(window, game.player, game.player.location, panes['map'])
     pygame.draw.rect(window, COLORS['DARK GRAY'], panes['bottom'], 0)
 
-#todo have drawMapPane always on screen
+
 def drawMapPane(window, player, floor, pane):
     """Draws the translucent map"""
     map_surface = pygame.Surface((pane.width, pane.height))
