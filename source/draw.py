@@ -707,7 +707,9 @@ def drawItemInfo(surface, pane, item):
 
     else:  # item.item_class == 'reactor'
         area_height = pane.height / 3
-        description = "LVL %d %s" % (item.difficulty, item.item_class.capitalize())
+        item_type, num = item.id.rsplit("_")
+
+        description = "LVL %d %s %s" % (item.difficulty, item_type.capitalize(), item.item_class.capitalize())
 
         stats.append("Max Charge: %.1f" % item.max_charge)
         stats.append("Recharge Rate: %.1f" % item.recharge_rate)

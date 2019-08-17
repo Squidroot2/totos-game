@@ -10,7 +10,9 @@ Functions:
 # Standard Library
 import math
 import random
-
+RANGE_BASE_HIT_CHANCE = 1
+RANGE_EXCEEDED_PENALTY = -0.3
+RANGE_ENCUMBRANCE_PENALTY = -0.25
 
 def getMeleeHitChance(attacker_enc, defender_enc):
     """ Takes the attackers encumbrance and the defender's encumbrance and returns a floating number between 0 and 1 representing the chance to hit the defender
@@ -33,11 +35,11 @@ def getRangedHitChance(attacker_enc, defender_enc, range_exceeded):
     """Returns a float 0-1 that indicates the chance of a ranged attack landing"""
     
     # Base chance to hit
-    base = .95
+    base = RANGE_BASE_HIT_CHANCE
     
     # Calculate Penalties
-    enc_penalty = attacker_enc * -0.15
-    range_penalty = range_exceeded * -0.15
+    enc_penalty = attacker_enc * RANGE_ENCUMBRANCE_PENALTY
+    range_penalty = range_exceeded * RANGE_EXCEEDED_PENALTY
     
     # Calculate Bonus
     enc_bonus = defender_enc * .1
@@ -47,7 +49,7 @@ def getRangedHitChance(attacker_enc, defender_enc, range_exceeded):
 
 def getMaxRange(encumbrance, peak_range):
     """Given the encumbrance and rated range, returns the range at which, any further and the chance to hit would be 0"""
-    return math.floor((((0.1*encumbrance)-.95)/-.15) + peak_range)
+    return math.floor((((-RANGE_ENCUMBRANCE_PENALTY * encumbrance) - RANGE_BASE_HIT_CHANCE) / RANGE_EXCEEDED_PENALTY) + peak_range)
 
 
 def getDamageDealt(attack, defense):

@@ -732,7 +732,7 @@ class Player(Character):
     draw_order = DRAW_ORDER['PLAYER']
     base_image = None
 
-    xp_ceiling = [0, 1, 5, 10, 15, 25]
+    xp_ceiling = [0, 10, 25, 45, 70, 100]
 
     max_level = len(xp_ceiling)
 

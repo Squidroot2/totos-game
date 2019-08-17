@@ -162,7 +162,7 @@
       "name": "Pi Shooter",
       "image": "pistol1",
 	  "melee_verb" : "pistol-whipped",
-      "melee_damage" : 2,
+      "melee_damage" : 1,
       "melee_speed" : 1,
       "quick_draw": true,
       "difficulty": 2,
@@ -182,7 +182,7 @@
       "melee_damage": 1,
       "melee_speed": 1,
       "quick_draw": false,
-      "difficulty": 1,
+      "difficulty": 2,
       "ranged": {
 		"verb": "shot",
         "damage": 8,
@@ -196,14 +196,14 @@
       "name": "Pounder",
       "image": null,
 	  "melee_verb": "hit",
-      "melee_damage": 2,
+      "melee_damage": 1,
       "melee_speed": 1,
       "quick_draw": false,
       "difficulty": 2,
       "ranged": {
 		"verb": "blasted",
         "damage": 10,
-        "energy": 3,
+        "energy": 4,
         "fire_rate": 1,
         "range": 2,
         "projectile": "red_slug"
@@ -219,7 +219,7 @@
       "difficulty": 2,
       "ranged": {
 		"verb": "shot",
-        "damage": 2,
+        "damage": 3,
         "energy": 2,
         "fire_rate": 3,
         "range": 2,
@@ -230,7 +230,7 @@
       "name": "Simple Knife",
       "image": "dagger1",
 	  "melee_verb" : "stabbed",
-      "melee_damage": 3,
+      "melee_damage": 3.5,
       "melee_speed": 2,
       "quick_draw": true,
       "difficulty": 1,
@@ -282,7 +282,7 @@
       "max_charge": 5,
       "recharge_rate": 0.1,
       "recovery": 3,
-      "recoil_charge": 3,
+      "recoil_charge": 2,
       "difficulty": 1
     },
     "MEDIUM_1": {
@@ -291,7 +291,7 @@
       "max_charge": 8,
       "recharge_rate": 0.2,
       "recovery": 3,
-      "recoil_charge": 2,
+      "recoil_charge": 1,
       "difficulty": 1
     },
 	"HEAVY_1": {
@@ -300,7 +300,7 @@
 	  "max_charge": 10,
 	  "recharge_rate": 0.1,
 	  "recovery": 5,
-	  "recoil_charge": 2,
+	  "recoil_charge": 1,
 	  "difficulty": 1
 	}
   },
