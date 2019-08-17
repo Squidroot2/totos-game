@@ -217,7 +217,7 @@ class Fonts:
     def create(cls):
         cls.presets = {
                 'title':        Font(cls.files['default'], 70),
-                'main':         Font(cls.files['default'], 28),
+                'main':         Font(cls.files['unispace'], 28),
                 'sub_main':      Font(cls.files['default'], 20),
                 'info_header':  Font(cls.files['unispace'], 16),
                 'info':         Font(cls.files['unispace'], 14),

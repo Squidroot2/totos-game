@@ -17,11 +17,11 @@ from pygame.constants import *
 # My Modules
 from source.constants import COLORS, FONTS, FPS, BACKGROUNDS
 from source.draw import drawClassSelect, getPanes, drawMapPane, drawGamePane, drawFPS, drawInventory, \
-                        drawAllPanes, drawItemInfo
+                        drawAllPanes, drawItemInfo, drawMainMenu
 from source.utilities import checkForQuit
 from source.entities import Target
 from source.floors import Floor
-from source.assets import Images
+from source.assets import Images, Fonts
 
 
 def titleScreen(window, fps_clock):
@@ -42,7 +42,7 @@ def titleScreen(window, fps_clock):
     window_rect = window.get_rect()
 
     # Flashing prompt shown near bottom of screen
-    continue_prompt = FONTS['MAIN'].render("Press Enter to Continue", True, COLORS['YELLOW'])
+    continue_prompt = Fonts.presets['main'].render("Press Enter to Continue", True, COLORS['YELLOW'])
     continue_prompt_rect = continue_prompt.get_rect()
     continue_prompt_rect.center = (window_rect.centerx, window_rect.height*(3/4))
 
@@ -91,6 +91,32 @@ def titleScreen(window, fps_clock):
         drawFPS(window, fps_clock)
         pygame.display.flip()
         fps_clock.tick(FPS)
+
+
+def mainMenuScreen(window, fps_clock):
+    """Shows the main menu"""
+
+    choices = ("New Game", "Load Game", "How To Play", "Quit")
+    selected_index = 0
+
+    option_chosen = False
+    while not option_chosen:
+        drawMainMenu(window, selected_index, choices)
+        checkForQuit()
+        for event in pygame.event.get(KEYDOWN):
+            if event.key in (K_KP2, K_DOWN) and selected_index < (len(choices)-1):
+                selected_index += 1
+                continue
+            elif event.key in (K_KP8, K_UP) and selected_index > 0:
+                selected_index -= 1
+                continue
+            elif event.key == K_RETURN:
+                option_chosen = True
+
+        pygame.display.flip()
+        fps_clock.tick(FPS)
+
+    return choices[selected_index]
 
 
 def playerCreateScreen(window, fps_clock):

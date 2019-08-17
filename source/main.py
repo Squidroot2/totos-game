@@ -9,7 +9,7 @@ import pygame
 from source.constants import WINDOW_WIDTH, WINDOW_HEIGHT
 from source.entities import Player
 from source.game import Game
-from source.screens import mainGameScreen, titleScreen, playerCreateScreen, gameOverScreen, generateDungeonScreen
+from source.screens import mainGameScreen, titleScreen, playerCreateScreen, gameOverScreen, generateDungeonScreen, mainMenuScreen
 from source.assets import loadAssets
 
 def main():
@@ -17,6 +17,10 @@ def main():
     
     Initializes pygame. Setups Game, Runs the game, finally presents game over screen before repeating loop"""
     window, fps_clock = initializePygame()
+    loadAssets()
+    titleScreen(window, fps_clock)
+    mainMenuScreen(window, fps_clock)
+
     while True:
         game = setupGame(window, fps_clock)
         mainGameScreen(window,fps_clock,game)
@@ -58,8 +62,7 @@ def setupGame(window, fps_clock):
         source.game
             Game(dungeon, player)
     """
-    loadAssets()
-    titleScreen(window, fps_clock)
+
     name, background = playerCreateScreen(window, fps_clock)
 
     # Shows loading screen for generating dungeon

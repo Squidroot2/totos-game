@@ -13,10 +13,47 @@ Functions:
 
 import pygame
 
-from source.assets import Fonts
+from source.assets import Fonts, Images
 from source.constants import BACKGROUNDS, COLORS, FONTS, CELL_SIZE, FLOOR_HEIGHT, FLOOR_WIDTH
 from source.formulas import getRangedHitChance, getMeleeHitChance
 from source.utilities import formatFloat
+
+
+def drawMainMenu(window, selected_index, choices):
+    window_rect = window.get_rect()
+
+    font_color = COLORS['WHITE']
+
+    bg_image = Images.getImage('Backgrounds', 'title')
+
+    main_font = Fonts.presets['main']
+    line_size = main_font.get_linesize()
+
+    choice_top = window_rect.centery + 50
+
+    text_dist = line_size * 2
+
+    # Selector triangle dimensions
+    triangle_length = 20
+    triangle_x_margin = 10
+
+    window.blit(bg_image, window_rect)
+
+    for i, choice in enumerate(choices):
+        choice_text = Fonts.presets['main'].render(choice, True, font_color)
+        choice_rect = choice_text.get_rect()
+        choice_rect.midtop = (window_rect.centerx, choice_top + (i * text_dist))
+
+        window.blit(choice_text, choice_rect)
+
+        if i == selected_index:
+            # Triangle points
+            tip = (choice_rect.left - triangle_x_margin, choice_rect.centery)
+            base_top = (tip[0] - triangle_length, choice_rect.top)
+            base_bottom = (tip[0] - triangle_length, choice_rect.bottom)
+
+            # draw Selector triangle
+            pygame.draw.polygon(window, COLORS['YELLOW'], (tip, base_top, base_bottom), 0)
 
 
 def drawClassSelect(window, selected_class):
@@ -55,7 +92,8 @@ def drawClassSelect(window, selected_class):
         # Determine horizontal location for rect and create inner and outer
         left = left_margin + button_width*i
         border_rect = pygame.Rect(left, button_top, button_width, button_height)
-        inner_rect = pygame.Rect(left+border_thickness, button_top+border_thickness, button_width-border_thickness, button_height-border_thickness)
+        inner_rect = pygame.Rect(left+border_thickness, button_top+border_thickness,
+                                 button_width-border_thickness, button_height-border_thickness)
 
         # Inner and outer Rect
         if background == selected_class:
@@ -173,13 +211,10 @@ def drawStatPane(window, player, pane):
     eps = player.getEnergyPerShot()
     enc = player.getEncumbrance()
     percent_to_next_level = player.getPercentToNextLevel()
-    charge_this_turn = player.getChargeThisTurn()
     if player.getRecoveryTime():
         recovery_left = "(%d)" % player.getRecoveryTime()
     else:
         recovery_left = ""
-
-
 
     # Strings used
     full_name = player.name + " the " + player.background
@@ -386,11 +421,11 @@ def drawGamePane(window, game, pane, target=None, message=None):
     """Draws on the game surface then blits game surface to the window
     
     Parameters:
-        window : pygame.Surface
-        game = source.game.Game
-        pane = pygame.Rect
-        target = source.entities.Target or None
-        message = string or None   
+        window: pygame.Surface
+        game: source.game.Game
+        pane: pygame.Rect
+        target: source.entities.Target or None
+        message: string or None
     """
 
     # Pulls the player and current floor from the game object
@@ -566,7 +601,7 @@ def drawInventory(surface, pane, inventory, selected_item):
     inventory_width = pane.width / 4
     inventory_height = pane.height * (1/2)
     inventory_area = pygame.Rect(0, 0, inventory_width, inventory_height)
-    inventory_area.center = (pane.centerx /2, pane.centery)
+    inventory_area.center = (pane.centerx / 2, pane.centery)
     border_width = 3
 
     # Draw Inventory Area
