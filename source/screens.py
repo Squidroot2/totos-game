@@ -237,7 +237,6 @@ def playerCreateScreen(window, fps_clock):
                 elif len(name) < max_name_length:
                     if event.key != K_TAB:
                         name += event.unicode
-                    print(event.unicode)
 
         # Decreases or increases alpha of cover
         if decrease_alpha:
