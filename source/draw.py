@@ -844,7 +844,7 @@ def drawItemInfo(surface, pane, item):
     actions = ["(d)rop"]
 
     if item.item_class == 'battery':
-        actions.append("u(s)e")
+        actions.append("(r)echarge")
     elif item in item.location.equipped.values():
         actions.append("(u)nequip")
     elif item.item_class == 'weapon' and item.is_quick_draw:

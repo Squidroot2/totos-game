@@ -356,7 +356,7 @@ def mainGameScreen(window, fps_clock, game):
                     pass
 
                 # Rest Key
-                elif event.key in (K_KP0, K_r):
+                elif event.key == K_KP0:
                     while not player.getEnemiesinFOV() and player.energy < player.max_energy:
                         for entity in player.location.entities:
                             #  every entity with an AI takes a turn
@@ -431,7 +431,6 @@ def mainGameScreen(window, fps_clock, game):
                                 item = itemActionScreen(window, game, panes['main'], items, "Pick up")
 
                             if item is not None:
-                                turn_taken = True
                                 item.pickUp(player.inventory)
                                 game.log.addMessage("%s picked up a %s" % (player.name, items[0].name))
 
@@ -476,8 +475,6 @@ def mainGameScreen(window, fps_clock, game):
                             item.equip()
                             if item.is_quick_draw:
                                 turn_taken = False
-                            else:
-                                turn_taken = True
                         # item equip cancelled
                         else:
                             turn_taken = False
@@ -485,6 +482,26 @@ def mainGameScreen(window, fps_clock, game):
                     else:
                         game.log.addMessage("Nothing in inventory to equip")
                         turn_taken = False
+
+                # Recharge Key
+                elif event.key == K_r:
+                    batteries = player.inventory.getItemsByType()['batteries']
+
+                    if batteries:
+                        # If all batteries share one id, set first in list to item
+                        if len({item.id for item in batteries}) == 1:
+                            item = batteries[0]
+                        # Otherwise, give the player a choice
+                        else:
+                            item = itemActionScreen(window, game, panes['main'], batteries, "Recharge with")
+                        if item is not None:
+                            item.use()
+                        else:
+                            turn_taken = False
+                    else:
+                        game.log.addMessage("No batteries to recharge with")
+                        turn_taken = False
+
                 # All other Keys
                 else:
                     turn_taken = False
@@ -701,7 +718,7 @@ def inventoryScreen(window, fps_clock, game, panes):
                             break
 
                     # If battery is used, turn taken
-                    elif event.key == K_s:
+                    elif event.key == K_r:
                         if selected_item.item_class == "battery":
                             selected_item.use()
                             show_inventory = False

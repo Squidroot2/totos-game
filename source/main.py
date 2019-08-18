@@ -74,8 +74,6 @@ def setupGame(window, fps_clock, name, background):
             Game(dungeon, player)
     """
 
-
-
     # Shows loading screen for generating dungeon
     dungeon = generateDungeonScreen(window)
 

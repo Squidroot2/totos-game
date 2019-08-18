@@ -331,6 +331,7 @@ class Inventory:
                 equipables.append(item)
 
         return equipables
+
     def getItemsByType(self):
         """Returns a dictionary of lists sorted by the item type"""
         items = {"weapons":[],
