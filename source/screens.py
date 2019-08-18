@@ -356,7 +356,7 @@ def mainGameScreen(window, fps_clock, game):
                     pass
 
                 # Rest Key
-                elif event.key == K_KP0:
+                elif event.key in (K_KP0, K_r):
                     while not player.getEnemiesinFOV() and player.energy < player.max_energy:
                         for entity in player.location.entities:
                             #  every entity with an AI takes a turn
@@ -467,6 +467,24 @@ def mainGameScreen(window, fps_clock, game):
                     if item is not None:
                         item.drop()
 
+                # Equip Key
+                elif event.key == K_e:
+                    equipable_items = player.inventory.getEquipable()
+                    if equipable_items:
+                        item = itemActionScreen(window, game, panes['main'], equipable_items, "Equip")
+                        if item is not None:
+                            item.equip()
+                            if item.is_quick_draw:
+                                turn_taken = False
+                            else:
+                                turn_taken = True
+                        # item equip cancelled
+                        else:
+                            turn_taken = False
+                    # No Items to Equip
+                    else:
+                        game.log.addMessage("Nothing in inventory to equip")
+                        turn_taken = False
                 # All other Keys
                 else:
                     turn_taken = False

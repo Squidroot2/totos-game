@@ -11,7 +11,7 @@ from collections import Counter
 # Third Party
 import pygame
 # My Modules
-from source.constants import CELL_SIZE, BACKGROUNDS, REACTORS
+from source.constants import CELL_SIZE, BACKGROUNDS, REACTORS, WEAPONS
 from source.utilities import getDistanceBetweenEntities
 from source.assets import Data
 
@@ -320,6 +320,17 @@ class Inventory:
         for item in self.contents:
             item.drop()
 
+    def getEquipable(self):
+        """Returns a list of items in the contents that are now equipped but could be"""
+        equipable_types = {"ARMOR"} | REACTORS | WEAPONS
+
+        equipables = []
+        for item in self.contents:
+            item_type, num = item.id.rsplit("_")
+            if item_type in equipable_types and item not in self.equipped.values():
+                equipables.append(item)
+
+        return equipables
     def getItemsByType(self):
         """Returns a dictionary of lists sorted by the item type"""
         items = {"weapons":[],
