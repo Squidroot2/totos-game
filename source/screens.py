@@ -19,7 +19,7 @@ from pygame.constants import *
 # My Modules
 from source.constants import COLORS, FONTS, FPS, BACKGROUNDS
 from source.draw import drawClassSelect, getPanes, drawMapPane, drawGamePane, drawFPS, drawInventory, \
-                        drawAllPanes, drawItemInfo, drawMainMenu
+                        drawAllPanes, drawItemInfo, drawMainMenu, drawItemList
 from source.quit import checkForQuit, SAVE_LOCATION
 from source.entities import Target
 from source.floors import Floor
@@ -419,18 +419,34 @@ def mainGameScreen(window, fps_clock, game):
                         turn_taken = False
 
                 # Pick Up Key
-                # todo be able to choose from a list of items to pick up
                 elif event.key == K_g:
+                    # If inventory is not full...
                     if len(player.inventory.contents) < player.inventory.capacity:
                         items = player.getItemsAtFeet()
-                        if len(items) > 0:
-                            items[0].pickUp(player.inventory)
-                            game.log.addMessage("%s picked up a %s" % (player.name, items[0].name))
+                        if items:
+                            # If there is only 1 item, choose it, otherwise have player choose from itemActionScreen
+                            if len(items) == 1:
+                                item = items[0]
+                            else:
+                                item = itemActionScreen(window, game, panes['main'], items, "Pick up")
+
+                            if item is not None:
+                                turn_taken = True
+                                item.pickUp(player.inventory)
+                                game.log.addMessage("%s picked up a %s" % (player.name, items[0].name))
+
+                            # If player canceled item pick up
+                            else:
+                                turn_taken = False
+                        # If there are no items at feet
                         else:
                             game.log.addMessage("Nothing to pick up here")
+                            turn_taken = False
+                    # If Inventory is full
                     else:
                         game.log.addMessage("Inventory is Full")
                         turn_taken = False
+                # END IF G KEY IS PRESSED
 
                 # Explore Key
                 elif event.key == K_x:
@@ -445,8 +461,17 @@ def mainGameScreen(window, fps_clock, game):
                         message = player.lookAround()
                     turn_taken = False
 
+                # Drop Key
+                elif event.key == K_d:
+                    item = itemActionScreen(window, game, panes['main'], player.inventory.contents, "Drop")
+                    if item is not None:
+                        item.drop()
+
+                # All other Keys
                 else:
                     turn_taken = False
+
+
 
                 # If turn was taken...
                 if turn_taken:
@@ -499,7 +524,8 @@ def mainGameScreen(window, fps_clock, game):
 
     # END WHILE RUN GAME
     # Delete the save
-    os.remove(SAVE_LOCATION)
+    if os.path.exists(SAVE_LOCATION):
+        os.remove(SAVE_LOCATION)
 
     # Stop until player hit enter key
     show_screen = True
@@ -512,32 +538,7 @@ def mainGameScreen(window, fps_clock, game):
     gameOverScreen(window, fps_clock)
 
 
-def gameOverScreen(window, fps_clock):
-    """Shown after the player dies and deletes the save if there is one
 
-    Parameters:
-        window : pygame.Surface
-        fps_clock : pygame.Clock
-    """
-    window.fill(COLORS['BLACK'])
-
-    window_rect = window.get_rect()
-
-    text = FONTS['TITLE'].render('Game Over', True, COLORS['RED'])
-    text_rect = text.get_rect()
-    text_rect.center = window_rect.center
-
-    window.blit(text, text_rect)
-    show_game_over = True
-
-    while show_game_over:
-        checkForQuit()
-        for event in pygame.event.get(KEYDOWN):
-            if event.key == K_RETURN:
-                show_game_over = False
-
-        pygame.display.flip()
-        fps_clock.tick(FPS)
 
 
 def targetScreen(window, fps_clock, game, panes):
@@ -661,6 +662,7 @@ def inventoryScreen(window, fps_clock, game, panes):
 
                 # Item Actions:
                 if selected_item is not None:
+                    # It item is unequipped, no turn taken
                     if event.key == K_u:
                         if selected_item in player.inventory.equipped.values():
                             selected_item.unequip()
@@ -668,6 +670,7 @@ def inventoryScreen(window, fps_clock, game, panes):
                             turn_taken = False
                             break
 
+                    # If item is equipped, turn taken unless the item is quick draw
                     elif event.key == K_e:
                         if selected_item.item_class != "battery" and \
                                 selected_item not in player.inventory.equipped.values():
@@ -679,6 +682,7 @@ def inventoryScreen(window, fps_clock, game, panes):
                                 turn_taken = True
                             break
 
+                    # If battery is used, turn taken
                     elif event.key == K_s:
                         if selected_item.item_class == "battery":
                             selected_item.use()
@@ -686,9 +690,11 @@ def inventoryScreen(window, fps_clock, game, panes):
                             turn_taken = True
                             break
 
+                    # If item is dropped, no turn taken
                     elif event.key == K_d:
                         selected_item.drop()
                         show_inventory = False
+                        turn_taken = False
                         break
 
                 # If Item selected, draw its info
@@ -703,3 +709,65 @@ def inventoryScreen(window, fps_clock, game, panes):
 
     # END WHILE SHOW INVENTORY
     return turn_taken
+
+
+def itemActionScreen(window, game, main_pane,  item_list, action):
+    """Shows item action window
+
+    Returns : source.entities.Item : item to be acted on
+    """
+    prompt = action + " what?"
+
+    drawItemList(window, main_pane, item_list, prompt)
+    pygame.display.update(main_pane)
+
+    # Runs until return in called
+    while True:
+        checkForQuit(game)
+        for event in pygame.event.get():
+            if event.type == KEYDOWN:
+                # Escape to quit
+                if event.key == K_ESCAPE:
+                    return None
+
+                # Number Key Pressed
+                elif event.key in range(K_0, K_9+1):
+                    # Determine index
+                    if event.key == K_0:
+                        index = 9
+                    else:
+                        index = event.key - K_1
+
+                    # Try to return that item
+                    try:
+                        return item_list[index]
+                    except IndexError:
+                        pass
+
+
+def gameOverScreen(window, fps_clock):
+    """Shown after the player dies and deletes the save if there is one
+
+    Parameters:
+        window : pygame.Surface
+        fps_clock : pygame.Clock
+    """
+    window.fill(COLORS['BLACK'])
+
+    window_rect = window.get_rect()
+
+    text = FONTS['TITLE'].render('Game Over', True, COLORS['RED'])
+    text_rect = text.get_rect()
+    text_rect.center = window_rect.center
+
+    window.blit(text, text_rect)
+    show_game_over = True
+
+    while show_game_over:
+        checkForQuit()
+        for event in pygame.event.get():
+            if event.type == KEYDOWN and event.key == K_RETURN:
+                show_game_over = False
+
+        pygame.display.flip()
+        fps_clock.tick(FPS)

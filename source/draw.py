@@ -614,6 +614,7 @@ def drawInventory(surface, pane, inventory, selected_item):
     header_font = Fonts.presets['inv_header']
     main_font = Fonts.presets['inv_listing']
 
+
     # Inventory Area dimensions
     inventory_width = pane.width / 4
     inventory_height = pane.height * (1 / 2)
@@ -697,18 +698,78 @@ def drawInventory(surface, pane, inventory, selected_item):
 
     return item_order
 
+def drawItemList(surface, pane, item_list, prompt):
+    """A simpler form of draw Inventory to be used for item Action Prompts"""
+    bg_color = COLORS['DARK GRAY']
+    font_color = COLORS['WHITE']
+    border_color = COLORS['YELLOW']
+
+    # Identify Fonts
+    header_font = Fonts.presets['inv_header']
+    main_font = Fonts.presets['inv_listing']
+    small_font = Fonts.presets['inv_detail']
+
+    # The amount that the line top is moved for each item printed
+    line_height = main_font.get_linesize()
+    header_line_height = header_font.get_linesize()
+
+    # Area dimensions
+    area_width = pane.width / 4
+    area_height = (header_line_height*3/2) + line_height*(len(item_list)+3)
+    area = pygame.Rect(0, 0, area_width, area_height)
+    area.center = (pane.width * (3/4), pane.centery)
+    border_width = 3
+
+    # Draw Area and Border
+    pygame.draw.rect(surface, bg_color, area, 0)
+    pygame.draw.rect(surface, border_color, area, border_width)
+
+    # Distance from the the top of the pane to the top of the prompt
+    title_y_margin = header_line_height/2
+
+    # Draw the prompt text at the top of the area
+    title = header_font.render(prompt, True, font_color, bg_color)
+    title_rect = title.get_rect()
+    title_rect.midtop = (area.centerx, area.top + title_y_margin)
+    surface.blit(title, title_rect)
+
+    # Get the margin on the left side
+    x_margin = pane.width / 25
+    indent_left = area.left + x_margin
+
+    # Start the line after the bottom of the Title
+    line_top = title_rect.bottom + line_height
+
+    for index, item in enumerate(item_list, 1):
+        # Draw Index, str(index)[-1] is the last digit of a number or only digit if 0-9
+        index_surf = main_font.render(str(index)[-1] + ".", True, font_color, bg_color)
+        index_rect = index_surf.get_rect()
+        index_rect.topleft = (indent_left, line_top)
+        surface.blit(index_surf, index_rect)
+
+        # Draw Item
+        drawItemListing(surface, item, main_font, font_color, bg_color, (index_rect.right, line_top))
+
+        # Move Line
+        line_top += line_height
+
+    exit_text = small_font.render("Press [ESC] to Exit", True, font_color, bg_color)
+    exit_rect = exit_text.get_rect()
+    exit_rect.midbottom = (area.centerx, area.bottom - border_width)
+    surface.blit(exit_text, exit_rect)
 
 def drawItemListing(surface, item, font, font_color, bg_color, top_left):
     """Draws the specified item as a line in the inventory"""
-    # Space inbetween left side of image and left side of text
-
     icon_size = int(CELL_SIZE / 2)
 
-    gap = icon_size * (3 / 2)
+    # Reduce the item image to the icon size
     item_icon = pygame.transform.scale(item.image, (icon_size, icon_size))
 
     # Draw the image of the item
     surface.blit(item_icon, top_left)
+
+    # Space in between left side of image and left side of text
+    gap = icon_size * (3 / 2)
 
     item_name = font.render(item.name, True, font_color, bg_color)
     item_name_rect = item_name.get_rect()
