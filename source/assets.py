@@ -223,6 +223,7 @@ class Fonts:
                 'info_header':  Font(cls.files['unispace'], 16),
                 'info':         Font(cls.files['unispace'], 14),
                 'info_S':       Font(cls.files['unispace'],12),
+                'message':      Font(cls.files['rokkitt'], 22),
                 'log':          Font(cls.files['rokkitt'], 12),
                 'inv_title':    Font(cls.files['unispace_bold'], 16),
                 'inv_header':   Font(cls.files['unispace_bold'], 14),

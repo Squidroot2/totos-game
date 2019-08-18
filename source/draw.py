@@ -15,7 +15,7 @@ import pygame
 from source.assets import Fonts, Images
 from source.constants import BACKGROUNDS, COLORS, FONTS, CELL_SIZE, FLOOR_HEIGHT, FLOOR_WIDTH
 from source.formulas import getRangedHitChance, getMeleeHitChance
-from source.utilities import formatFloat
+from source.utilities import formatFloat, smartSplit
 
 
 
@@ -571,6 +571,9 @@ def drawMessageBox(window, pane, message):
     # todo be able to handle longer messages
     y_offset = pane.height / 5
 
+    font = Fonts.presets['message']
+    line_size = font.get_linesize()
+
     message_height = pane.height / 5
     message_width = pane.width / 2
 
@@ -579,12 +582,19 @@ def drawMessageBox(window, pane, message):
     message_box.center = (pane.centerx, pane.centery - y_offset)
 
     pygame.draw.rect(window, COLORS['BLACK'], message_box, 0)
+    pygame.draw.rect(window, COLORS['YELLOW'], message_box, 1)
 
-    text = FONTS['SUBMAIN'].render(message, True, COLORS['WHITE'], COLORS['BLACK'])
-    text_rect = text.get_rect()
-    text_rect.center = message_box.center
+    message_lines = smartSplit(message, max_length=50)
 
-    window.blit(text, text_rect)
+    # Center of the first line
+    line_start = message_box.centery - (line_size/2) * (len(message_lines)-1)
+
+    for i, line in enumerate(message_lines):
+        text = font.render(line, True, COLORS['WHITE'], COLORS['BLACK'])
+        text_rect = text.get_rect()
+        text_rect.center = (message_box.centerx, line_start + line_size*i)
+        window.blit(text, text_rect)
+
 
 
 def drawInventory(surface, pane, inventory, selected_item):
