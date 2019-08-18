@@ -86,6 +86,9 @@ def getDamageDealt(attack, defense):
 
     damage = attack - attack*reduction
 
+    if damage < 0:
+        damage = 0
+
     # Damage is rounded to nearest tenth
     return round(damage, 1)
 
