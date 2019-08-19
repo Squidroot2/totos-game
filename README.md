@@ -87,6 +87,9 @@ In addition to the starting items, the player will also pick up items found thro
 * Pick Up: G
 * Look Around: L
 * Inventory : I
+* Recharge : R
+* Drop : D
+* Equip: E
 
 **Inventory**
 * Select Item: 0-9

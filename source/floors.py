@@ -116,7 +116,11 @@ class Floor:
                 self.landing_room = room
 
     def generateEnemies(self):
-        """Goes trhough each room and rolls to determine if an enemy is going to be in that room. Then it decides which enemy based on the leveled list """
+        """Adds enemies to the floor
+
+        Goes through each room and rolls to determine if an enemy is going to be in that room.
+        Then it decides which enemy based on the leveled list
+        """
         chance_per_room = .5
         leveled_list = Data.getLeveledList("ENEMIES", self.number)
 
@@ -154,6 +158,26 @@ class Floor:
             # Gets the item from the leveled_list
             item_id = random.choices(list(leveled_list.keys()), list(leveled_list.values()))[0]
             
+            # Create the item
+            Item.createItem(item_id, self, x, y)
+
+    # todo use generateb atterues
+    def generateBatteries(self):
+        """Adds batteries to the floor"""
+        num_of_batteries = round(random.triangular(low=1, high=6, mode=3))
+
+        # Get leveled list
+        leveled_list = Data.getLeveledList("CONSUMABLES", self.number)
+
+        # For each battery in the number of batteries...
+        for i in range(num_of_batteries):
+            room = random.choice(self.rooms)
+            x = random.randrange(room['x'], room['x'] + room['w'])
+            y = random.randrange(room['y'], room['y'] + room['h'])
+
+            # Gets the item from the leveled_list
+            item_id = random.choices(list(leveled_list.keys()), list(leveled_list.values()))[0]
+
             # Create the item
             Item.createItem(item_id, self, x, y)
         

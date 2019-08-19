@@ -483,6 +483,8 @@ def mainGameScreen(window, fps_clock, game):
                         game.log.addMessage("Nothing in inventory to equip")
                         turn_taken = False
 
+                # UN
+
                 # Recharge Key
                 elif event.key == K_r:
                     batteries = player.inventory.getItemsByType()['batteries']
@@ -505,8 +507,6 @@ def mainGameScreen(window, fps_clock, game):
                 # All other Keys
                 else:
                     turn_taken = False
-
-
 
                 # If turn was taken...
                 if turn_taken:
@@ -571,9 +571,6 @@ def mainGameScreen(window, fps_clock, game):
                 show_screen = False
 
     gameOverScreen(window, fps_clock)
-
-
-
 
 
 def targetScreen(window, fps_clock, game, panes):
