@@ -298,7 +298,8 @@ def validateLeveledList(item_names, character_names):
     # Main Schema
     main_schema = Schema({
         'ENEMIES': dict,
-        'ITEMS': dict
+        'ITEMS': dict,
+        'CONSUMABLES': dict
     }, required=True)
     # Validate main schema
     try:
@@ -333,6 +334,19 @@ def validateLeveledList(item_names, character_names):
             print("Error in Item Leveled List %s: %s" % (enemy_list, e))
             valid = False
 
+    # Consumable Leveled List Schema
+    consum_schema = Schema({
+        In(item_names): int
+    })
+    
+    # Validate Consumables Schema
+    for consum_list in data["CONSUMABLES"]:
+        try:
+            consum_schema(data["CONSUMABLES"][consum_list])
+        except voluptuous.error.Invalid as e:
+            print("Error in Consumable Leveled List %s: %s" % (consum_list, e))
+            valid = False
+    
     return valid
 
 

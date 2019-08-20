@@ -19,17 +19,21 @@
     },
 	"ITEMS": {
 	  "LEVEL_1": {
-        "BATTERY_1": 50,
         "LIGHT_1": 8,
+		"MEDIUM_1": 8,
+		"HEAVY_1": 8,
         "BRAWLER_1": 8,
         "RECYCLE_1": 8,
-        "MEDIUM_1": 8,
-        "ARMOR_2": 3,
-        "KNIFE_1": 10,
-        "PISTOL_1": 5
+        "ARMOR_2": 2,
+        "KNIFE_1": 9,
+		"CLUB_1": 9,
+        "PISTOL_1": 9,
+		"SWORD_1": 7,
+		"RIFLE_1": 5,
+		"CANNON_1": 5,
+		"PDW_1": 5
 	  },
       "LEVEL_2": {
-        "BATTERY_1": 40,
         "LIGHT_1": 6,
         "BRAWLER_1": 6,
         "RECYCLE_1": 6,
@@ -40,5 +44,10 @@
         "PISTOL_1": 5,
         "RIFLE_2": 5
       }
+	},
+	"CONSUMABLES": {
+	  "LEVEL_1":  {
+	    "BATTERY_1":100
+	  }
 	}
 }
