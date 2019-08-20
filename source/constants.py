@@ -40,10 +40,11 @@ COLORS = {'BLACK':      (  0,  0,  0),
 
 DRAW_ORDER =    {'CORPSE': 0,
                  'PORTAL': 1,
-                 'ITEM': 2,
-                 'ENEMY': 3,
-                 'PLAYER': 4,
-                 'TARGET': 5}
+                 'CHEST': 2,
+                 'ITEM': 3,
+                 'ENEMY': 4,
+                 'PLAYER': 5,
+                 'TARGET': 6}
 
 WEAPONS = {"PISTOL", "RIFLE", "PDW", "CANNON", "KNIFE", "CLUB", "SWORD"}
 REACTORS = {"RECYCLE", "LIGHT", "MEDIUM", "HEAVY", "BRAWLER"}

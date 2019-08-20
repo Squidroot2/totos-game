@@ -267,6 +267,42 @@ class Corpse(Entity):
         super().__init__(character.location, character.x, character.y)
 
 
+# todo spawn chests on floor and handling opening of chests
+class Chest(Entity):
+    """Entity which holds an item
+
+    Child of Entity"""
+    image_dir = "Other"
+    draw_order = DRAW_ORDER['CHEST']
+
+    def __init__(self, location, x, y, item):
+        """Init method for Chest. Extends the init method of Entity
+
+        Parameters:
+            location : source.floors.Floor
+            x : int
+            y : int
+            item : source.entities.Item
+        """
+        self.item = item
+        self.image_name = "chest_closed"
+
+        super().__init__(location, x, y, obstruct=True)
+
+    def open(self):
+        """Opening the chest add the item to the floor, changes the image of the chest and sets it to non-obstructing"""
+        # Add item to location
+        self.item.location = self.location
+        self.item.x = self.x
+        self.item.y = self.y
+        self.location.addEntity(self.item)
+
+        # Open Chest
+        self.obstruct = False
+        self.image_name = "chest_open"
+        self.setImage()
+
+
 class Character(Entity):
     """Used for entities which act on the world (ie Enemies and the Player)
 
