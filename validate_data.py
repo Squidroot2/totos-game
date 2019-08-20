@@ -69,6 +69,8 @@ def runValidation():
         print("Error(s) in %s \n" % leveled_lists_json)
         return False
 
+    print()
+    
     return True
 
 def validatePresent():
@@ -346,6 +348,8 @@ def validateLeveledList(item_names, character_names):
         except voluptuous.error.Invalid as e:
             print("Error in Consumable Leveled List %s: %s" % (consum_list, e))
             valid = False
+        if sum(data["CONSUMABLES"][consum_list].values()) != 100:
+            print("Warning: Consumables %s list sum does not equal 100" % consum_list)
     
     return valid
 
