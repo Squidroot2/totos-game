@@ -1,0 +1,10 @@
+1. forest
+2. laboratory
+3. moon
+4. starship
+5. barracks
+6. methane glacier
+7. lava cave
+8. tomb
+9. library
+10. void
