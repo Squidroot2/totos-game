@@ -109,6 +109,7 @@ class Entity:
         else:
             self.inventory = None
 
+        self.image = None
         self.setImage()
 
     def draw(self, surface):
@@ -166,11 +167,11 @@ class Target(Entity):
 
     def drawPath(self, surface):
         path = self.getPath()
-        range = self.origin.getRange()
+        peak_range = self.origin.getRange()
 
-        if len(path) <= range:
+        if len(path) <= peak_range:
             color = COLORS['RED']
-        elif range < len(path) <= formulas.getMaxRange(self.origin.getEncumbrance(), range):
+        elif peak_range < len(path) <= formulas.getMaxRange(self.origin.getEncumbrance(), peak_range):
             color = COLORS['DARK YELLOW']
         else:
             color = COLORS['GRAY']
@@ -335,7 +336,7 @@ class Character(Entity):
         validateMove(self, destination) : Returns True if the destination is walkable and False if it isn'tagged
         checkEntityObstruct(self, destination) : Checks if an obstructing entity is in the destination.
         attack(self, opponent, is_ranged=False) : Attacks a specified opponent
-        takeDamage(self, damage) : Reduces the amount of energy in the characters reactor and deals any remaining to flesh
+        takeDamage(self, damage) : Reduces the amount of energy in the characters reactor and deals remaining to flesh
         kill(self) : Kill the character
         getDefense(self) : Gets the total defense of the character
         getMeleeDamage(self) : Gets the total melee damage per strike
@@ -586,8 +587,6 @@ class Character(Entity):
                 return
         else:
             damage_to_flesh = damage
-
-
 
         # Determine if the damage to flesh was lethal
         killed = formulas.determineLethal(damage_to_flesh, self.life)

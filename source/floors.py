@@ -140,7 +140,8 @@ class Floor:
 
                 # Create Character
                 Character(char_id, self, x, y)
-    
+
+    # todo make items never be ones in the player's starting inventory
     def generateChest(self):
         """Based on the level list, generates a chest and puts an item in it
 
@@ -172,7 +173,6 @@ class Floor:
         # Create the item
         Item.createItem(item_id, self.chest)
 
-    # todo use generateb atterues
     def generateConsumables(self):
         """Adds batteries to the floor"""
         num_of_batteries = round(random.triangular(low=0, high=3, mode=1))
