@@ -11,7 +11,7 @@ import queue
 import pygame
 import tcod
 # My Modules
-from source.entities import Portal, Item, Character
+from source.entities import Portal, Item, Character, Chest
 from source.constants import CELL_SIZE, FLOOR_HEIGHT, FLOOR_WIDTH, COLORS
 from source.assets import Images, Data
 
@@ -32,6 +32,7 @@ class Floor:
 
         # Initialize empty variables
         self.entities = []
+        self.chest = None
         self.sort_entities = False
         self.projectiles = []
         self.rooms = []
@@ -42,8 +43,9 @@ class Floor:
         self.generateLayout()
         self.updateTiles()
         self.generatePortals()
-        self.generateItems()
+        self.generateConsumables()
         self.generateEnemies()
+        self.generateChest()
 
         # Get pathfinder, diagonal is just slightly higher than 1 to make paths a little straighter
         self.path_finder = tcod.path.AStar(self.map, diagonal=1.01)
@@ -139,32 +141,41 @@ class Floor:
                 # Create Character
                 Character(char_id, self, x, y)
     
-    def generateItems(self):
-        """Based on the level list, determines items that show up"""
-        # Uses a random function to determine if the number of items on the floor
-        num_of_items = round(random.triangular(low=1, high=6, mode=3))
-        
+    def generateChest(self):
+        """Based on the level list, generates a chest and puts an item in it
+
+        Depends on all floor items and enemies being already generated"""
         # Get leveled list
         leveled_list = Data.getLeveledList("ITEMS", self.number)
-        
-        # For each item in the number of items...
-        for i in range(num_of_items):
-        
-            # Get the location for the item
+
+        # Get the location for the item
+        valid_location = False
+
+        while not valid_location:
             room = random.choice(self.rooms)
             x = random.randrange(room['x'], room['x']+room['w'])
             y = random.randrange(room['y'], room['y']+room['h'])
-            
-            # Gets the item from the leveled_list
-            item_id = random.choices(list(leveled_list.keys()), list(leveled_list.values()))[0]
-            
-            # Create the item
-            Item.createItem(item_id, self, x, y)
+
+            valid_location = True
+            # Ensures the chest is not on top of any other entities
+            for entity in self.entities:
+                if entity.x == x and entity.y == y:
+                    valid_location = False
+                    break
+
+        # Gets the item from the leveled_list
+        item_id = random.choices(list(leveled_list.keys()), list(leveled_list.values()))[0]
+
+        # Creates the chest
+        self.chest = Chest(self, x, y)
+
+        # Create the item
+        Item.createItem(item_id, self.chest)
 
     # todo use generateb atterues
-    def generateBatteries(self):
+    def generateConsumables(self):
         """Adds batteries to the floor"""
-        num_of_batteries = round(random.triangular(low=1, high=6, mode=3))
+        num_of_batteries = round(random.triangular(low=0, high=3, mode=1))
 
         # Get leveled list
         leveled_list = Data.getLeveledList("CONSUMABLES", self.number)

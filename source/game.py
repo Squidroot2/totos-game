@@ -50,6 +50,9 @@ class Game:
                 for y in range(FLOOR_HEIGHT):
                     floor.tile_map[x][y].image = None
 
+            if floor.chest.item:
+                floor.chest.item.image = None
+
         self.surface = None
 
     def setSurfaces(self):
@@ -63,6 +66,9 @@ class Game:
             for x in range(FLOOR_WIDTH):
                 for y in range(FLOOR_HEIGHT):
                     floor.tile_map[x][y].setImage()
+
+            if floor.chest.item:
+                floor.chest.item.setImage()
 
         self.surface = pygame.Surface((FLOOR_WIDTH*CELL_SIZE, FLOOR_HEIGHT*CELL_SIZE))
 class Log:

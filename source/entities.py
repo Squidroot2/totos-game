@@ -267,24 +267,22 @@ class Corpse(Entity):
         super().__init__(character.location, character.x, character.y)
 
 
-# todo spawn chests on floor and handling opening of chests
 class Chest(Entity):
     """Entity which holds an item
 
     Child of Entity"""
     image_dir = "Other"
     draw_order = DRAW_ORDER['CHEST']
+    name = "chest"
 
-    def __init__(self, location, x, y, item):
+    def __init__(self, location, x, y):
         """Init method for Chest. Extends the init method of Entity
 
         Parameters:
             location : source.floors.Floor
             x : int
             y : int
-            item : source.entities.Item
         """
-        self.item = item
         self.image_name = "chest_closed"
 
         super().__init__(location, x, y, obstruct=True)
@@ -301,6 +299,10 @@ class Chest(Entity):
         self.obstruct = False
         self.image_name = "chest_open"
         self.setImage()
+
+    def addEntity(self, item):
+        """Mirrors method on floor and inventory"""
+        self.item = item
 
 
 class Character(Entity):
@@ -471,6 +473,26 @@ class Character(Entity):
         
         Returns: None
         """
+
+        # If the opponent can be opened(is a chest), open it and end attack
+        if hasattr(opponent, "open"):
+            opponent.open()
+
+            # Get verb and, if applicable, reduce energy
+            if is_ranged:
+                verb = self.getRangedVerb()
+                if self.inventory.equipped['weapon'].is_ranged:
+                    self.energy = self.getEnergyPerShot() - self.getRecoilCharge()
+            else:
+                verb = self.getMeleeVerb()
+
+            # Log open message
+            Log.addToBuffer("%s %s the %s to open it " % (self.name, verb, opponent.name))
+
+            # End Attack
+            return
+        # END IF OPPONENT HAS OPEN ATTRIBUTE
+
         # Get defense of opponent character
         defense = opponent.getDefense()
         
@@ -499,7 +521,7 @@ class Character(Entity):
         damage = formulas.getDamageDealt(attack, defense)
         
         # Boolean that determines if energy is being used on the attack
-        using_energy = bool(is_ranged and self.inventory.equipped['weapon'])
+        using_energy = bool(is_ranged and self.inventory.equipped['weapon'].is_ranged)
         
         # For every strike in the number of attacks...
         for strike in range(self.getAttackRate(is_ranged)):
