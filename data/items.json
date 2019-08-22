@@ -254,8 +254,8 @@
       "ranged": null
     },
     "CLUB_1": {
-      "name": "Nightstick",
-      "image": null,
+      "name": "Lightstick",
+      "image": "lightstick",
 	  "melee_verb" : "hit",
       "melee_damage": 6,
       "melee_speed": 1,
