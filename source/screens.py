@@ -592,7 +592,7 @@ def targetScreen(window, fps_clock, game, panes):
     while target_mode:
 
         # Event Handler
-        checkForQuit(game)
+        checkForQuit(game, remove=[target])
         for event in pygame.event.get():
 
             # Determine what to do with Key Presses

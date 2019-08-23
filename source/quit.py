@@ -18,9 +18,13 @@ def loadSave():
     return game
 
 
-def terminateGame(game=None):
+def terminateGame(game=None, remove=[]):
     """Quits the program"""
     if game is not None:  # Save the game
+        # Remove any passed entities
+        for entity in remove:
+            entity.location.removeEntity(entity)
+
         # Strip the game of surfaces
         game.removeSurfaces()
 
@@ -36,7 +40,7 @@ def terminateGame(game=None):
     sys.exit()
 
 
-def checkForQuit(game=None):
+def checkForQuit(game=None, remove=[]):
     """Terminates the game if the QUIT event is present or the Escape key has been pressed"""
     for event in pygame.event.get(QUIT): # get all the QUIT events
-        terminateGame(game) # terminate if any QUIT events are present
+        terminateGame(game, remove) # terminate if any QUIT events are present
