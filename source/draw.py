@@ -596,7 +596,6 @@ def drawMessageBox(window, pane, message):
         window.blit(text, text_rect)
 
 
-
 def drawInventory(surface, pane, inventory, selected_item):
     """Draws all of the items of the inventory
 
@@ -613,7 +612,6 @@ def drawInventory(surface, pane, inventory, selected_item):
     # Identify Fonts
     header_font = Fonts.presets['inv_header']
     main_font = Fonts.presets['inv_listing']
-
 
     # Inventory Area dimensions
     inventory_width = pane.width / 4

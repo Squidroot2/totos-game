@@ -9,7 +9,7 @@ import pygame
 from source.constants import WINDOW_WIDTH, WINDOW_HEIGHT
 from source.entities import Player
 from source.game import Game, Log
-from source.screens import mainGameScreen, titleScreen, playerCreateScreen, gameOverScreen, generateDungeonScreen, mainMenuScreen
+from source.screens import mainGameScreen, titleScreen, playerCreateScreen, generateDungeonScreen, mainMenuScreen
 from source.assets import loadAssets
 from source.quit import terminateGame, loadSave
 
@@ -37,6 +37,7 @@ def main():
         else:
             terminateGame()
 
+
 def initializePygame():
     """Initializes the pygame modules and returns SCREEN and FPS_CLOCK
     
@@ -52,11 +53,14 @@ def initializePygame():
 
 
 def setupGame(window, fps_clock, name, background):
-    """Runs the titleScreen and the playerCreateScreen to get information from user. Then, creates player and dungeon and puts them in a game object
-    
+    """Gets information from user. Then, creates player and dungeon and puts them in a game object
+
+    Gets information from the user by running the titleScreen and the playerCreateScreen functions
+
     Parameters:
         window : pygame.Surface
         fps_clock : pygame.Clock
+        name : string
     
     Returns:
         game : source.game.Game

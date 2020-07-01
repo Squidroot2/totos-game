@@ -803,17 +803,12 @@ class Player(Character):
         """Extends the Character init method
 
         Parameters:
-            name : string
-                name of the player
-            background : string
-                background of the player which determines the starting items
+            name (string) : name of the player
+            background (string) : background of the player which determines the starting items.
                 Valid Attributes are ['Officer','Marksman','Agent','Pointman','Gladiator']
-            floor : Floor
-                the starting location of the player
-            x : int
-                starting x position on the floor
-            y : int
-                starting y position on the floor
+            floor (Floor) : the Floor object that the player starts in
+            x (int) : starting x position on the floor
+            y (int) : starting y position on the floor
         """
 
         super().__init__("PLAYER", floor, x, y, is_player=True)
@@ -836,7 +831,13 @@ class Player(Character):
         self.discoverTiles()
 
     def changeFloors(self, new_floor, direction):
-        """Change player's location to a specified floor"""
+        """Change player's location to a specified floor
+
+        Parameter:
+            new_floor (Floor) : Floor object that the player is moving to
+            direction (string) : Either up or down. Determines which portal the player go to
+
+        Returns: None"""
         assert direction in ("up", "down")
         # If you are going up, you will land on the new floors down portal and vice versa
         if direction == "up":
@@ -854,12 +855,21 @@ class Player(Character):
         self.location.map.compute_fov(self.x, self.y, radius=8)
 
     def getFOV(self):
+        """Gets the fov object of the map object of the floor object that the player is on
+
+        Returns: Tcod.Map.Fov
+        """
         return self.location.map.fov
 
     def getEnemiesinFOV(self):
-        """Returns an interger count of the enemies in the FOV"""
+        """Returns an integer count of the enemies in the FOV
+
+        Returns : int
+        """
         count = 0
         fov_map = self.getFOV()
+
+        # WHY IS THIS REVERSED!?!?
         for entity in reversed(self.location.entities):
             if entity is self:
                 continue
