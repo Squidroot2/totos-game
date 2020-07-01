@@ -1,4 +1,4 @@
-"""Module which will hold struct-like classes which wiil load all assets into memory before the game starts
+"""Module which will hold struct-like classes which will load all assets into memory before the game starts
 
 Functions:
     loadAssets() : Runs the load method on all classes
@@ -86,7 +86,7 @@ class Images:
                         3: os.path.join(splatter_images, 'splatter03.png'),
                         4: os.path.join(splatter_images, 'splatter04.png')
                     },
-                    'Projectiles' : {
+                    'Projectiles': {
                         'green_beam': os.path.join(proj_images, 'green_beam.png'),
                         'red_beam': os.path.join(proj_images, 'red_beam.png'),
                         'red_slug': os.path.join(proj_images, 'red_slug.png'),
@@ -133,8 +133,6 @@ class Images:
     def getRandomSplatter(cls):
         """Returns a random image from the splatter directory"""
         return random.choice(list(cls.images['Splatters'].values()))
-        
-        
 
 
 class Data:
@@ -234,7 +232,3 @@ class Fonts:
                 'inv_detail':   Font(cls.files['unispace_ital'], 10)}
 
         cls.presets['inv_header'].set_underline(True)
-
-    
-    
-    
